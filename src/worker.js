@@ -1,4 +1,3 @@
-import { CONFIG } from "./config/config.js";
 import { layout } from "./layout.js";
 import { getHomeUI } from "./pages/home.js";
 import { getCoursesPage } from "./pages/courses.js";
@@ -17,10 +16,8 @@ export default {
     }
 
     else if (path === "/courses") {
-
       const courses = await getCourses(env);
       content = getCoursesPage(courses);
-
     }
 
     else {
@@ -34,20 +31,3 @@ export default {
     });
   }
 };
-
-function layout(content, CONFIG) {
-
-  return `
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>${CONFIG.TITLE}</title>
-  </head>
-
-  <body>
-    ${content}
-  </body>
-  </html>
-  `;
-}

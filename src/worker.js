@@ -2,9 +2,11 @@ import { CONFIG } from "./config/config.js";
 import { layout } from "./layout.js";
 import { getHomeUI } from "./pages/home.js";
 import { getCoursesPage } from "./pages/courses.js";
+import { getCourses } from "./services/courseService.js";
+import { getCoursesPage } from "./pages/courses.js";
 
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
 
     const url = new URL(request.url);
     const path = url.pathname;
@@ -16,11 +18,14 @@ export default {
     }
 
     else if (path === "/courses") {
-      content = getCoursesPage();
+
+      const courses = await getCourses(env);
+      content = getCoursesPage(courses);
+
     }
 
     else {
-      content = "<h1>404 - Không tìm thấy trang</h1>";
+      content = "<h1>404</h1>";
     }
 
     return new Response(layout(content), {

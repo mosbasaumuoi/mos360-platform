@@ -20,8 +20,15 @@ export default {
       const courses = await getCourses(env);
       content = getCoursesPage(courses);
     }
-      else if (path === "/seed") {
-  content = await seedCourses(env);
+else if (path === "/seed") {
+  try {
+    content = await seedCourses(env);
+  } catch (err) {
+    content = `
+      <h1>SEED ERROR</h1>
+      <pre>${err.stack}</pre>
+    `;
+  }
 }
     else {
       content = "<h1>404</h1>";

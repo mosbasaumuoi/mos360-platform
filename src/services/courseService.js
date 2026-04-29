@@ -1,6 +1,13 @@
 export async function getCourses(env) {
-  // Tạm thời mock data (sau sẽ thay bằng KV / Sheet)
 
+  // BƯỚC 1: thử lấy từ KV trước
+  const data = await env.MOS_COURSES?.get("list");
+
+  if (data) {
+    return JSON.parse(data);
+  }
+
+  // fallback nếu chưa có KV
   return [
     {
       id: "excel-365",

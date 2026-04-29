@@ -1,24 +1,17 @@
 export async function seedCourses(env) {
-
-  const courses = [
-    {
-      id: "excel-365",
-      name: "MOS Excel 365",
-      price: "400.000đ",
-      lessons: 35
-    },
-    {
-      id: "word-365",
-      name: "MOS Word 365",
-      price: "350.000đ",
-      lessons: 30
-    }
+  const data = [
+    { id: 1, title: "MOS Excel", price: 400000 },
+    { id: 2, title: "MOS Word", price: 400000 }
   ];
 
-  await env.MOS_COURSES.put(
-    "list",
-    JSON.stringify(courses)
-  );
+  if (!env.MOS_KV) {
+    return "❌ KV chưa bind MOS_KV";
+  }
 
-  return "seed done";
+  await env.MOS_KV.put("courses", JSON.stringify(data));
+
+  return `
+    <h1>Seed OK</h1>
+    <pre>${JSON.stringify(data, null, 2)}</pre>
+  `;
 }

@@ -1,5 +1,5 @@
 import { CONFIG } from "./config";
-import { getHomeUI } from "./pages/home";
+import { getHomeUI } from "./pages/home.js";
 
 export default {
   async fetch(request, env) {

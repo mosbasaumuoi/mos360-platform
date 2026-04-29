@@ -74,4 +74,4 @@ export function getHomeUI(studentData) {
         }
       <\/script>
       `;
-  }
+  },

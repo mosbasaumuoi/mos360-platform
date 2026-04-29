@@ -1,4 +1,4 @@
-import { CONFIG } from ".config/config.js";
+import { CONFIG } from "./config/config.js";
 import { getHomeUI } from "./pages/home.js";
 
 export default {

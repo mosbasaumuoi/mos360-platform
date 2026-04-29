@@ -2,7 +2,7 @@ import { CONFIG } from "./config.js";
 import { getHomeUI } from "./pages/home.js";
 
 export default {
-  async fetch(request, env) {
+  async fetch(request) {
 
     const url = new URL(request.url);
     const path = url.pathname;
@@ -10,16 +10,12 @@ export default {
     let content = "";
 
     if (path === "/") {
-
       content = getHomeUI("test");
-
     } else {
-
       content = "<h1>404</h1>";
-
     }
 
-    return new Response(layout(content), {
+    return new Response(layout(content, CONFIG), {
       headers: {
         "Content-Type": "text/html;charset=UTF-8"
       }
@@ -27,7 +23,7 @@ export default {
   }
 };
 
-function layout(content) {
+function layout(content, CONFIG) {
 
   return `
   <!DOCTYPE html>
@@ -38,9 +34,7 @@ function layout(content) {
   </head>
 
   <body>
-
     ${content}
-
   </body>
   </html>
   `;

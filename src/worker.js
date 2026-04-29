@@ -3,7 +3,6 @@ import { layout } from "./layout.js";
 import { getHomeUI } from "./pages/home.js";
 import { getCoursesPage } from "./pages/courses.js";
 import { getCourses } from "./services/courseService.js";
-import { getCoursesPage } from "./pages/courses.js";
 
 export default {
   async fetch(request, env) {

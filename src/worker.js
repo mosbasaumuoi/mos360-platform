@@ -1,3 +1,4 @@
+import { getHomeUI } from "./pages/home.js";
 import { CONFIG } from "./config/config.js";
 export default {
   async fetch(request, env) {
@@ -30,88 +31,10 @@ export default {
     if (path === "/courses") content = this.getCoursesUI();
     else if (path === "/login") content = this.getLoginUI();
     else if (path === "/library") content = this.getLibraryUI();
-    else content = this.getHomeUI(studentData);
+    else content = getHomeUI(studentData);
 
     return new Response(this.layout(content), { headers: { "Content-Type": "text/html;charset=UTF-8" } });
   },
-
-  getHomeUI(studentData) {
-    return `
-      <div class="stats-bar">
-          <div class="stat-item"><h2>100%</h2><p>Thi đậu ngay lần đầu</p></div>
-          <div class="stat-item"><h2>1.000+</h2><p>Học viên đã nhận chứng chỉ</p></div>
-          <div class="stat-item"><h2>500+</h2><p>Truy cập thường xuyên</p></div>
-      </div>
-
-      <div class="main-container">
-          <div class="left-col">
-              <div class="promo-box-top" style="border: 1.5px solid var(--primary); background: rgba(255,87,34,0.1); border-radius:15px; padding:15px; margin-bottom:15px;">
-                  <p style="font-size:1.1rem; line-height:1.4; text-align:center;">🔥 <b style="color:var(--primary);">Siêu ưu đãi đặc biệt trong tháng 5 !!!</b><br><span style="font-size:0.9rem; opacity:0.9;">Mua 3 khóa tính tiền 2</span><br><span style="color:#FFD700; font-weight:800; font-size:1.2rem;">Tiết kiệm 400k</span></p>
-              </div>
-              <div class="section-card wheel-card" style="text-align: center;">
-                  <h3 class="wheel-title" style="margin-bottom: 15px;">Vòng Quay May Mắn</h3>
-                  <div class="wheel-box">
-                      <div class="wheel-pointer"></div>
-                      <div class="wheel-circle idle-spin" id="main-wheel">
-                          <div class="wheel-label l1"><b>GIẢM 50K</b></div>
-                          <div class="wheel-label l2"><b>GIẢM 50%</b></div>
-                          <div class="wheel-label l3"><b>GIẢM 100K</b></div>
-                          <div class="wheel-label l4"><b>GIẢM 80%</b></div>
-                      </div>
-                      <div class="wheel-center">MOS</div>
-                  </div>
-                  <div class="wheel-inputs">
-                      <input type="text" placeholder="Họ tên của bạn" id="w-name">
-                      <input type="text" placeholder="Số điện thoại của bạn" id="w-phone">
-                  </div>
-                  <button class="btn-action" onclick="spinWheel()">QUAY NGAY</button>
-              </div>
-          </div>
-
-          <div class="right-col">
-              <div class="section-card" id="bang-vang-container">
-                  <h3 class="bv-title">🏆 Bảng Vàng Chứng Chỉ</h3>
-                  <div class="carousel-viewport">
-                      <div class="carousel-track">${studentData}</div>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-      <div class="services-grid">
-          <div class="service-card"><h4>Thi Thật 100%</h4><p class="small-desc">Hệ thống mô phỏng sát đề quốc tế.</p></div>
-          <div class="service-card ai-chat-card" style="display: flex; flex-direction: column; justify-content: center;">
-              <h4 style="color:var(--cyan); margin-bottom: 10px;">AI Assistant 24/7 ✨</h4>
-              <div class="chat-input-box">
-                  <input type="text" placeholder="Chào bạn, hỏi MOS đi..."><button style="color: white; font-family: 'Plus Jakarta Sans', sans-serif; font-weight:800;">GỬI</button>
-              </div>
-          </div>
-          <div class="service-card"><h4>Đồng hành trọn đời</h4><p class="small-desc">Hỗ trợ đề án, luận văn, tin học công sở.</p></div>
-      </div>
-
-      <div class="side-socials">
-        <a href="https://zalo.me/0912888360" target="_blank" class="s-btn"><img src="https://img.icons8.com/color/48/zalo.png"></a>
-        <a href="https://facebook.com/mos360.vn" target="_blank" class="s-btn"><img src="https://img.icons8.com/color/48/facebook-new.png"></a>
-        <a href="https://m.me/mos360.vn" target="_blank" class="s-btn"><img src="https://img.icons8.com/color/48/facebook-messenger--v1.png"></a>
-        <a href="https://youtube.com/@mos360_vn" target="_blank" class="s-btn"><img src="https://img.icons8.com/color/48/youtube-play.png"></a>
-        <a href="https://tiktok.com/@mos360.vn" target="_blank" class="s-btn" style="background:#000;"><img src="https://img.icons8.com/ios-filled/50/ffffff/tiktok--v1.png"></a>
-      </div>
-
-      <script>
-        function spinWheel() {
-            const name = document.getElementById('w-name').value;
-            const phone = document.getElementById('w-phone').value;
-            if(!name || !phone) { alert('Vui lòng nhập đủ thông tin!'); return; }
-            const wheel = document.getElementById('main-wheel');
-            wheel.classList.remove('idle-spin');
-            const deg = 3600 + Math.random() * 360;
-            wheel.style.transition = 'transform 4s cubic-bezier(0.1, 0, 0.1, 1)';
-            wheel.style.transform = 'rotate(' + deg + 'deg)';
-            setTimeout(() => { alert('Chúc mừng ' + name + '! MOS360 sẽ liên hệ ưu đãi qua SĐT ' + phone); }, 4500);
-        }
-      </script>`;
-  },
-
   getCoursesUI() {
     return `<div class="section-card" style="max-width:900px; margin:40px auto;">
         <h1 style="text-align:center; color:var(--primary); margin-bottom:10px;">ĐĂNG KÝ KHÓA HỌC</h1>

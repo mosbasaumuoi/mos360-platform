@@ -1,3 +1,3 @@
-name = "mos360"
+name = "mos360-platform"
 main = "src/worker.js"
 compatibility_date = "2026-04-29"

@@ -2,6 +2,7 @@ import { layout } from "./layout.js";
 import { getHomeUI } from "./pages/home.js";
 import { getCoursesPage } from "./pages/courses.js";
 import { getCourses } from "./services/courseService.js";
+import { seedCourses } from "./admin/seedCourses.js";
 
 export default {
   async fetch(request, env) {
@@ -19,7 +20,9 @@ export default {
       const courses = await getCourses(env);
       content = getCoursesPage(courses);
     }
-
+      else if (path === "/seed") {
+  content = await seedCourses(env);
+}
     else {
       content = "<h1>404</h1>";
     }

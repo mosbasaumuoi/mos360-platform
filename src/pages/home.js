@@ -72,5 +72,6 @@ export function getHomeUI(studentData) {
             wheel.style.transform = 'rotate(' + deg + 'deg)';
             setTimeout(() => { alert('Ch\xFAc m\u1EEBng ' + name + '! MOS360 s\u1EBD li\xEAn h\u1EC7 \u01B0u \u0111\xE3i qua S\u0110T ' + phone); }, 4500);
         }
-      <\/script>`;
+      <\/script>
+      `;
   },

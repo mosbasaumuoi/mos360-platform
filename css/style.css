@@ -1,0 +1,47 @@
+:root {
+  --primary: #FF5722;
+  --bg: #080808;
+  --card: #121212;
+  --text: #ffffff;
+  --cyan: #00f2ff;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header{
+  padding:15px 5%;
+  background:#111;
+  border-bottom:1px solid #222;
+}
+
+.brand{
+  color:white;
+  text-decoration:none;
+  font-size:1.5rem;
+  font-weight:bold;
+}
+
+.hero{
+  padding:80px 20px;
+  text-align:center;
+}
+
+.hero h1{
+  font-size:3rem;
+  color:var(--primary);
+}
+
+.hero p{
+  margin-top:15px;
+  color:#999;
+}

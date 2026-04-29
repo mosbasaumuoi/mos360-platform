@@ -1,4 +1,4 @@
-  getHomeUI(studentData) {
+export function getHomeUI(studentData) {
     return `
       <div class="stats-bar">
           <div class="stat-item"><h2>100%</h2><p>Thi \u0111\u1EADu ngay l\u1EA7n \u0111\u1EA7u</p></div>

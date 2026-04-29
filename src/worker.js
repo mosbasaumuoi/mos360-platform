@@ -1,5 +1,5 @@
-import { CONFIG } from "./config.js";
-import { getHomeUI } from "./pages/home.js";
+import { CONFIG } from "./config";
+import { getHomeUI } from "./pages/home";
 
 export default {
   async fetch(request) {

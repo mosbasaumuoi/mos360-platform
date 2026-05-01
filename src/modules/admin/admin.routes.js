@@ -8,7 +8,7 @@ export const handleAdmin = async (request, env, ctx) => {
 
   return new Response(
     JSON.stringify({
-      message: "Admin API OK",
+      message: "Welcome Admin",
       user: request.user
     }),
     { headers: { "Content-Type": "application/json" } }

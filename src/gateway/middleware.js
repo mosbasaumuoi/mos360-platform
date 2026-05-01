@@ -1,17 +1,17 @@
-export const compose = (middlewares) => {
-  return async (request, env, ctx, handler) => {
-    let index = -1;
+export async function use(request, env, ctx, middlewares = []) {
+  for (const middleware of middlewares) {
+    const result = await middleware(request, env, ctx);
 
-    const next = async () => {
-      index++;
+    // middleware chặn request
+    if (result instanceof Response) {
+      return result;
+    }
 
-      if (index < middlewares.length) {
-        return await middlewares[index](request, env, ctx, next);
-      }
+    // middleware inject request mới
+    if (result?.request) {
+      request = result.request;
+    }
+  }
 
-      return handler(request, env, ctx);
-    };
-
-    return next();
-  };
-};
+  return { request };
+}

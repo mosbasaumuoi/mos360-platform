@@ -1,16 +1,18 @@
-import { adminGuard } from "../auth/admin.guard.js";
+import { use } from "../../gateway/middleware.js";
+import { authMiddleware } from "../auth/auth.middleware.js";
+import { adminOnly } from "../auth/admin.guard.js";
 
-export const handleAdmin = async (request, env, ctx) => {
-  // 🛡️ check quyền tại đây (KHÔNG phải router)
-  const guard = await adminGuard(request);
-
-  if (guard) return guard;
-
+const adminHandler = async (req) => {
   return new Response(
     JSON.stringify({
-      message: "Welcome Admin",
-      user: request.user
-    }),
-    { headers: { "Content-Type": "application/json" } }
+      message: "Admin OK",
+      user: req.user,
+    })
   );
 };
+
+// 🔥 CHAIN APPLY
+export const handleAdmin = use(
+  [authMiddleware, adminOnly],
+  adminHandler
+);

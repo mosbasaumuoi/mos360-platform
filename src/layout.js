@@ -41,6 +41,53 @@ export function layout(content) {
         cursor: pointer;
         border-radius: 6px;
       }
+    .courses-page{
+  max-width:1200px;
+  margin:auto;
+  padding:40px 20px;
+}
+
+.page-title{
+  font-size:40px;
+  margin-bottom:30px;
+}
+
+.courses-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+}
+
+.course-card{
+  background:#111827;
+  border-radius:16px;
+  padding:24px;
+  border:1px solid #1f2937;
+}
+
+.course-title{
+  font-size:24px;
+  margin-bottom:12px;
+}
+
+.course-desc{
+  color:#9ca3af;
+  line-height:1.6;
+  margin-bottom:20px;
+}
+
+.download-btn{
+  display:inline-block;
+  background:#2563eb;
+  color:white;
+  padding:12px 20px;
+  border-radius:10px;
+  text-decoration:none;
+}
+
+.download-btn:hover{
+  opacity:0.9;
+}
     </style>
 
   </head>

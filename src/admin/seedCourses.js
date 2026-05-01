@@ -1,60 +1,25 @@
-export function getCoursesPage(courses) {
-  return `
-    <section style="padding:40px;">
-      <h1 style="font-size:56px; margin-bottom:30px;">
-        Khóa học MOS360
-      </h1>
+export async function seedCourses(env) {
 
-      <div style="
-        display:grid;
-        gap:20px;
-        grid-template-columns:
-        repeat(auto-fit,minmax(320px,1fr));
-      ">
+  const courses = [
 
-        ${courses.map(course => `
-          <div style="
-            background:#07142b;
-            border:1px solid #1e2b45;
-            border-radius:20px;
-            padding:24px;
-          ">
+    {
+      title: "MOS Word 365",
+      description: "Khóa học Word từ cơ bản tới nâng cao",
+      url: "https://example.com/word"
+    },
 
-            <h3 style="
-              font-size:32px;
-              margin-bottom:14px;
-            ">
-              ${course.title}
-            </h3>
+    {
+      title: "MOS Excel 365",
+      description: "Khóa học Excel thực chiến",
+      url: "https://example.com/excel"
+    }
 
-            <p style="
-              color:#bbb;
-              line-height:1.6;
-              margin-bottom:20px;
-            ">
-              ${course.description}
-            </p>
+  ];
 
-            <a
-              href="${course.url}"
-              target="_blank"
-              style="
-                display:inline-block;
-                background:#ff6600;
-                color:white;
-                padding:12px 20px;
-                border-radius:12px;
-                text-decoration:none;
-                font-weight:bold;
-              "
-            >
-              Vào học
-            </a>
+  await env.MOS_COURSES.put(
+    "courses",
+    JSON.stringify(courses)
+  );
 
-          </div>
-        `).join("")}
-
-      </div>
-    </section>
-  `;
+  return "Seed done";
 }

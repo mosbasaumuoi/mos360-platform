@@ -5,13 +5,37 @@ import { getCourses } from "./services/courseService.js";
 import { seedCourses } from "./admin/seedCourses.js";
 import { getCourseDetailPage } from "./pages/courseDetail.js";
 import { getCourseBySlug } from "./services/getCourseBySlug.js";
+import { getCoursesAPI } from "./api/courses.js";
+import { getCourseBySlugAPI } from "./api/course.js";
+import { healthCheck } from "./api/health.js";
+import { seedCourses } from "./api/admin.js";
+
 
 export default {
   async fetch(request, env) {
 
     const url = new URL(request.url);
     const path = url.pathname;
+// =========================
+// API ROUTES (THÊM MỚI)
+// =========================
 
+if (path === "/api/health") {
+  return healthCheck();
+}
+
+if (path === "/api/courses") {
+  return getCoursesAPI(env);
+}
+
+if (path.startsWith("/api/course/")) {
+  const slug = path.split("/api/course/")[1];
+  return getCourseBySlugAPI(env, slug);
+}
+
+if (path === "/api/seed") {
+  return seedCourses(env);
+}
     let content = "";
 
     if (path === "/") {

@@ -1,40 +1,10 @@
-export function getCoursesPage(courses) {
+export async function getCourses(env) {
 
-  return `
-    <section class="courses-page">
+  const data = await env.MOS_COURSES.get("courses");
 
-      <h1 class="page-title">
-        MOS360 Courses
-      </h1>
+  if (!data) {
+    return [];
+  }
 
-      <div class="courses-grid">
-
-        ${courses.map(course => `
-
-          <div class="course-card">
-
-            <h2 class="course-title">
-              ${course.title}
-            </h2>
-
-            <p class="course-desc">
-              ${course.description || "Tài liệu học MOS"}
-            </p>
-
-            <a 
-              href="${course.url}" 
-              target="_blank"
-              class="download-btn"
-            >
-              Download
-            </a>
-
-          </div>
-
-        `).join("")}
-
-      </div>
-
-    </section>
-  `;
+  return JSON.parse(data);
 }

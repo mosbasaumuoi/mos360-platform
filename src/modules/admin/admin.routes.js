@@ -1,5 +1,5 @@
 import { use } from "../../gateway/middleware.js";
-import { authMiddleware } from "../auth/auth.middleware.js";
+import { authMiddleware } from "../../middleware/auth.middleware.js";
 import { adminOnly } from "../auth/admin.guard.js";
 
 const adminHandler = async (req) => {

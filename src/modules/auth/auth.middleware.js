@@ -1,42 +1,26 @@
-import { jwtVerify } from "jose";
+import { verifyToken } from "./auth.service.js";
 
-const SECRET = new TextEncoder().encode("MOS360_SECRET_KEY");
+export const authMiddleware = async (req, env, ctx, next) => {
+  const auth = req.headers.get("Authorization");
 
-// 🔑 Verify + decode token
-export const authMiddleware = async (request) => {
-  const authHeader = request.headers.get("Authorization");
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return {
-      ok: false,
-      error: "Missing token"
-    };
+  if (!auth || !auth.startsWith("Bearer ")) {
+    return new Response("Missing token", { status: 401 });
   }
 
-  const token = authHeader.split(" ")[1];
-
   try {
-    const { payload } = await jwtVerify(token, SECRET);
+    const payload = await verifyToken(auth.split(" ")[1]);
 
-    // 👤 Gán role theo email
-    const role =
-      payload.email === "admin@mos360.vn"
-        ? "admin"
-        : "user";
-
-    return {
-      ok: true,
-      user: {
-        id: payload.sub,
-        email: payload.email,
-        role
-      }
+    req.user = {
+      id: payload.sub,
+      email: payload.email,
+      role:
+        payload.email === "admin@mos360.vn"
+          ? "admin"
+          : "user",
     };
 
-  } catch (err) {
-    return {
-      ok: false,
-      error: "Invalid token"
-    };
+    return next();
+  } catch {
+    return new Response("Invalid token", { status: 401 });
   }
 };

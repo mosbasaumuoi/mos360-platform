@@ -1,25 +1,40 @@
-export async function getCourses(env) {
+export function getCoursesPage(courses) {
 
-  // BƯỚC 1: thử lấy từ KV trước
-  const data = await env.MOS_COURSES?.get("list");
+  return `
+    <section class="courses-page">
 
-  if (data) {
-    return JSON.parse(data);
-  }
+      <h1 class="page-title">
+        MOS360 Courses
+      </h1>
 
-  // fallback nếu chưa có KV
-  return [
-    {
-      id: "excel-365",
-      name: "MOS Excel 365",
-      price: "400.000đ",
-      lessons: 35
-    },
-    {
-      id: "word-365",
-      name: "MOS Word 365",
-      price: "350.000đ",
-      lessons: 30
-    }
-  ];
+      <div class="courses-grid">
+
+        ${courses.map(course => `
+
+          <div class="course-card">
+
+            <h2 class="course-title">
+              ${course.title}
+            </h2>
+
+            <p class="course-desc">
+              ${course.description || "Tài liệu học MOS"}
+            </p>
+
+            <a 
+              href="${course.url}" 
+              target="_blank"
+              class="download-btn"
+            >
+              Download
+            </a>
+
+          </div>
+
+        `).join("")}
+
+      </div>
+
+    </section>
+  `;
 }

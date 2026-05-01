@@ -2,7 +2,6 @@ import { layout } from "./layout.js";
 import { getHomeUI } from "./pages/home.js";
 import { getCoursesPage } from "./pages/courses.js";
 import { getCourses } from "./services/courseService.js";
-import { seedCourses } from "./admin/seedCourses.js";
 import { getCourseDetailPage } from "./pages/courseDetail.js";
 import { getCourseBySlug } from "./services/getCourseBySlug.js";
 import { getCoursesAPI } from "./api/courses.js";

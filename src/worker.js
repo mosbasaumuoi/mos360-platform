@@ -3,6 +3,8 @@ import { getHomeUI } from "./pages/home.js";
 import { getCoursesPage } from "./pages/courses.js";
 import { getCourses } from "./services/courseService.js";
 import { seedCourses } from "./admin/seedCourses.js";
+import { getCourseDetailPage } from "./pages/courseDetail.js";
+import { getCourseBySlug } from "./services/getCourseBySlug.js";
 
 export default {
   async fetch(request, env) {
@@ -29,6 +31,14 @@ else if (path === "/seed") {
       <pre>${err.stack}</pre>
     `;
   }
+}
+  else if (path.startsWith("/course/")) {
+
+  const slug = path.split("/course/")[1];
+
+  const course = await getCourseBySlug(env, slug);
+
+  content = getCourseDetailPage(course);
 }
     else {
       content = "<h1>404</h1>";

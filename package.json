@@ -1,4 +1,7 @@
 {
   "name": "mos360-platform",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "dependencies": {
+    "jose": "^5.2.3"
+  }
 }

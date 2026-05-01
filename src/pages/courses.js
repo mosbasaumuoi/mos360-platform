@@ -1,19 +1,40 @@
 export function getCoursesPage(courses) {
-  return `
-    <section style="padding:40px;">
-      <h1>Khóa học MOS360</h1>
 
-      <div style="margin-top:20px; display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(250px,1fr));">
+  return `
+    <section class="courses-page">
+
+      <h1 class="page-title">
+        Khóa học MOS360
+      </h1>
+
+      <div class="courses-grid">
 
         ${courses.map(course => `
-          <div style="padding:20px; border:1px solid #333; border-radius:10px;">
-            <h3>${course.name}</h3>
-            <p>${course.price} - ${course.lessons} bài học</p>
-            <button>Đăng ký</button>
+
+          <div class="course-card">
+
+            <h3 class="course-title">
+              ${course.name}
+            </h3>
+
+            <p class="course-info">
+              ${course.price} - ${course.lessons} bài học
+            </p>
+
+            <a 
+              href="${course.link}" 
+              target="_blank"
+              class="course-btn"
+            >
+              Vào học
+            </a>
+
           </div>
+
         `).join("")}
 
       </div>
+
     </section>
   `;
 }

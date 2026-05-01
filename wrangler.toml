@@ -1,3 +1,7 @@
 name = "mos360-platform"
 main = "src/worker.js"
-compatibility_date = "2026-04-29"
+compatibility_date = "2026-05-01"
+
+[[kv_namespaces]]
+binding = "MOS_COURSES"
+id = "9f4d266d92784d749ceac0e8831adf70"

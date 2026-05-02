@@ -11,7 +11,7 @@ export default {
     // ⚡ Cache Test
     runtime.cache.set("test", "MOS360");
 
-    const value = runtime.cache.get("test");
+ console.log("Cache test:", runtime.cache.get("test"));
 
     // ⚡ Event Bus Test
     runtime.events.on("student.login", (payload) => {

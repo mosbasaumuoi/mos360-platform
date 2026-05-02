@@ -1,6 +1,7 @@
 import { handleAuth } from "../modules/auth/auth.routes.js";
 import { handleCourses } from "../modules/courses/courses.routes.js";
 import { handleAdmin } from "../modules/admin/admin.routes.js";
+import { handlePublic } from "../modules/public/public.routes.js";
 
 export async function router(request, env, ctx, runtime) {
 
@@ -204,7 +205,11 @@ loadCourses();
   if (pathname.startsWith("/api/auth")) {
     return handleAuth(request, env, ctx);
   }
-
+  // ===============================
+  // PUBLIC API
+  if (pathname.startsWith("/api/public")) {
+    return handlePublic(request, env, ctx);
+  }
   // ===============================
   // 🔒 ADMIN
   // ===============================

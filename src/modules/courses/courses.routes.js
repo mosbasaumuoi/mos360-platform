@@ -1,19 +1,20 @@
-import { json }
-  from "../../utils/response.js";
+import { json } from "../../utils/response.js";
 
-import { CoursesService }
-  from "../../database/services/courses.service.js";
+export async function handleCourses(request, env, ctx) {
 
-export async function handleCourses(
-  request,
-  env
-) {
+  // ⚡ TEST DATA TRỰC TIẾP (KHÔNG DB)
+  const data = [
+    {
+      id: 1,
+      title: "MOS Word 2019",
+      description: "Học Word từ cơ bản đến nâng cao"
+    },
+    {
+      id: 2,
+      title: "MOS Excel 2019",
+      description: "Thực hành Excel thực chiến"
+    }
+  ];
 
-  const service =
-    new CoursesService(env);
-
-  const courses =
-    await service.getCourses();
-
-  return json(courses);
+  return json(data);
 }

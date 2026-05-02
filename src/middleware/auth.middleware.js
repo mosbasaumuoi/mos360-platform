@@ -3,26 +3,40 @@ import { jwtVerify } from "jose";
 const SECRET = new TextEncoder().encode("MOS360_SECRET_KEY");
 
 export async function authMiddleware(request, env) {
+
   try {
+
+    const url = new URL(request.url);
+    const pathname = url.pathname;
+
+    // ⚡ PUBLIC ROUTES
+    const publicRoutes = [
+      "/",
+      "/login",
+      "/debug/runtime",
+    ];
+
+    // ✅ bypass auth
+    if (publicRoutes.includes(pathname)) {
+      return {
+        ok: true,
+        user: null,
+      };
+    }
+
+    // 🔐 AUTH HEADER
     const authHeader = request.headers.get("Authorization");
 
     if (!authHeader?.startsWith("Bearer ")) {
-      return { ok: false, message: "Missing token" };
+      return {
+        ok: false,
+        message: "Missing token",
+      };
     }
-    const publicRoutes = [
-  "/",
-  "/login",
-  "/debug/runtime",
-];
-    if (publicRoutes.includes(pathname)) {
-  return {
-    ok: true,
-    user: null,
-  };
-}
 
     const token = authHeader.split(" ")[1];
 
+    // 🔐 VERIFY JWT
     const { payload } = await jwtVerify(token, SECRET);
 
     request.user = {
@@ -31,9 +45,16 @@ export async function authMiddleware(request, env) {
       role: payload.role || "user",
     };
 
-    return { ok: true, user: request.user };
+    return {
+      ok: true,
+      user: request.user,
+    };
 
   } catch (e) {
-    return { ok: false, message: "Invalid token" };
+
+    return {
+      ok: false,
+      message: "Invalid token",
+    };
   }
 }

@@ -118,9 +118,12 @@ async function loadCourses() {
       <div class="course">
         <h3>\${c.title}</h3>
         <p>\${c.description}</p>
-        <a href="https://zalo.me/0912888360" class="btn" target="_blank">
-          Đăng ký học
-        </a>
+<a href="https://zalo.me/0912888360" 
+   class="btn" 
+   target="_blank"
+   onclick="trackClick('${c.id}')">
+  Đăng ký học
+</a>
       </div>
     \`).join("");
 

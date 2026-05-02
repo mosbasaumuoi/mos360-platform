@@ -3,7 +3,7 @@ import { authMiddleware } from "./middleware/auth.middleware.js";
 import { createRuntimeContext } from "./runtime/runtimeContext.js";
 
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request, env, ctx, runtime) {
 
     // ⚡ Runtime Layer
     const runtime = createRuntimeContext(env);

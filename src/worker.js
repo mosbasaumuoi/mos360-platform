@@ -3,7 +3,7 @@ import { authMiddleware } from "./middleware/auth.middleware.js";
 import { createRuntimeContext } from "./runtime/runtimeContext.js";
 
 export default {
-  async fetch(request, env, ctx, runtime) {
+  async fetch(request, env, ctx) {
 
     // ⚡ Runtime Layer
     const runtime = createRuntimeContext(env);
@@ -39,6 +39,6 @@ export default {
     request.user = authResult.user;
 
     // 🚀 Continue Gateway Router
-    return router(request, env, ctx);
+    return router(request, env, ctx, runtime);
   },
 };

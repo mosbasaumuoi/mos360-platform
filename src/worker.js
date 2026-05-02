@@ -7,7 +7,7 @@ export default {
 
     // 🧭 STEP 7 - MIDDLEWARE CHAIN
     const authResult = await authMiddleware(request, env);
-    const ctx = createRuntime(env);
+    const runtime = createRuntimeContext(env);
 
     // ❌ nếu fail auth thì chặn luôn
     if (!authResult.ok) {

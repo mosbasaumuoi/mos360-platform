@@ -1,3 +1,21 @@
+if (pathname === "/") {
+  return new Response(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>MOS360</title>
+      </head>
+      <body>
+        <h1>MOS360 đang chạy 🚀</h1>
+        <p>Homepage OK</p>
+      </body>
+    </html>
+  `, {
+    headers: {
+      "Content-Type": "text/html"
+    }
+  });
+}
 import { handleAuth } from "../modules/auth/auth.routes.js";
 import { handleCourses } from "../modules/courses/courses.routes.js";
 import { handleAdmin } from "../modules/admin/admin.routes.js";

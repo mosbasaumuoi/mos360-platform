@@ -14,6 +14,7 @@ export async function authMiddleware(request, env) {
       "/",
       "/login",
       "/debug/runtime",
+      "/debug/cache",
     ];
 
     // ✅ bypass auth

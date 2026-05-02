@@ -7,9 +7,11 @@ export async function router(request, env, ctx, runtime) {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
-  // 🔥 HOMEPAGE 
-if (pathname === "/") {
-  return new Response(`
+  // ===============================
+  // 🌐 HOMEPAGE (PUBLIC)
+  // ===============================
+  if (pathname === "/") {
+    return new Response(`
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -109,7 +111,7 @@ if (pathname === "/") {
 <script>
 async function loadCourses() {
   try {
-    const res = await fetch("/api/courses");
+    const res = await fetch("/api/public/courses");
     const data = await res.json();
 
     const html = data.map(c => \`
@@ -134,16 +136,17 @@ loadCourses();
 
 </body>
 </html>
-  `, {
-    headers: {
-      "Content-Type": "text/html; charset=UTF-8"
-    }
-  });
-}
+    `, {
+      headers: {
+        "Content-Type": "text/html; charset=UTF-8"
+      }
+    });
+  }
 
+  // ===============================
   // ⚡ DEBUG RUNTIME
+  // ===============================
   if (pathname === "/debug/runtime") {
-
     runtime.cache.set("hello", "MOS360 Runtime");
 
     runtime.events.emit("debug.test", {
@@ -161,7 +164,9 @@ loadCourses();
     });
   }
 
+  // ===============================
   // ⚡ DEBUG CACHE
+  // ===============================
   if (pathname === "/debug/cache") {
     return new Response(JSON.stringify({
       ok: true,
@@ -173,21 +178,30 @@ loadCourses();
     });
   }
 
-  // AUTH
+  // ===============================
+  // 🌐 PUBLIC API
+  // ===============================
+  if (pathname.startsWith("/api/public/courses")) {
+    return handleCourses(request, env, ctx);
+  }
+
+  // ===============================
+  // 🔐 AUTH
+  // ===============================
   if (pathname.startsWith("/api/auth")) {
     return handleAuth(request, env, ctx);
   }
 
-  // COURSES
-  if (pathname.startsWith("/api/courses")) {
-    return handleCourses(request, env, ctx);
-  }
-
-  // ADMIN
+  // ===============================
+  // 🔒 ADMIN
+  // ===============================
   if (pathname.startsWith("/api/admin")) {
     return handleAdmin(request, env, ctx);
   }
 
+  // ===============================
+  // ❌ NOT FOUND
+  // ===============================
   return new Response("Not Found", {
     status: 404,
   });

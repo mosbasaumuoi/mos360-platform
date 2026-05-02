@@ -7,7 +7,7 @@ export async function router(request, env, ctx, runtime) {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
-  // 🔥 HOMEPAGE (FIX NOT FOUND + FIX FONT)
+  // 🔥 HOMEPAGE 
 if (pathname === "/") {
   return new Response(`
 <!DOCTYPE html>
@@ -19,7 +19,7 @@ if (pathname === "/") {
 
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       margin: 0;
       background: #f5f7fb;
     }
@@ -33,25 +33,26 @@ if (pathname === "/") {
 
     .container {
       padding: 20px;
-      text-align: center;
+    }
+
+    .course {
+      background: white;
+      padding: 15px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     }
 
     .btn {
       display: inline-block;
-      margin: 10px;
-      padding: 12px 20px;
+      margin-top: 10px;
+      padding: 10px 16px;
       background: #2563eb;
       color: white;
       text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
+      border-radius: 6px;
     }
 
-    .btn:hover {
-      background: #1d4ed8;
-    }
-
-    /* SOCIAL FLOAT */
     .side-socials {
       position: fixed;
       right: 10px;
@@ -74,7 +75,6 @@ if (pathname === "/") {
 
     .s-btn img {
       width: 28px;
-      height: 28px;
     }
   </style>
 </head>
@@ -87,14 +87,11 @@ if (pathname === "/") {
 </header>
 
 <div class="container">
-  <h2>Học MOS dễ dàng hơn bao giờ hết</h2>
-  <p>Luyện thi – Thực hành – Đạt chứng chỉ</p>
-
-  <a href="/api/courses" class="btn">Xem khóa học</a>
-  <a href="https://zalo.me/0912888360" target="_blank" class="btn">Tư vấn Zalo</a>
+  <h2>Khóa học nổi bật</h2>
+  <div id="courses">Đang tải...</div>
 </div>
 
-<!-- SOCIAL BUTTONS -->
+<!-- SOCIAL -->
 <div class="side-socials">
   <a href="https://zalo.me/0912888360" target="_blank" class="s-btn">
     <img src="https://img.icons8.com/color/48/zalo.png">
@@ -108,6 +105,32 @@ if (pathname === "/") {
     <img src="https://img.icons8.com/color/48/facebook-messenger--v1.png">
   </a>
 </div>
+
+<script>
+async function loadCourses() {
+  try {
+    const res = await fetch("/api/courses");
+    const data = await res.json();
+
+    const html = data.map(c => \`
+      <div class="course">
+        <h3>\${c.title}</h3>
+        <p>\${c.description}</p>
+        <a href="https://zalo.me/0912888360" class="btn" target="_blank">
+          Đăng ký học
+        </a>
+      </div>
+    \`).join("");
+
+    document.getElementById("courses").innerHTML = html;
+
+  } catch (e) {
+    document.getElementById("courses").innerText = "Lỗi tải dữ liệu";
+  }
+}
+
+loadCourses();
+</script>
 
 </body>
 </html>

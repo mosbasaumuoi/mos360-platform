@@ -1,11 +1,19 @@
-import { getCourses } from "./courses.service.js";
+import { json }
+  from "../../utils/response.js";
 
-export async function handleCourses(request) {
-  const url = new URL(request.url);
+import { CoursesService }
+  from "../../database/services/courses.service.js";
 
-  if (request.method === "GET") {
-    return getCourses();
-  }
+export async function handleCourses(
+  request,
+  env
+) {
 
-  return new Response("Method not allowed", { status: 405 });
+  const service =
+    new CoursesService(env);
+
+  const courses =
+    await service.getCourses();
+
+  return json(courses);
 }

@@ -15,6 +15,16 @@ export async function router(request, env, ctx, runtime) {
     runtime.events.emit("debug.test", {
       time: Date.now(),
     });
+    return new Response(JSON.stringify({
+      ok: true,
+      cache: runtime.cache.get("hello"),
+      eventBus: "working",
+    }), {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
 // ⚡ DEBUG CACHE
     if (pathname === "/debug/cache") {
 
@@ -27,17 +37,6 @@ export async function router(request, env, ctx, runtime) {
     },
   });
 }
-    return new Response(JSON.stringify({
-      ok: true,
-      cache: runtime.cache.get("hello"),
-      eventBus: "working",
-    }), {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
-
   // AUTH
   if (pathname.startsWith("/api/auth")) {
     return handleAuth(request, env, ctx);

@@ -7,22 +7,23 @@ export async function router(request, env, ctx, runtime) {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
-  // 🔥 HOMEPAGE (FIX NOT FOUND)
+  // 🔥 HOMEPAGE (FIX NOT FOUND + FIX FONT)
   if (pathname === "/") {
     return new Response(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>MOS360</title>
-        </head>
-        <body>
-          <h1>MOS360 đang chạy 🚀</h1>
-          <p>Homepage OK</p>
-        </body>
-      </html>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>MOS360</title>
+</head>
+<body>
+  <h1>MOS360 đang chạy 🚀</h1>
+  <p>Homepage OK</p>
+</body>
+</html>
     `, {
       headers: {
-        "Content-Type": "text/html"
+        "Content-Type": "text/html; charset=UTF-8"
       }
     });
   }

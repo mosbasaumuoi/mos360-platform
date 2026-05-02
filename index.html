@@ -1,30 +1,249 @@
-<div class="side-socials">
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>MOS360 - Học MOS hiệu quả</title>
 
-  <!-- 🔥 PRIMARY -->
-  <a href="https://zalo.me/0912888360" target="_blank" class="s-btn main zalo">
-    <img src="https://img.icons8.com/color/48/zalo.png">
-    <span>Chat Zalo</span>
-  </a>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <a href="https://m.me/mos360.vn" target="_blank" class="s-btn main messenger">
-    <img src="https://img.icons8.com/color/48/facebook-messenger--v1.png">
-    <span>Messenger</span>
-  </a>
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+    }
 
-  <!-- divider -->
-  <div class="divider"></div>
+    h1, h2 {
+      margin: 0;
+    }
 
-  <!-- 🔹 SECONDARY -->
-  <a href="https://facebook.com/mos360.vn" target="_blank" class="s-btn small">
-    <img src="https://img.icons8.com/color/48/facebook-new.png">
-  </a>
+    /* HERO */
+    .hero {
+      padding: 50px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      color: white;
+    }
 
-  <a href="https://youtube.com/@mos360_vn" target="_blank" class="s-btn small">
-    <img src="https://img.icons8.com/color/48/youtube-play.png">
-  </a>
+    .hero button {
+      margin-top: 15px;
+      padding: 12px 20px;
+      border: none;
+      background: #fff;
+      color: #007bff;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 6px;
+    }
 
-  <a href="https://tiktok.com/@mos360.vn" target="_blank" class="s-btn small">
-    <img src="https://img.icons8.com/ios-filled/50/ffffff/tiktok--v1.png">
-  </a>
+    /* COURSES */
+    .courses {
+      padding: 30px 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
 
-</div>
+    .course-card {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .course-card h3 {
+      margin-bottom: 10px;
+    }
+
+    .course-card p {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .course-card button {
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    /* SOCIAL FLOAT */
+    .side-socials {
+      position: fixed;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 999;
+    }
+
+    .s-btn.main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 30px;
+      background: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      font-size: 14px;
+      font-weight: bold;
+      text-decoration: none;
+      color: #333;
+      transition: 0.2s;
+    }
+
+    .s-btn.main:hover {
+      transform: translateX(-5px);
+    }
+
+    .s-btn.main img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .zalo {
+      border-left: 4px solid #0084ff;
+    }
+
+    .messenger {
+      border-left: 4px solid #0078ff;
+    }
+
+    .divider {
+      height: 1px;
+      background: #ddd;
+      margin: 5px 0;
+    }
+
+    .s-btn.small {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    }
+
+    .s-btn.small img {
+      width: 22px;
+      height: 22px;
+    }
+
+    @media (max-width: 768px) {
+      .s-btn.main span {
+        display: none;
+      }
+
+      .s-btn.main {
+        width: 45px;
+        height: 45px;
+        justify-content: center;
+        padding: 0;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Học MOS 1 lần – Đỗ ngay</h1>
+    <p>Lộ trình rõ ràng, luyện đề sát 100%</p>
+
+    <button onclick="scrollToCourses()">
+      Xem khóa học
+    </button>
+  </section>
+
+  <!-- COURSES -->
+  <section>
+    <h2 style="text-align:center; margin-top:20px;">Khóa học MOS360</h2>
+    <div id="courses" class="courses"></div>
+  </section>
+
+  <!-- SOCIAL -->
+  <div class="side-socials">
+
+    <a href="https://zalo.me/0912888360" target="_blank" class="s-btn main zalo">
+      <img src="https://img.icons8.com/color/48/zalo.png">
+      <span>Tư vấn Zalo</span>
+    </a>
+
+    <a href="https://m.me/mos360.vn" target="_blank" class="s-btn main messenger">
+      <img src="https://img.icons8.com/color/48/facebook-messenger--v1.png">
+      <span>Messenger</span>
+    </a>
+
+    <div class="divider"></div>
+
+    <a href="https://facebook.com/mos360.vn" target="_blank" class="s-btn small">
+      <img src="https://img.icons8.com/color/48/facebook-new.png">
+    </a>
+
+    <a href="https://youtube.com/@mos360_vn" target="_blank" class="s-btn small">
+      <img src="https://img.icons8.com/color/48/youtube-play.png">
+    </a>
+
+    <a href="https://tiktok.com/@mos360.vn" target="_blank" class="s-btn small">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/tiktok--v1.png">
+    </a>
+
+  </div>
+
+  <script>
+
+    function scrollToCourses() {
+      document.getElementById("courses").scrollIntoView({
+        behavior: "smooth"
+      });
+    }
+
+    async function loadCourses() {
+      try {
+        const res = await fetch("/api/courses");
+        const data = await res.json();
+
+        renderCourses(data);
+      } catch (err) {
+        console.error("Lỗi load courses:", err);
+      }
+    }
+
+    function renderCourses(courses) {
+      const container = document.getElementById("courses");
+
+      container.innerHTML = courses.map(course => `
+        <div class="course-card">
+          <h3>${course.title}</h3>
+          <p>${course.description}</p>
+
+          <button onclick="register('${course.title}')">
+            Đăng ký ngay
+          </button>
+        </div>
+      `).join("");
+    }
+
+    function register(courseName) {
+      window.open(
+        "https://zalo.me/0912888360?text=Đăng ký khóa " + courseName
+      );
+    }
+
+    loadCourses();
+
+  </script>
+
+</body>
+</html>

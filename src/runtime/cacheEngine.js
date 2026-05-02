@@ -1,10 +1,14 @@
 const memoryCache = new Map();
 
 export const cacheEngine = {
+
   get(key) {
+
     const item = memoryCache.get(key);
 
-    if (!item) return null;
+    if (!item) {
+      return null;
+    }
 
     if (Date.now() > item.expireAt) {
       memoryCache.delete(key);
@@ -15,9 +19,11 @@ export const cacheEngine = {
   },
 
   set(key, value, ttl = 60000) {
+
     memoryCache.set(key, {
       value,
       expireAt: Date.now() + ttl,
+      createdAt: Date.now(),
     });
   },
 
@@ -28,4 +34,13 @@ export const cacheEngine = {
   clear() {
     memoryCache.clear();
   },
+
+  stats() {
+
+    return {
+      size: memoryCache.size,
+      keys: [...memoryCache.keys()],
+    };
+  },
+
 };

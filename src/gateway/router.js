@@ -20,22 +20,9 @@ export async function router(request, env, ctx, runtime) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body {
-      font-family: Arial;
-      margin: 0;
-      background: #f5f7fb;
-    }
-
-    header {
-      background: #0f172a;
-      color: white;
-      padding: 16px;
-      text-align: center;
-    }
-
-    .container {
-      padding: 20px;
-    }
+    body { font-family: Arial; margin: 0; background: #f5f7fb; }
+    header { background: #0f172a; color: white; padding: 16px; text-align: center; }
+    .container { padding: 20px; }
 
     .course {
       background: white;
@@ -75,9 +62,7 @@ export async function router(request, env, ctx, runtime) {
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
-    .s-btn img {
-      width: 28px;
-    }
+    .s-btn img { width: 28px; }
   </style>
 </head>
 
@@ -118,12 +103,12 @@ async function loadCourses() {
       <div class="course">
         <h3>\${c.title}</h3>
         <p>\${c.description}</p>
-<a href="https://zalo.me/0912888360" 
-   class="btn" 
-   target="_blank"
-   onclick="trackClick('${c.id}')">
-  Đăng ký học
-</a>
+        <a href="https://zalo.me/0912888360"
+           class="btn"
+           target="_blank"
+           onclick="trackClick('\${c.id}')">
+          Đăng ký học
+        </a>
       </div>
     \`).join("");
 
@@ -132,6 +117,20 @@ async function loadCourses() {
   } catch (e) {
     document.getElementById("courses").innerText = "Lỗi tải dữ liệu";
   }
+}
+
+function trackClick(courseId) {
+  fetch("/api/public/track", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      event: "course_click",
+      courseId: courseId,
+      time: Date.now()
+    })
+  });
 }
 
 loadCourses();
@@ -161,9 +160,7 @@ loadCourses();
       cache: runtime.cache.get("hello"),
       eventBus: "working",
     }), {
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" }
     });
   }
 
@@ -175,9 +172,22 @@ loadCourses();
       ok: true,
       stats: runtime.cache.stats(),
     }), {
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+
+  // ===============================
+  // 📊 TRACK EVENT
+  // ===============================
+  if (pathname === "/api/public/track" && request.method === "POST") {
+    const body = await request.json();
+
+    runtime.events.emit("course.click", body);
+
+    console.log("TRACK EVENT:", body);
+
+    return new Response(JSON.stringify({ ok: true }), {
+      headers: { "Content-Type": "application/json" }
     });
   }
 
@@ -205,7 +215,5 @@ loadCourses();
   // ===============================
   // ❌ NOT FOUND
   // ===============================
-  return new Response("Not Found", {
-    status: 404,
-  });
+  return new Response("Not Found", { status: 404 });
 }

@@ -1,96 +1,30 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title>MOS360</title>
+<div class="side-socials">
 
-  <style>
-    body {
-      font-family: Arial;
-      margin: 0;
-      padding: 0;
-    }
+  <!-- 🔥 PRIMARY -->
+  <a href="https://zalo.me/0912888360" target="_blank" class="s-btn main zalo">
+    <img src="https://img.icons8.com/color/48/zalo.png">
+    <span>Chat Zalo</span>
+  </a>
 
-    .hero {
-      padding: 40px;
-      background: #f5f5f5;
-      text-align: center;
-    }
+  <a href="https://m.me/mos360.vn" target="_blank" class="s-btn main messenger">
+    <img src="https://img.icons8.com/color/48/facebook-messenger--v1.png">
+    <span>Messenger</span>
+  </a>
 
-    .courses {
-      padding: 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
+  <!-- divider -->
+  <div class="divider"></div>
 
-    .course-card {
-      border: 1px solid #ddd;
-      padding: 15px;
-      border-radius: 10px;
-    }
+  <!-- 🔹 SECONDARY -->
+  <a href="https://facebook.com/mos360.vn" target="_blank" class="s-btn small">
+    <img src="https://img.icons8.com/color/48/facebook-new.png">
+  </a>
 
-    button {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 10px;
-      cursor: pointer;
-    }
-  </style>
-</head>
+  <a href="https://youtube.com/@mos360_vn" target="_blank" class="s-btn small">
+    <img src="https://img.icons8.com/color/48/youtube-play.png">
+  </a>
 
-<body>
+  <a href="https://tiktok.com/@mos360.vn" target="_blank" class="s-btn small">
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/tiktok--v1.png">
+  </a>
 
-  <!-- HERO -->
-  <section class="hero">
-    <h1>Học MOS 1 lần – Đỗ ngay</h1>
-    <p>Lộ trình rõ ràng, luyện đề sát 100%</p>
-  </section>
-
-  <!-- COURSES -->
-  <section>
-    <h2 style="text-align:center">Khóa học</h2>
-    <div id="courses" class="courses"></div>
-  </section>
-
-  <script>
-
-    async function loadCourses() {
-      try {
-        const res = await fetch("/api/courses");
-        const data = await res.json();
-
-        renderCourses(data);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    function renderCourses(courses) {
-      const container = document.getElementById("courses");
-
-      container.innerHTML = courses.map(course => `
-        <div class="course-card">
-          <h3>${course.title}</h3>
-          <p>${course.description}</p>
-
-          <button onclick="register('${course.title}')">
-            Đăng ký
-          </button>
-        </div>
-      `).join("");
-    }
-
-    function register(courseName) {
-      window.open(
-        "https://zalo.me/your-number?text=Đăng ký khóa " + courseName
-      );
-    }
-
-    loadCourses();
-
-  </script>
-
-</body>
-</html>
+</div>

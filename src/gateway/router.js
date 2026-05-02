@@ -15,7 +15,18 @@ export async function router(request, env, ctx, runtime) {
     runtime.events.emit("debug.test", {
       time: Date.now(),
     });
+// ⚡ DEBUG CACHE
+    if (pathname === "/debug/cache") {
 
+  return new Response(JSON.stringify({
+    ok: true,
+    stats: runtime.cache.stats(),
+  }), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
     return new Response(JSON.stringify({
       ok: true,
       cache: runtime.cache.get("hello"),

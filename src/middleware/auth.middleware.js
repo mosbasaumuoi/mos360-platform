@@ -9,6 +9,17 @@ export async function authMiddleware(request, env) {
     if (!authHeader?.startsWith("Bearer ")) {
       return { ok: false, message: "Missing token" };
     }
+    const publicRoutes = [
+  "/",
+  "/login",
+  "/debug/runtime",
+];
+    if (publicRoutes.includes(pathname)) {
+  return {
+    ok: true,
+    user: null,
+  };
+}
 
     const token = authHeader.split(" ")[1];
 

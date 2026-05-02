@@ -5,13 +5,15 @@ import { createRuntimeContext } from "./runtime/runtimeContext.js";
 export default {
   async fetch(request, env, ctx) {
 
-    // 🧭 STEP 7 - MIDDLEWARE CHAIN
-    const authResult = await authMiddleware(request, env);
+    // ⚡ Runtime Layer
     const runtime = createRuntimeContext(env);
-        runtime.cache.set("test", "MOS360");
+
+    // ⚡ Cache Test
+    runtime.cache.set("test", "MOS360");
 
     const value = runtime.cache.get("test");
 
+    // ⚡ Event Bus Test
     runtime.events.on("student.login", (payload) => {
       console.log("Student login:", payload.name);
     });
@@ -20,21 +22,23 @@ export default {
       name: "MOS Student",
     });
 
-    return new Response(value);
-    }
+    // 🧭 Middleware
+    const authResult = await authMiddleware(request, env);
 
-    // ❌ nếu fail auth thì chặn luôn
+    // ❌ Block unauthorized
     if (!authResult.ok) {
       return new Response(JSON.stringify(authResult), {
         status: 401,
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
     }
 
-    // ✅ gắn user vào request
+    // ✅ Attach user
     request.user = authResult.user;
 
-    // 🚀 đi tiếp vào API Gateway
+    // 🚀 Continue Gateway Router
     return router(request, env, ctx);
-  }
+  },
 };

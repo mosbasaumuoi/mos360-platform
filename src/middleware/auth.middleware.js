@@ -14,6 +14,7 @@ export async function authMiddleware(request) {
     "/debug/runtime",
     "/debug/cache",
     "/api/public/track",
+    "/debug/analytics",
   ];
 
   // 👉 check public route

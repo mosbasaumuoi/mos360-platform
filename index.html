@@ -117,13 +117,23 @@ async function loadCourses() {
 // ===== TRACK SOCIAL =====
 function trackAndOpen(source, url) {
 
-  fetch("/api/public/track?source=" + source)
-    .finally(() => {
-      setTimeout(() => {
-        window.open(url, "_blank");
-      }, 150); // delay 150ms
-    });
+  console.log("CLICK:", source);
 
+  fetch("/api/public/track?source=" + source + "&t=" + Date.now(), {
+    method: "GET",
+    cache: "no-store"
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log("TRACK OK:", data);
+  })
+  .catch(err => {
+    console.error("TRACK ERROR:", err);
+  });
+
+  setTimeout(() => {
+    window.open(url, "_blank");
+  }, 300); // tăng delay
 }
 
 

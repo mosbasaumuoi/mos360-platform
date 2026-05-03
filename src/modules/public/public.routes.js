@@ -4,7 +4,6 @@ export async function handlePublic(request, env) {
 
   if (pathname === "/api/public/track") {
 
-    // 🔥 LẤY SOURCE ĐÚNG CÁCH
     const source = url.searchParams.get("source") || "unknown";
 
     const key = `track:${source}:${Date.now()}`;
@@ -16,10 +15,9 @@ export async function handlePublic(request, env) {
       time: Date.now(),
     };
 
-    // 🔥 LƯU CHI TIẾT
+    // 🔥 QUAN TRỌNG: dùng đúng tên KV
     await env.MOS360_TRACKING.put(key, JSON.stringify(data));
 
-    // 🔥 ĐẾM
     const countKey = `count:${source}`;
 
     let current = await env.MOS360_TRACKING.get(countKey);

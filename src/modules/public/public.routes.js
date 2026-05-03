@@ -1,25 +1,25 @@
-export async function handlePublic(request, env, ctx) {
+export async function handlePublic(request, env) {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
   if (pathname === "/api/public/track") {
 
+    // 🔥 LẤY SOURCE ĐÚNG CÁCH
     const source = url.searchParams.get("source") || "unknown";
 
-    // 🧠 KEY chi tiết
-    const detailKey = `track:${source}:${Date.now()}`;
+    const key = `track:${source}:${Date.now()}`;
 
     const data = {
       source,
       ip: request.headers.get("CF-Connecting-IP"),
-      userAgent: request.headers.get("User-Agent"),
-      time: new Date().toISOString(),
+      ua: request.headers.get("User-Agent"),
+      time: Date.now(),
     };
 
-    // 🔥 Lưu chi tiết
-    await env.MOS360_TRACKING.put(detailKey, JSON.stringify(data));
+    // 🔥 LƯU CHI TIẾT
+    await env.MOS360_TRACKING.put(key, JSON.stringify(data));
 
-    // 🔥 COUNT KEY
+    // 🔥 ĐẾM
     const countKey = `count:${source}`;
 
     let current = await env.MOS360_TRACKING.get(countKey);
@@ -29,14 +29,14 @@ export async function handlePublic(request, env, ctx) {
 
     await env.MOS360_TRACKING.put(countKey, current.toString());
 
-    console.log("Tracking:", source, "→", current);
+    console.log("TRACK:", source, "→", current);
 
     return new Response(JSON.stringify({
       ok: true,
       source,
       total: current
     }), {
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" }
     });
   }
 

@@ -3,20 +3,23 @@ import { jwtVerify } from "jose";
 const SECRET = new TextEncoder().encode("MOS360_SECRET_KEY");
 
 export async function authMiddleware(request) {
+
   const url = new URL(request.url);
   const pathname = url.pathname;
+
+  // ✅ PUBLIC ROUTES (KIỂM SOÁT CHÍNH XÁC)
   const publicRoutes = [
-  "/",
-  "/login",
-  "/debug/runtime",
-  "/debug/cache",
-  "/api/public/track",
-];
-  // ✅ PUBLIC ROUTES (KHÔNG cần login)
+    "/",
+    "/login",
+    "/debug/runtime",
+    "/debug/cache",
+    "/api/public/track",
+  ];
+
+  // 👉 check public route
   if (
-    pathname === "/" ||
-    pathname.startsWith("/debug") ||
-    pathname.startsWith("/api/public")
+    publicRoutes.includes(pathname) ||
+    pathname.startsWith("/debug")
   ) {
     return { ok: true, user: null };
   }
@@ -40,7 +43,7 @@ export async function authMiddleware(request) {
 
     return { ok: true, user: request.user };
 
-  } catch {
+  } catch (err) {
     return { ok: false, message: "Invalid token" };
   }
 }

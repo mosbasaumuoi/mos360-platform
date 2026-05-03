@@ -5,7 +5,13 @@ const SECRET = new TextEncoder().encode("MOS360_SECRET_KEY");
 export async function authMiddleware(request) {
   const url = new URL(request.url);
   const pathname = url.pathname;
-
+  const publicRoutes = [
+  "/",
+  "/login",
+  "/debug/runtime",
+  "/debug/cache",
+  "/api/public/track",
+];
   // ✅ PUBLIC ROUTES (KHÔNG cần login)
   if (
     pathname === "/" ||

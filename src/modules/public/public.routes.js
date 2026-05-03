@@ -1,21 +1,44 @@
-import { json } from "../../utils/response.js";
-
-export async function handlePublic(request, env) {
+export async function handlePublic(request, env, ctx) {
   const url = new URL(request.url);
+  const pathname = url.pathname;
 
-  if (url.pathname === "/api/public/track" && request.method === "POST") {
-    const body = await request.json();
+  if (pathname === "/api/public/track") {
 
-    // 🔥 KEY UNIQUE
-    const key = `track:${Date.now()}`;
+    const source = url.searchParams.get("source") || "unknown";
 
-    // 🔥 LƯU KV
-    await env.TRACKING_KV.put(key, JSON.stringify(body));
+    // 🧠 KEY chi tiết
+    const detailKey = `track:${source}:${Date.now()}`;
 
-    console.log("TRACK SAVED:", body);
+    const data = {
+      source,
+      ip: request.headers.get("CF-Connecting-IP"),
+      userAgent: request.headers.get("User-Agent"),
+      time: new Date().toISOString(),
+    };
 
-    return json({ success: true });
+    // 🔥 Lưu chi tiết
+    await env.TRACKING_KV.put(detailKey, JSON.stringify(data));
+
+    // 🔥 COUNT KEY
+    const countKey = `count:${source}`;
+
+    let current = await env.TRACKING_KV.get(countKey);
+    current = current ? parseInt(current) : 0;
+
+    current++;
+
+    await env.TRACKING_KV.put(countKey, current.toString());
+
+    console.log("Tracking:", source, "→", current);
+
+    return new Response(JSON.stringify({
+      ok: true,
+      source,
+      total: current
+    }), {
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  return json({ message: "Public API" });
+  return new Response("Public API");
 }

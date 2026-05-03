@@ -1,157 +1,31 @@
 import { handleAuth } from "../modules/auth/auth.routes.js";
 import { handleCourses } from "../modules/courses/courses.routes.js";
 import { handleAdmin } from "../modules/admin/admin.routes.js";
-import { handlePublic } from "../modules/public/public.routes.js";
-import { handleTrack } from "../modules/public/track.routes.js";
-import { handleAnalytics } from "../modules/analytics/analytics.routes.js";
+
+import { indexHTML } from "../static/index.js";
 
 export async function router(request, env, ctx, runtime) {
 
   const url = new URL(request.url);
   const pathname = url.pathname;
 
-  // ===============================
-  // 🌐 HOMEPAGE (PUBLIC)
-  // ===============================
+  // =============================
+  // 🏠 HOMEPAGE (STATIC FRONTEND)
+  // =============================
   if (pathname === "/") {
-    return new Response(`
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title>MOS360</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body { font-family: Arial; margin: 0; background: #f5f7fb; }
-    header { background: #0f172a; color: white; padding: 16px; text-align: center; }
-    .container { padding: 20px; }
-
-    .course {
-      background: white;
-      padding: 15px;
-      margin-bottom: 12px;
-      border-radius: 10px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    }
-
-    .btn {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 10px 16px;
-      background: #2563eb;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-    }
-
-    .side-socials {
-      position: fixed;
-      right: 10px;
-      bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .s-btn {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-
-    .s-btn img { width: 28px; }
-  </style>
-</head>
-
-<body>
-
-<header>
-  <h1>MOS360 🚀</h1>
-  <p>Nền tảng học MOS + AI</p>
-</header>
-
-<div class="container">
-  <h2>Khóa học nổi bật</h2>
-  <div id="courses">Đang tải...</div>
-</div>
-
-<!-- SOCIAL -->
-<div class="side-socials">
-  <a href="https://zalo.me/0912888360" target="_blank" class="s-btn">
-    <img src="https://img.icons8.com/color/48/zalo.png">
-  </a>
-
-  <a href="https://facebook.com/mos360.vn" target="_blank" class="s-btn">
-    <img src="https://img.icons8.com/color/48/facebook-new.png">
-  </a>
-
-  <a href="https://m.me/mos360.vn" target="_blank" class="s-btn">
-    <img src="https://img.icons8.com/color/48/facebook-messenger--v1.png">
-  </a>
-</div>
-
-<script>
-async function loadCourses() {
-  try {
-    const res = await fetch("/api/public/courses");
-    const data = await res.json();
-
-    const html = data.map(c => \`
-      <div class="course">
-        <h3>\${c.title}</h3>
-        <p>\${c.description}</p>
-        <a href="https://zalo.me/0912888360"
-           class="btn"
-           target="_blank"
-           onclick="trackClick('\${c.id}')">
-          Đăng ký học
-        </a>
-      </div>
-    \`).join("");
-
-    document.getElementById("courses").innerHTML = html;
-
-  } catch (e) {
-    document.getElementById("courses").innerText = "Lỗi tải dữ liệu";
-  }
-}
-
-function trackClick(courseId) {
-  fetch("/api/public/track", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      event: "course_click",
-      courseId: courseId,
-      time: Date.now()
-    })
-  });
-}
-
-loadCourses();
-</script>
-
-</body>
-</html>
-    `, {
+    return new Response(indexHTML, {
       headers: {
-        "Content-Type": "text/html; charset=UTF-8"
+        "Content-Type": "text/html; charset=UTF-8",
+        "Cache-Control": "no-store"
       }
     });
   }
 
-  // ===============================
+  // =============================
   // ⚡ DEBUG RUNTIME
-  // ===============================
+  // =============================
   if (pathname === "/debug/runtime") {
+
     runtime.cache.set("hello", "MOS360 Runtime");
 
     runtime.events.emit("debug.test", {
@@ -163,67 +37,106 @@ loadCourses();
       cache: runtime.cache.get("hello"),
       eventBus: "working",
     }), {
-      headers: { "Content-Type": "application/json" }
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
   }
 
-  // ===============================
+  // =============================
   // ⚡ DEBUG CACHE
-  // ===============================
+  // =============================
   if (pathname === "/debug/cache") {
     return new Response(JSON.stringify({
       ok: true,
       stats: runtime.cache.stats(),
     }), {
-      headers: { "Content-Type": "application/json" }
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
   }
 
-  // ===============================
-  // 📊 TRACK EVENT
-  // ===============================
-  if (pathname === "/api/public/track" && request.method === "POST") {
-    const body = await request.json();
+  // =============================
+  // 📊 DEBUG ANALYTICS
+  // =============================
+  if (pathname === "/debug/analytics") {
 
-    runtime.events.emit("course.click", body);
+    const keys = ["zalo", "facebook", "messenger"];
+    const result = {};
 
-    console.log("TRACK EVENT:", body);
+    for (const key of keys) {
+      const value = await env.MOS360_TRACKING.get(key);
+      result[key] = value ? parseInt(value) : 0;
+    }
 
-    return new Response(JSON.stringify({ ok: true }), {
-      headers: { "Content-Type": "application/json" }
+    return new Response(JSON.stringify({
+      ok: true,
+      data: result,
+    }), {
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
   }
 
-  // ===============================
-  // 🌐 PUBLIC API
-  // ===============================
-  if (pathname.startsWith("/api/public/courses")) {
+  // =============================
+  // 📈 TRACK CLICK
+  // =============================
+  if (pathname === "/api/public/track") {
+
+    const source = url.searchParams.get("source") || "unknown";
+
+    const current = await env.MOS360_TRACKING.get(source);
+    const count = current ? parseInt(current) : 0;
+
+    await env.MOS360_TRACKING.put(source, String(count + 1));
+
+    console.log("TRACK:", source, count + 1);
+
+    return new Response(JSON.stringify({
+      ok: true,
+      source,
+      count: count + 1
+    }), {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+
+  // =============================
+  // 📦 PUBLIC COURSES API
+  // =============================
+  if (pathname === "/api/public/courses") {
     return handleCourses(request, env, ctx);
   }
 
-  // ===============================
+  // =============================
   // 🔐 AUTH
-  // ===============================
+  // =============================
   if (pathname.startsWith("/api/auth")) {
     return handleAuth(request, env, ctx);
   }
-  // ===============================
-  // PUBLIC API
-  if (pathname.startsWith("/api/public")) {
-    return handlePublic(request, env, ctx);
+
+  // =============================
+  // 🎓 COURSES (PROTECTED)
+  // =============================
+  if (pathname.startsWith("/api/courses")) {
+    return handleCourses(request, env, ctx);
   }
-  if (pathname === "/debug/analytics") {
-  return handleAnalytics(request, env);
-}
-  // ===============================
-  // 🔒 ADMIN
-  // ===============================
+
+  // =============================
+  // 🛠 ADMIN
+  // =============================
   if (pathname.startsWith("/api/admin")) {
     return handleAdmin(request, env, ctx);
   }
 
-  // ===============================
+  // =============================
   // ❌ NOT FOUND
-  // ===============================
-  return new Response("Not Found", { status: 404 });
+  // =============================
+  return new Response("Not Found", {
+    status: 404,
+  });
 }

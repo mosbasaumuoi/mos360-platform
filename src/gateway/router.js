@@ -10,7 +10,7 @@ export async function router(request, env, ctx, runtime) {
   const pathname = url.pathname;
 
   // =============================
-  // 🏠 HOMEPAGE (STATIC FRONTEND)
+  // 🏠 FRONTEND (STATIC HTML)
   // =============================
   if (pathname === "/") {
     return new Response(indexHTML, {
@@ -81,7 +81,7 @@ export async function router(request, env, ctx, runtime) {
   }
 
   // =============================
-  // 📈 TRACK CLICK
+  // 📈 TRACK CLICK (PUBLIC)
   // =============================
   if (pathname === "/api/public/track") {
 

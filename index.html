@@ -148,7 +148,60 @@ function trackClick(source) {
 loadCourses();
 
 <\/script>
+<script>
 
+// ===== LOAD COURSES =====
+async function loadCourses() {
+  try {
+    const res = await fetch("/api/public/courses");
+    const data = await res.json();
+
+    const html = data.map(c => `
+      <div class="course">
+        <h3>${c.title}</h3>
+        <p>${c.description}</p>
+
+        <a href="https://zalo.me/0912888360"
+           target="_blank"
+           class="btn"
+           onclick="trackClick('zalo')">
+          Đăng ký học
+        </a>
+      </div>
+    `).join("");
+
+    document.getElementById("courses").innerHTML = html;
+
+  } catch (e) {
+    document.getElementById("courses").innerText = "Lỗi tải dữ liệu";
+  }
+}
+
+
+// ===== TRACK CLICK =====
+function trackClick(source) {
+  fetch("/api/public/track?source=" + source)
+    .catch(() => {});
+}
+
+
+// ===== SOCIAL BUTTON =====
+function trackAndOpen(source, url) {
+
+  fetch("/api/public/track?source=" + source)
+    .finally(() => {
+      setTimeout(() => {
+        window.open(url, "_blank");
+      }, 150);
+    });
+
+}
+
+
+// ===== INIT =====
+loadCourses();
+
+</script>
 </body>
 </html>
 `, {

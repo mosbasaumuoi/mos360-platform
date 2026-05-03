@@ -2,6 +2,7 @@ import { handleAuth } from "../modules/auth/auth.routes.js";
 import { handleCourses } from "../modules/courses/courses.routes.js";
 import { handleAdmin } from "../modules/admin/admin.routes.js";
 import { handlePublic } from "../modules/public/public.routes.js";
+import { handleTrack } from "../modules/public/track.routes.js";
 
 export async function router(request, env, ctx, runtime) {
 
@@ -193,6 +194,10 @@ loadCourses();
   }
 
   // ===============================
+  // 🔥 PUBLIC TRACKING
+if (pathname.startsWith("/api/public/track")) {
+  return handleTrack(request, env, ctx);
+}
   // 🌐 PUBLIC API
   // ===============================
   if (pathname.startsWith("/api/public/courses")) {

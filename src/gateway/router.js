@@ -195,10 +195,6 @@ loadCourses();
   }
 
   // ===============================
-  // 🔥 PUBLIC TRACKING
-if (pathname.startsWith("/api/public/track")) {
-  return handleTrack(request, env, ctx);
-}
   // 🌐 PUBLIC API
   // ===============================
   if (pathname.startsWith("/api/public/courses")) {

@@ -3,6 +3,7 @@ import { handleCourses } from "../modules/courses/courses.routes.js";
 import { handleAdmin } from "../modules/admin/admin.routes.js";
 import { handlePublic } from "../modules/public/public.routes.js";
 import { handleTrack } from "../modules/public/track.routes.js";
+import { handleAnalytics } from "../modules/analytics/analytics.routes.js";
 
 export async function router(request, env, ctx, runtime) {
 
@@ -215,6 +216,9 @@ if (pathname.startsWith("/api/public/track")) {
   if (pathname.startsWith("/api/public")) {
     return handlePublic(request, env, ctx);
   }
+  if (pathname === "/debug/analytics") {
+  return handleAnalytics(request, env);
+}
   // ===============================
   // 🔒 ADMIN
   // ===============================

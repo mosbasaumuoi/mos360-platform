@@ -2,9 +2,9 @@ export async function handleAnalytics(request, env) {
 
   try {
 
-    if (!env.TRACKING_KV) {
+    if (!env.MOS360_TRACKING) {
       return new Response(JSON.stringify({
-        error: "TRACKING_KV not found"
+        error: "MOS360_TRACKING not found"
       }), {
         headers: { "Content-Type": "application/json" }
       });
@@ -15,7 +15,7 @@ export async function handleAnalytics(request, env) {
     const result = {};
 
     for (const src of sources) {
-      const value = await env.TRACKING_KV.get(`count:${src}`);
+      const value = await env.MOS360_TRACKING.get(`count:${src}`);
       result[src] = value ? parseInt(value) : 0;
     }
 

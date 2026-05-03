@@ -1,3 +1,212 @@
-import html from "./index.html?raw";
+if (pathname === "/") {
+  return new Response(`
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>MOS360</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-export const indexHTML = html;
+  <style>
+    body { font-family: Arial; margin: 0; background: #f5f7fb; }
+    header { background: #0f172a; color: white; padding: 16px; text-align: center; }
+    .container { padding: 20px; }
+
+    .course {
+      background: white;
+      padding: 15px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 16px;
+      background: #2563eb;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+    }
+
+    .side-socials {
+      position: fixed;
+      right: 10px;
+      bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .s-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+
+    .s-btn img { width: 28px; }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>MOS360 🚀</h1>
+  <p>Nền tảng học MOS + AI</p>
+</header>
+
+<div class="container">
+  <h2>Khóa học nổi bật</h2>
+  <div id="courses">Đang tải...</div>
+</div>
+
+<!-- SOCIAL -->
+<div class="side-socials">
+
+  <div class="s-btn" onclick="trackAndOpen('zalo', 'https://zalo.me/0912888360')">
+    <img src="https://img.icons8.com/color/48/zalo.png">
+  </div>
+
+  <div class="s-btn" onclick="trackAndOpen('facebook', 'https://facebook.com/mos360.vn')">
+    <img src="https://img.icons8.com/color/48/facebook-new.png">
+  </div>
+
+  <div class="s-btn" onclick="trackAndOpen('messenger', 'https://m.me/mos360.vn')">
+    <img src="https://img.icons8.com/color/48/facebook-messenger--v1.png">
+  </div>
+
+</div>
+
+<script>
+
+// ===== LOAD COURSE =====
+async function loadCourses() {
+  try {
+    const res = await fetch("/api/public/courses");
+    const data = await res.json();
+
+    const html = data.map(c => \`
+      <div class="course">
+        <h3>\${c.title}</h3>
+        <p>\${c.description}</p>
+
+        <a href="https://zalo.me/0912888360"
+           class="btn"
+           target="_blank"
+           onclick="trackClick('zalo')">
+          Đăng ký học
+        </a>
+      </div>
+    \`).join("");
+
+    document.getElementById("courses").innerHTML = html;
+
+  } catch (e) {
+    document.getElementById("courses").innerText = "Lỗi tải dữ liệu";
+  }
+}
+
+
+// ===== TRACK SOCIAL =====
+function trackAndOpen(source, url) {
+
+  console.log("CLICK:", source);
+
+  fetch("/api/public/track?source=" + source + "&t=" + Date.now(), {
+    method: "GET",
+    cache: "no-store"
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log("TRACK OK:", data);
+  })
+  .catch(err => {
+    console.error("TRACK ERROR:", err);
+  });
+
+  setTimeout(() => {
+    window.open(url, "_blank");
+  }, 300); // tăng delay
+}
+
+
+// ===== TRACK COURSE =====
+function trackClick(source) {
+  fetch("/api/public/track?source=" + source)
+    .catch(() => {});
+}
+
+
+// INIT
+loadCourses();
+
+<\/script>
+<script>
+
+// ===== LOAD COURSES =====
+async function loadCourses() {
+  try {
+    const res = await fetch("/api/public/courses");
+    const data = await res.json();
+
+    const html = data.map(c => `
+      <div class="course">
+        <h3>${c.title}</h3>
+        <p>${c.description}</p>
+
+        <a href="https://zalo.me/0912888360"
+           target="_blank"
+           class="btn"
+           onclick="trackClick('zalo')">
+          Đăng ký học
+        </a>
+      </div>
+    `).join("");
+
+    document.getElementById("courses").innerHTML = html;
+
+  } catch (e) {
+    document.getElementById("courses").innerText = "Lỗi tải dữ liệu";
+  }
+}
+
+
+// ===== TRACK CLICK =====
+function trackClick(source) {
+  fetch("/api/public/track?source=" + source)
+    .catch(() => {});
+}
+
+
+// ===== SOCIAL BUTTON =====
+function trackAndOpen(source, url) {
+
+  fetch("/api/public/track?source=" + source)
+    .finally(() => {
+      setTimeout(() => {
+        window.open(url, "_blank");
+      }, 150);
+    });
+
+}
+
+
+// ===== INIT =====
+loadCourses();
+
+</script>
+</body>
+</html>
+`, {
+  headers: {
+    "Content-Type": "text/html; charset=UTF-8"
+  }
+});
+}

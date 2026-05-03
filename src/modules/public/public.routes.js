@@ -17,17 +17,17 @@ export async function handlePublic(request, env, ctx) {
     };
 
     // 🔥 Lưu chi tiết
-    await env.TRACKING_KV.put(detailKey, JSON.stringify(data));
+    await env.MOS360_TRACKING.put(detailKey, JSON.stringify(data));
 
     // 🔥 COUNT KEY
     const countKey = `count:${source}`;
 
-    let current = await env.TRACKING_KV.get(countKey);
+    let current = await env.MOS360_TRACKING.get(countKey);
     current = current ? parseInt(current) : 0;
 
     current++;
 
-    await env.TRACKING_KV.put(countKey, current.toString());
+    await env.MOS360_TRACKING.put(countKey, current.toString());
 
     console.log("Tracking:", source, "→", current);
 

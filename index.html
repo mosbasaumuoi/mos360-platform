@@ -18,7 +18,6 @@
       margin: 0;
     }
 
-    /* HERO */
     .hero {
       padding: 50px 20px;
       text-align: center;
@@ -37,7 +36,6 @@
       border-radius: 6px;
     }
 
-    /* COURSES */
     .courses {
       padding: 30px 20px;
       display: grid;
@@ -72,7 +70,6 @@
       border-radius: 6px;
     }
 
-    /* SOCIAL FLOAT */
     .side-socials {
       position: fixed;
       right: 15px;
@@ -96,30 +93,6 @@
       font-weight: bold;
       text-decoration: none;
       color: #333;
-      transition: 0.2s;
-    }
-
-    .s-btn.main:hover {
-      transform: translateX(-5px);
-    }
-
-    .s-btn.main img {
-      width: 24px;
-      height: 24px;
-    }
-
-    .zalo {
-      border-left: 4px solid #0084ff;
-    }
-
-    .messenger {
-      border-left: 4px solid #0078ff;
-    }
-
-    .divider {
-      height: 1px;
-      background: #ddd;
-      margin: 5px 0;
     }
 
     .s-btn.small {
@@ -133,40 +106,21 @@
       box-shadow: 0 3px 10px rgba(0,0,0,0.15);
     }
 
-    .s-btn.small img {
+    .s-btn img {
       width: 22px;
-      height: 22px;
     }
-
-    @media (max-width: 768px) {
-      .s-btn.main span {
-        display: none;
-      }
-
-      .s-btn.main {
-        width: 45px;
-        height: 45px;
-        justify-content: center;
-        padding: 0;
-      }
-    }
-
   </style>
 </head>
 
 <body>
 
-  <!-- HERO -->
   <section class="hero">
     <h1>Học MOS 1 lần – Đỗ ngay</h1>
     <p>Lộ trình rõ ràng, luyện đề sát 100%</p>
 
-    <button onclick="scrollToCourses()">
-      Xem khóa học
-    </button>
+    <button onclick="scrollToCourses()">Xem khóa học</button>
   </section>
 
-  <!-- COURSES -->
   <section>
     <h2 style="text-align:center; margin-top:20px;">Khóa học MOS360</h2>
     <div id="courses" class="courses"></div>
@@ -175,33 +129,42 @@
   <!-- SOCIAL -->
   <div class="side-socials">
 
-    <a href="https://zalo.me/0912888360" target="_blank" class="s-btn main zalo">
+    <!-- ZALO -->
+    <a href="https://zalo.me/0912888360"
+       onclick="trackClick(event, 'zalo', this.href)"
+       class="s-btn main">
       <img src="https://img.icons8.com/color/48/zalo.png">
       <span>Tư vấn Zalo</span>
     </a>
 
-    <a href="https://m.me/mos360.vn" target="_blank" class="s-btn main messenger">
+    <!-- MESSENGER -->
+    <a href="https://m.me/mos360.vn"
+       onclick="trackClick(event, 'messenger', this.href)"
+       class="s-btn main">
       <img src="https://img.icons8.com/color/48/facebook-messenger--v1.png">
       <span>Messenger</span>
     </a>
 
-    <div class="divider"></div>
-
-    <a href="https://facebook.com/mos360.vn" target="_blank" class="s-btn small">
+    <!-- FACEBOOK -->
+    <a href="https://facebook.com/mos360.vn"
+       onclick="trackClick(event, 'facebook', this.href)"
+       class="s-btn small">
       <img src="https://img.icons8.com/color/48/facebook-new.png">
-    </a>
-
-    <a href="https://youtube.com/@mos360_vn" target="_blank" class="s-btn small">
-      <img src="https://img.icons8.com/color/48/youtube-play.png">
-    </a>
-
-    <a href="https://tiktok.com/@mos360.vn" target="_blank" class="s-btn small">
-      <img src="https://img.icons8.com/ios-filled/50/ffffff/tiktok--v1.png">
     </a>
 
   </div>
 
   <script>
+
+    function trackClick(event, source, url) {
+      event.preventDefault();
+
+      fetch(`/api/public/track?source=${source}`)
+        .catch(() => {})
+        .finally(() => {
+          window.open(url, "_blank");
+        });
+    }
 
     function scrollToCourses() {
       document.getElementById("courses").scrollIntoView({
@@ -213,7 +176,6 @@
       try {
         const res = await fetch("/api/courses");
         const data = await res.json();
-
         renderCourses(data);
       } catch (err) {
         console.error("Lỗi load courses:", err);
@@ -236,6 +198,10 @@
     }
 
     function register(courseName) {
+
+      // 🔥 tracking luôn khi đăng ký
+      fetch(`/api/public/track?source=register`);
+
       window.open(
         "https://zalo.me/0912888360?text=Đăng ký khóa " + courseName
       );

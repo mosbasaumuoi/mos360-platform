@@ -15,30 +15,32 @@ export default {
 registerTrackingEvents(runtime);   
 
     // ⚡ PUBLIC ROUTES (bypass auth)
-    const publicRoutes = [
-      "/",
-      "/debug/runtime",
-      "/debug/cache",
-      "/debug/analytics",
-      "/api/public/courses",
-      "/api/public/track"
-    ];
+const publicPrefixes = [
+  "/debug",
+  "/api/public"
+];
 
-    if (!publicRoutes.includes(pathname)) {
+// ⚡ Nếu KHÔNG phải API → bỏ qua auth luôn
+if (!pathname.startsWith("/api")) {
+  return router(request, env, ctx, runtime);
+}
 
-      const authResult = await authMiddleware(request, env);
+// ⚡ API thì mới check auth
+if (!publicPrefixes.some(p => pathname.startsWith(p))) {
 
-      if (!authResult.ok) {
-        return new Response(JSON.stringify(authResult), {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
+  const authResult = await authMiddleware(request, env);
 
-      request.user = authResult.user;
-    }
+  if (!authResult.ok) {
+    return new Response(JSON.stringify(authResult), {
+      status: 401,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+
+  request.user = authResult.user;
+}
 
     // 🚀 Router
     return router(request, env, ctx, runtime);

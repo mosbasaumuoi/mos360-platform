@@ -1,6 +1,7 @@
 import { handleAuth } from "../modules/auth/auth.routes.js";
 import { handleCourses } from "../modules/courses/courses.routes.js";
 import { handleAdmin } from "../modules/admin/admin.routes.js";
+import { trackClick } from "../services/tracking.service.js";
 
 export async function router(request, env, ctx, runtime) {
 
@@ -72,26 +73,22 @@ export async function router(request, env, ctx, runtime) {
   // =============================
   // 📈 TRACK CLICK (PUBLIC)
   // =============================
-  if (pathname === "/api/public/track") {
+if (pathname === "/api/public/track") {
 
-    const source = url.searchParams.get("source") || "unknown";
+  const source = url.searchParams.get("source") || "unknown";
 
-    const current = await env.MOS360_TRACKING.get(source);
-    const count = current ? parseInt(current) : 0;
+  const result = await trackClick(runtime, source);
 
-    await env.MOS360_TRACKING.put(source, String(count + 1));
-
-    return new Response(JSON.stringify({
-      ok: true,
-      source,
-      count: count + 1
-    }), {
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      },
-    });
-  }
+  return new Response(JSON.stringify({
+    ok: true,
+    ...result
+  }), {
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store"
+    },
+  });
+}
 
   // =============================
   // 📦 PUBLIC COURSES API

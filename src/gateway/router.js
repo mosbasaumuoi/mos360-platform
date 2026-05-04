@@ -51,24 +51,17 @@ export async function router(request, env, ctx, runtime) {
   // =============================
   if (pathname === "/debug/analytics") {
 
+    const date = new Date().toISOString().slice(0, 10);
+
     const keys = ["zalo", "facebook", "messenger"];
     const result = {};
 
-    for (const key of keys) {
-      const value = await env.MOS360_TRACKING.get(key);
-      result[key] = value ? parseInt(value) : 0;
-    }
+    for (const source of keys) {
+      const key = `track:${date}:${source}`;
 
-    return new Response(JSON.stringify({
-      ok: true,
-      data: result,
-    }), {
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      },
-    });
-  }
+      const value = await env.MOS360_TRACKING.get(key);
+      result[source] = value ? parseInt(value) : 0;
+}
 
   // =============================
   // 📈 TRACK CLICK (PUBLIC)

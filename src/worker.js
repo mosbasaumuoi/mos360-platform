@@ -6,43 +6,41 @@ import { registerTrackingEvents } from "./events/tracking.event.js";
 export default {
   async fetch(request, env, ctx) {
 
-    // ⚡ Runtime Layer (đúng chuẩn)
-    const runtime = createRuntimeContext(request, env);
+    const runtime = createRuntimeContext(env);
+    const url = new URL(request.url);
+    const pathname = url.pathname;
 
-    const pathname = new URL(request.url).pathname;
+    // 🔥 register event
+    registerTrackingEvents(runtime);
 
-   // 🔥 đăng ký event
-registerTrackingEvents(runtime);   
+    // =============================
+    // 🔐 AUTH CONTROL (CHUẨN)
+    // =============================
 
-    // ⚡ PUBLIC ROUTES (bypass auth)
-const publicPrefixes = [
-  "/debug",
-  "/api/public"
-];
+    const isApi = pathname.startsWith("/api");
+    const isPublicApi =
+      pathname.startsWith("/api/public") ||
+      pathname.startsWith("/debug");
 
-// ⚡ Nếu KHÔNG phải API → bỏ qua auth luôn
-if (!pathname.startsWith("/api")) {
-  return router(request, env, ctx, runtime);
-}
+    if (isApi && !isPublicApi) {
 
-// ⚡ API thì mới check auth
-if (!publicPrefixes.some(p => pathname.startsWith(p))) {
+      const authResult = await authMiddleware(request, env);
 
-  const authResult = await authMiddleware(request, env);
+      if (!authResult.ok) {
+        return new Response(JSON.stringify(authResult), {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
 
-  if (!authResult.ok) {
-    return new Response(JSON.stringify(authResult), {
-      status: 401,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
+      request.user = authResult.user;
+    }
 
-  request.user = authResult.user;
-}
-
-    // 🚀 Router
+    // =============================
+    // 🚀 ROUTER
+    // =============================
     return router(request, env, ctx, runtime);
   },
 };

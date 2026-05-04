@@ -83,27 +83,26 @@ export async function router(request, env, ctx, runtime) {
   // =============================
   // 📈 TRACK CLICK (PUBLIC)
   // =============================
-  if (pathname === "/api/public/track") {
+if (pathname === "/api/public/track") {
 
-    const source = url.searchParams.get("source") || "unknown";
+  const source = url.searchParams.get("source") || "unknown";
 
-    const current = await env.MOS360_TRACKING.get(source);
-    const count = current ? parseInt(current) : 0;
+  const current = await env.MOS360_TRACKING.get(source);
+  const count = current ? parseInt(current) : 0;
 
-    await env.MOS360_TRACKING.put(source, String(count + 1));
+  await env.MOS360_TRACKING.put(source, String(count + 1));
 
-    console.log("TRACK:", source, count + 1);
-
-    return new Response(JSON.stringify({
-      ok: true,
-      source,
-      count: count + 1
-    }), {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
+  return new Response(JSON.stringify({
+    ok: true,
+    source,
+    count: count + 1
+  }), {
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store"
+    },
+  });
+}
 
   // =============================
   // 📦 PUBLIC COURSES API

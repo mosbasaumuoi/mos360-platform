@@ -73,9 +73,10 @@ export async function router(request, env, ctx, runtime) {
     return new Response(JSON.stringify({
       ok: true,
       data: result,
-    }), {
+      }), {
       headers: {
-        "Content-Type": "application/json",
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store"
       },
     });
   }
@@ -110,6 +111,10 @@ if (pathname === "/api/public/track") {
   if (pathname === "/api/public/courses") {
     return handleCourses(request, env, ctx);
   }
+  {
+  success: true,
+  data: courses
+}
 
   // =============================
   // 🔐 AUTH

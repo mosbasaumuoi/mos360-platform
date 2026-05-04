@@ -1,6 +1,7 @@
 import { router } from "./gateway/router.js";
 import { authMiddleware } from "./middleware/auth.middleware.js";
 import { createRuntimeContext } from "./runtime/runtimeContext.js";
+import { registerTrackingEvents } from "./events/tracking.event.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -9,6 +10,9 @@ export default {
     const runtime = createRuntimeContext(request, env);
 
     const pathname = new URL(request.url).pathname;
+
+   // 🔥 đăng ký event
+registerTrackingEvents(runtime);   
 
     // ⚡ PUBLIC ROUTES (bypass auth)
     const publicRoutes = [

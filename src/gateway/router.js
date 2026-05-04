@@ -1,7 +1,6 @@
 import { handleAuth } from "../modules/auth/auth.routes.js";
 import { handleCourses } from "../modules/courses/courses.routes.js";
 import { handleAdmin } from "../modules/admin/admin.routes.js";
-import { trackClick } from "../services/tracking.service.js";
 
 export async function router(request, env, ctx, runtime) {
 
@@ -47,41 +46,62 @@ export async function router(request, env, ctx, runtime) {
   }
 
   // =============================
-  // 📊 DEBUG ANALYTICS
+  // 📊 DEBUG ANALYTICS (THEO NGÀY)
   // =============================
   if (pathname === "/debug/analytics") {
 
     const date = new Date().toISOString().slice(0, 10);
 
-    const keys = ["zalo", "facebook", "messenger"];
+    const sources = ["zalo", "facebook", "messenger"];
     const result = {};
 
-    for (const source of keys) {
+    let total = 0;
+
+    for (const source of sources) {
       const key = `track:${date}:${source}`;
 
       const value = await env.MOS360_TRACKING.get(key);
-      result[source] = value ? parseInt(value) : 0;
-}
+      const count = value ? parseInt(value) : 0;
+
+      result[source] = count;
+      total += count;
+    }
+
+    return new Response(JSON.stringify({
+      ok: true,
+      date,
+      data: result,
+      total
+    }), {
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store"
+      },
+    });
+  }
 
   // =============================
   // 📈 TRACK CLICK (PUBLIC)
   // =============================
-if (pathname === "/api/public/track") {
+  if (pathname === "/api/public/track") {
 
-  const source = url.searchParams.get("source") || "unknown";
+    const source = url.searchParams.get("source") || "unknown";
 
-  const result = await trackClick(runtime, source);
+    // gọi service (event-driven)
+    const { trackClick } = await import("../services/tracking.service.js");
 
-  return new Response(JSON.stringify({
-    ok: true,
-    ...result
-  }), {
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store"
-    },
-  });
-}
+    await trackClick(runtime, source);
+
+    return new Response(JSON.stringify({
+      ok: true,
+      source
+    }), {
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store"
+      },
+    });
+  }
 
   // =============================
   // 📦 PUBLIC COURSES API

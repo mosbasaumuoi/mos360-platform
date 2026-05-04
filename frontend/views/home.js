@@ -1,10 +1,12 @@
-import { api } from "../core/apiClient.js";
+import { api, track } from "../core/apiClient.js";
 import { setState } from "../core/state.js";
 
 export async function renderHome() {
-  const data = await api("/courses");
+  const res = await api("/public/courses");
 
-  setState({ courses: data });
+  const courses = res.data;
+
+  setState({ courses });
 
   document.body.innerHTML = `
     <h1>MOS360 Home</h1>
@@ -13,10 +15,20 @@ export async function renderHome() {
 
   const container = document.getElementById("course-list");
 
-  container.innerHTML = data.map(c => `
+  container.innerHTML = courses.map(c => `
     <div class="card">
       <h3>${c.title}</h3>
       <p>${c.description}</p>
+
+      <button onclick="handleClick('zalo')">
+        Đăng ký
+      </button>
     </div>
   `).join("");
 }
+
+// 🔥 GLOBAL FUNCTION
+window.handleClick = async function(source) {
+  await track(source);
+  window.open("https://zalo.me/0912888360", "_blank");
+};

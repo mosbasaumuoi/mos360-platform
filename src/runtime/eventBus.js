@@ -9,15 +9,16 @@ export const eventBus = {
     listeners[event].push(callback);
   },
 
-  emit(event, payload) {
-    const handlers = listeners[event] || [];
+async emit(event, payload) {
 
-    handlers.forEach((handler) => {
-      try {
-        handler(payload);
-      } catch (err) {
-        console.error("Event handler error:", err);
-      }
-    });
-  },
-};
+  const handlers = listeners[event] || [];
+
+  for (const handler of handlers) {
+    try {
+      await handler(payload);
+    } catch (err) {
+      console.error("Event handler error:", err);
+    }
+  }
+
+}

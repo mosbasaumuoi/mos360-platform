@@ -5,40 +5,38 @@ import { createRuntimeContext } from "./runtime/runtimeContext.js";
 export default {
   async fetch(request, env, ctx) {
 
-    // ⚡ Runtime Layer
-    const runtime = createRuntimeContext(env);
+    // ⚡ Runtime Layer (đúng chuẩn)
+    const runtime = createRuntimeContext(request, env);
 
-    // ⚡ Cache Test
-    runtime.cache.set("test", "MOS360");
+    const pathname = new URL(request.url).pathname;
 
- console.log("Cache test:", runtime.cache.get("test"));
+    // ⚡ PUBLIC ROUTES (bypass auth)
+    const publicRoutes = [
+      "/",
+      "/debug/runtime",
+      "/debug/cache",
+      "/debug/analytics",
+      "/api/public/courses",
+      "/api/public/track"
+    ];
 
-    // ⚡ Event Bus Test
-    runtime.events.on("student.login", (payload) => {
-      console.log("Student login:", payload.name);
-    });
+    if (!publicRoutes.includes(pathname)) {
 
-    runtime.events.emit("student.login", {
-      name: "MOS Student",
-    });
+      const authResult = await authMiddleware(request, env);
 
-    // 🧭 Middleware
-    const authResult = await authMiddleware(request, env);
+      if (!authResult.ok) {
+        return new Response(JSON.stringify(authResult), {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
 
-    // ❌ Block unauthorized
-    if (!authResult.ok) {
-      return new Response(JSON.stringify(authResult), {
-        status: 401,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      request.user = authResult.user;
     }
 
-    // ✅ Attach user
-    request.user = authResult.user;
-
-    // 🚀 Continue Gateway Router
+    // 🚀 Router
     return router(request, env, ctx, runtime);
   },
 };

@@ -22,7 +22,10 @@ export async function handleAdmin(request, env, ctx) {
   const result = {};
 
   for (const key of keys) {
-    const value = await env.MOS360_TRACKING.get(`track_total:${key}`);
+   const date = new Date().toISOString().slice(0, 10);
+   const kvKey = `track:${date}:${key}`;
+
+   const value = await env.MOS360_TRACKING.get(kvKey);
     result[key] = value ? parseInt(value) : 0;
   }
 

@@ -2,7 +2,7 @@ import { jwtVerify } from "jose";
 
 const SECRET = new TextEncoder().encode(env.JWT_SECRET);
 
-export async function authMiddleware(request) {
+export async function authMiddleware(request, env) {
 
   const authHeader = request.headers.get("Authorization");
 

@@ -1,7 +1,7 @@
 import { json } from "../../utils/response.js";
 import { login, verifyToken } from "./auth.service.js";
 
-export async function handleAuth(request) {
+export async function handleAuth(request, env) { {
   const url = new URL(request.url);
 
   // LOGIN

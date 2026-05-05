@@ -1,7 +1,7 @@
 import { router } from "./core/router.js";
 import { login, api } from "./core/apiClient.js";
 
-// expose để test trong console
+// expose ra window để test
 window.login = login;
 window.api = api;
 

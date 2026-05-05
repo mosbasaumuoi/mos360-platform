@@ -1,49 +1,44 @@
 import { SignJWT, jwtVerify } from "jose";
 
-const SECRET = new TextEncoder().encode(env.JWT_SECRET);
+export async function login(email, password, env) {
 
-const fakeUsers = [
-  {
-    id: 1,
-    email: "admin@mos360.vn",
-    password: "123456",
-    role: "admin"
+  // demo user
+  if (email !== "admin@mos360.vn" || password !== "123456") {
+    return null;
   }
-];
-export async function createToken(user) {
-  return await new SignJWT({
-    id: user.id,
-    email: user.email,
-    role: user.role
+
+  const SECRET = new TextEncoder().encode(env.JWT_SECRET);
+
+  const token = await new SignJWT({
+    id: 1,
+    email,
+    role: "admin"
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("2h")
-    .sign(secret);
-}
-export async function verifyToken(token) {
-  try {
-    const { payload } = await jwtVerify(token, secret);
-    return payload;
-  } catch (e) {
-    return null;
-  }
-}
-export async function login(email, password) {
-  const user = fakeUsers.find(
-    u => u.email === email && u.password === password
-  );
-
-  if (!user) return null;
-
-  const token = await createToken(user);
+    .sign(SECRET);
 
   return {
     token,
     user: {
-      id: user.id,
-      email: user.email,
-      role: user.role
+      id: 1,
+      email,
+      role: "admin"
     }
   };
+}
+
+export async function verifyToken(token, env) {
+
+  try {
+    const SECRET = new TextEncoder().encode(env.JWT_SECRET);
+
+    const { payload } = await jwtVerify(token, SECRET);
+
+    return payload;
+
+  } catch (err) {
+    return null;
+  }
 }

@@ -24,7 +24,7 @@ export function registerTrackingEvents(runtime) {
 
       const newCount = count + 1;
 
-      await runtime.env.MOS360_TRACKING.put(key, String(newCount));
+      await runtime.env.MOS360_TRACKING_KV.put(key, String(newCount));
 
       console.log("TRACK:", key, "=>", newCount);
 

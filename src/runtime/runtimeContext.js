@@ -1,8 +1,7 @@
 import { cacheEngine } from "./cacheEngine.js";
-import { EventBus } from "../core/eventBus.js";
+import { eventBus } from "./eventBus.js"; // ✅ quay lại đúng file
 
 export function createRuntimeContext(request, env) {
-
   const url = new URL(request.url);
 
   return {
@@ -11,9 +10,7 @@ export function createRuntimeContext(request, env) {
     url,
 
     cache: cacheEngine,
-
-    // 🔥 FIX QUAN TRỌNG
-    events: new EventBus(),
+    events: eventBus, // ✅ dùng lại singleton
 
     meta: {
       startTime: Date.now(),

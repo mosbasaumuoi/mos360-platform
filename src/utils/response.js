@@ -1,17 +1,19 @@
-export function json(data = null, status = 200) {
-  return new Response(
-    JSON.stringify({
-      ok: status >= 200 && status < 300,
-      data,
-      error: status >= 400 ? data : null
-    }),
-    {
-      status,
-      headers: {
-        "Content-Type": "application/json"
-      }
+export function json(data, status = 200, options = {}) {
+  const {
+    cache = "no-store" // default cho API động
+  } = options;
+
+  return new Response(JSON.stringify({
+    ok: status < 400,
+    data: status < 400 ? data : null,
+    error: status >= 400 ? data : null
+  }), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": cache
     }
-  );
+  });
 }
 
 export function error(message = "Error", status = 500) {

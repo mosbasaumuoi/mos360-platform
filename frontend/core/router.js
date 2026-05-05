@@ -1,20 +1,24 @@
-import { renderHome } from "../views/home.js";
-import { renderCourse } from "../views/course.js";
-import { renderAdmin } from "../views/admin.js";
 import { renderAnalytics } from "../views/analytics.js";
-
-const routes = {
-  "/": renderHome,
-  "/course": renderCourse,
-  "/admin": renderAdmin,
-  "/admin/analytics": renderAnalytics
-};
 
 export function router() {
   const path = window.location.pathname;
 
-  const view = routes[path] || renderHome;
-  view();
+  if (path === "/analytics") {
+    renderAnalytics();
+    return;
+  }
+
+  // default
+  document.body.innerHTML = `
+    <h1>MOS360</h1>
+
+    <button onclick="goAnalytics()">Xem Analytics</button>
+  `;
 }
+
+window.goAnalytics = () => {
+  history.pushState({}, "", "/analytics");
+  router();
+};
 
 window.onpopstate = router;

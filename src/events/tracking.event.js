@@ -19,7 +19,7 @@ export function registerTrackingEvents(runtime) {
     const key = `track:${date}:${safeSource}`;
 
     try {
-      const current = await runtime.env.MOS360_TRACKING.get(key);
+      const current = await runtime.env.MOS360_TRACKING_KV.get(key);
       const count = current ? parseInt(current) : 0;
 
       const newCount = count + 1;

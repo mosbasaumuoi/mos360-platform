@@ -1,25 +1,13 @@
-export const adminOnly = async (req) => {
-
-  if (!req.user) {
-    return new Response(JSON.stringify({
-      ok: false,
-      message: "Unauthorized"
-    }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" }
-    });
+export async function adminOnly(req) {
+  if (!req.user || req.user.role !== "admin") {
+    return new Response(
+      JSON.stringify({
+        ok: false,
+        error: "Forbidden"
+      }),
+      { status: 403 }
+    );
   }
 
-  if (req.user.role !== "admin") {
-    return new Response(JSON.stringify({
-      ok: false,
-      message: "Forbidden"
-    }), {
-      status: 403,
-      headers: { "Content-Type": "application/json" }
-    });
-  }
-
-  // 🔥 QUAN TRỌNG
-  return { request: req };
-};
+  return true;
+}

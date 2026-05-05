@@ -1,19 +1,33 @@
-import { use } from "../../gateway/middleware.js";
 import { authMiddleware } from "../../middleware/auth.middleware.js";
 import { adminOnly } from "../auth/admin.guard.js";
 
-// =============================
-// 🎯 ADMIN HANDLER
-// =============================
-const adminHandler = async (req, env) => {
+export async function handleAdmin(request, env, ctx) {
 
-  const url = new URL(req.url);
-  const pathname = url.pathname;
+  // 🔐 AUTH
+  const authResult = await authMiddleware(request, env);
+
+  if (!authResult.ok) {
+    return new Response(JSON.stringify(authResult), {
+      status: 401,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+
+  request.user = authResult.user;
+
+  // 🔐 ADMIN GUARD
+  const guard = await adminOnly(request);
+
+  if (guard instanceof Response) {
+    return guard;
+  }
 
   // =============================
   // 📊 ANALYTICS
   // =============================
-  if (pathname === "/api/admin/analytics") {
+  const url = new URL(request.url);
+
+  if (url.pathname === "/api/admin/analytics") {
 
     const keys = ["zalo", "facebook", "messenger"];
     const result = {};
@@ -27,33 +41,12 @@ const adminHandler = async (req, env) => {
       ok: true,
       data: result
     }), {
-      headers: {
-        "Content-Type": "application/json"
-      }
+      headers: { "Content-Type": "application/json" }
     });
   }
 
-  // =============================
-  // 🧪 DEFAULT ADMIN TEST
-  // =============================
-  return new Response(
-    JSON.stringify({
-      ok: true,
-      message: "Admin OK",
-      user: req.user,
-    }),
-    {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }
-  );
-};
-
-// =============================
-// 🔥 APPLY MIDDLEWARE CHAIN
-// =============================
-export const handleAdmin = use(
-  [authMiddleware, adminOnly],
-  adminHandler
-);
+  return new Response(JSON.stringify({
+    ok: true,
+    message: "Admin OK"
+  }));
+}

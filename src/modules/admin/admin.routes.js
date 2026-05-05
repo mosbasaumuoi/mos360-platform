@@ -1,6 +1,7 @@
-import { authMiddleware } from "../../middleware/auth.middleware.js";
-import { adminOnly } from "../auth/admin.guard.js";
-import { json } from "../../utils/response.js";
+function getDateKey() {
+  const d = new Date();
+  return d.toISOString().slice(0, 10);
+}
 
 export async function handleAdmin(request, env, ctx) {
 
@@ -20,13 +21,16 @@ export async function handleAdmin(request, env, ctx) {
     return guard;
   }
 
-  // 📊 ANALYTICS
-  const keys = ["zalo", "facebook", "messenger"];
+  // 📊 ANALYTICS (FIX CHUẨN)
+  const date = getDateKey();
+  const sources = ["zalo", "facebook", "messenger"];
+
   const result = {};
 
-  for (const key of keys) {
+  for (const source of sources) {
+    const key = `track:${date}:${source}`;
     const value = await env.MOS360_TRACKING.get(key);
-    result[key] = value ? parseInt(value) : 0;
+    result[source] = value ? parseInt(value) : 0;
   }
 
   return json(result);

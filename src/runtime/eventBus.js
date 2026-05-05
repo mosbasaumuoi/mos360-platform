@@ -1,20 +1,25 @@
-export class EventBus {
-  constructor() {
-    this.events = {};
-  }
+const listeners = {};
 
-  on(name, handler) {
-    if (!this.events[name]) {
-      this.events[name] = [];
+export const eventBus = {
+
+  on(event, callback) {
+    if (!listeners[event]) {
+      listeners[event] = [];
     }
-    this.events[name].push(handler);
-  }
 
-  async emit(name, payload) {
-    const handlers = this.events[name] || [];
+    listeners[event].push(callback);
+  },
+
+  async emit(event, payload) {
+    const handlers = listeners[event] || [];
 
     for (const handler of handlers) {
-      await handler(payload);
+      try {
+        await handler(payload);
+      } catch (err) {
+        console.error("Event handler error:", err);
+      }
     }
   }
-}
+
+};

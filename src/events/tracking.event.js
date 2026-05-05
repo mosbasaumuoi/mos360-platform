@@ -7,30 +7,31 @@ export function registerTrackingEvents(runtime) {
 
   runtime.events.on("track.click", async ({ source }) => {
 
+    // 🔒 chuẩn hóa input (tránh lỗi lệch key)
+    const safeSource = (source || "").trim().toLowerCase();
+
+    if (!safeSource) {
+      console.log("❌ Invalid source");
+      return;
+    }
+
     const date = getDateKey();
+    const key = `track:${date}:${safeSource}`;
 
-    const dailyKey = `track:${date}:${source}`;
-    const totalKey = `track_total:${source}`;
+    try {
+      const current = await runtime.env.MOS360_TRACKING.get(key);
+      const count = current ? parseInt(current) : 0;
 
-    // 🔹 DAILY
-    const currentDaily = await runtime.env.MOS360_TRACKING.get(dailyKey);
-    const dailyCount = currentDaily ? parseInt(currentDaily) : 0;
+      const newCount = count + 1;
 
-    await runtime.env.MOS360_TRACKING.put(
-      dailyKey,
-      String(dailyCount + 1)
-    );
+      await runtime.env.MOS360_TRACKING.put(key, String(newCount));
 
-    // 🔥 TOTAL (CHÍNH)
-    const currentTotal = await runtime.env.MOS360_TRACKING.get(totalKey);
-    const totalCount = currentTotal ? parseInt(currentTotal) : 0;
+      console.log("TRACK:", key, "=>", newCount);
 
-    await runtime.env.MOS360_TRACKING.put(
-      totalKey,
-      String(totalCount + 1)
-    );
+    } catch (err) {
+      console.error("TRACK ERROR:", err);
+    }
 
-    console.log("TRACK:", source, "daily:", dailyCount + 1, "total:", totalCount + 1);
   });
 
 }

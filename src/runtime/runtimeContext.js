@@ -1,5 +1,5 @@
 import { cacheEngine } from "./cacheEngine.js";
-import { eventBus } from "./eventBus.js";
+import { EventBus } from "../core/eventBus.js";
 
 export function createRuntimeContext(request, env) {
 
@@ -11,7 +11,9 @@ export function createRuntimeContext(request, env) {
     url,
 
     cache: cacheEngine,
-    events: eventBus,
+
+    // 🔥 FIX QUAN TRỌNG
+    events: new EventBus(),
 
     meta: {
       startTime: Date.now(),

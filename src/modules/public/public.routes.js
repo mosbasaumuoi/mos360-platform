@@ -1,42 +1,27 @@
-export async function handlePublic(request, env) {
+import { json } from "../../utils/response.js";
+
+export async function handlePublic(request, env, ctx, runtime) {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
+  // =============================
+  // 📊 TRACK CLICK
+  // =============================
   if (pathname === "/api/public/track") {
+    const source = url.searchParams.get("source");
 
-    const source = url.searchParams.get("source") || "unknown";
+    if (!source) {
+      return json("Missing source", 400);
+    }
 
-    const key = `track:${source}:${Date.now()}`;
+    // 🔥 QUAN TRỌNG NHẤT
+    runtime.events.emit("track.click", { source });
 
-    const data = {
-      source,
-      ip: request.headers.get("CF-Connecting-IP"),
-      ua: request.headers.get("User-Agent"),
-      time: Date.now(),
-    };
-
-    // 🔥 QUAN TRỌNG: dùng đúng tên KV
-    await env.MOS360_TRACKING.put(key, JSON.stringify(data));
-
-    const countKey = `count:${source}`;
-
-    let current = await env.MOS360_TRACKING.get(countKey);
-    current = current ? parseInt(current) : 0;
-
-    current++;
-
-    await env.MOS360_TRACKING.put(countKey, current.toString());
-
-    console.log("TRACK:", source, "→", current);
-
-    return new Response(JSON.stringify({
+    return json({
       ok: true,
       source,
-      total: current
-    }), {
-      headers: { "Content-Type": "application/json" }
     });
   }
 
-  return new Response("Public API");
+  return json("Public API");
 }

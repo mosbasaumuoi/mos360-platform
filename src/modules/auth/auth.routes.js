@@ -8,7 +8,7 @@ export async function handleAuth(request) {
   if (url.pathname === "/api/auth/login" && request.method === "POST") {
     const body = await request.json();
 
-    const result = await login(body.email, body.password);
+    const result = await login(body.email, body.password, env);
 
     if (!result) {
       return json({ error: "Invalid credentials" }, 401);
@@ -27,7 +27,7 @@ export async function handleAuth(request) {
 
     const token = authHeader.replace("Bearer ", "");
 
-    const user = await verifyToken(token);
+    const user = await verifyToken(token, env);
 
     if (!user) {
       return json({ error: "Invalid token" }, 401);

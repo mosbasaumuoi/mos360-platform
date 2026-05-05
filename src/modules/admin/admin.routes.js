@@ -4,7 +4,6 @@ import { json } from "../../utils/response.js";
 
 export async function handleAdmin(request, env, ctx) {
 
-  // 🔐 AUTH
   const auth = await authMiddleware(request, env);
 
   if (!auth.ok) {
@@ -13,16 +12,12 @@ export async function handleAdmin(request, env, ctx) {
 
   request.user = auth.user;
 
-  // 👑 ADMIN CHECK
   const guard = await adminOnly(request);
 
   if (guard instanceof Response) {
     return guard;
   }
 
-  // =============================
-  // 🚀 TOTAL ANALYTICS (FAST)
-  // =============================
   const keys = ["zalo", "facebook", "messenger"];
   const result = {};
 

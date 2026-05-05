@@ -3,11 +3,11 @@ main = "src/worker.js"
 compatibility_date = "2026-05-01"
 
 [[kv_namespaces]]
-binding = "MOS_COURSES"
-id = "9f4d266d92784d749ceac0e8831adf70"
+binding = "MOS_COURSES_KV"
+id = "31110d6e2db34425accab5d6ae92ca46"
 
 [[kv_namespaces]]
-binding = "MOS360_TRACKING"
+binding = "MOS360_TRACKING_KV"
 id = "eee76ad74d4845458898a143a514ed84"
 
 [vars]

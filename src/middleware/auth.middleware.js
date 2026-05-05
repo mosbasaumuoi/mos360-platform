@@ -11,7 +11,7 @@ export async function authMiddleware(request, env) {
   try {
     const token = authHeader.split(" ")[1];
 
-    // 🔥 ĐẶT Ở ĐÂY (BÊN TRONG FUNCTION)
+    // ✅ env chỉ được dùng trong function
     const SECRET = new TextEncoder().encode(env.JWT_SECRET);
 
     const { payload } = await jwtVerify(token, SECRET);

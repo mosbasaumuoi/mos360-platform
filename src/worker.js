@@ -1,31 +1,42 @@
 import { router } from "./gateway/router.js";
-import { authMiddleware } from "./middleware/auth.middleware.js";
 import { createRuntimeContext } from "./runtime/runtimeContext.js";
 import { registerTrackingEvents } from "./events/tracking.event.js";
 
 export default {
   async fetch(request, env, ctx) {
 
-    const runtime = createRuntimeContext(request, env);
-    const url = new URL(request.url);
-    const pathname = url.pathname;
+    try {
+      // =============================
+      // ⚡ Runtime Layer
+      // =============================
+      const runtime = createRuntimeContext(request, env);
 
-    // 🔥 register event
-    registerTrackingEvents(runtime);
+      // =============================
+      // 🔥 Register Event System
+      // =============================
+      registerTrackingEvents(runtime);
 
-    // =============================
-    // 🔐 AUTH CONTROL (CHUẨN)
-    // =============================
+      // =============================
+      // 🚀 Gateway Router (NO AUTH HERE)
+      // =============================
+      return await router(request, env, ctx, runtime);
 
-    const isApi = pathname.startsWith("/api");
-    const isPublicApi =
-      pathname.startsWith("/api/public") ||
-      pathname.startsWith("/api/auth") ||
-      pathname.startsWith("/debug");
+    } catch (err) {
+      // =============================
+      // ❌ GLOBAL ERROR HANDLER
+      // =============================
+      console.error("🔥 Worker Error:", err);
 
-    // =============================
-    // 🚀 ROUTER
-    // =============================
-    return router(request, env, ctx, runtime);
+      return new Response(JSON.stringify({
+        ok: false,
+        message: "Internal Server Error",
+        error: err.message || "Unknown error"
+      }), {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+    }
   },
 };

@@ -1,3 +1,6 @@
+import { authMiddleware } from "../../middleware/auth.middleware.js";
+import { json } from "../../utils/response.js";
+
 function getLastNDays(n = 7) {
   const dates = [];
 
@@ -12,14 +15,21 @@ function getLastNDays(n = 7) {
 
 export async function handleAdmin(request, env, ctx) {
 
+  // 🔐 AUTH
   const auth = await authMiddleware(request, env);
-  if (!auth.ok) return json(auth.message, 401);
 
-  request.user = auth.user;
+  if (!auth.ok) {
+    return json(auth.message, 401);
+  }
 
-  const guard = await adminOnly(request);
-  if (guard instanceof Response) return guard;
+  const user = auth.user;
 
+  // 👑 ADMIN CHECK (KHÔNG dùng middleware nữa)
+  if (user.role !== "admin") {
+    return json("Forbidden", 403);
+  }
+
+  // 📊 ANALYTICS
   const sources = ["zalo", "facebook", "messenger"];
   const dates = getLastNDays(7);
 

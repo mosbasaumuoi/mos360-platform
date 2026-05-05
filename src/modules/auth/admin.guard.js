@@ -1,7 +1,25 @@
-export const adminOnly = async (req, env, ctx, next) => {
-  if (req.user.role !== "admin") {
-    return new Response("Forbidden", { status: 403 });
+export const adminOnly = async (req) => {
+
+  if (!req.user) {
+    return new Response(JSON.stringify({
+      ok: false,
+      message: "Unauthorized"
+    }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" }
+    });
   }
 
-  return next();
+  if (req.user.role !== "admin") {
+    return new Response(JSON.stringify({
+      ok: false,
+      message: "Forbidden"
+    }), {
+      status: 403,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+
+  // 🔥 QUAN TRỌNG
+  return { request: req };
 };

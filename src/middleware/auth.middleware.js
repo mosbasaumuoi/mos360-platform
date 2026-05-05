@@ -1,30 +1,21 @@
-import { jwtVerify } from "jose";
+import { verifyToken } from "../modules/auth/auth.service.js";
 
 export async function authMiddleware(request, env) {
+  const auth = request.headers.get("Authorization");
 
-  const authHeader = request.headers.get("Authorization");
-
-  if (!authHeader?.startsWith("Bearer ")) {
-    return { ok: false, message: "Missing token" };
+  if (!auth) {
+    return { ok: false, message: "No token" };
   }
 
-  try {
-    const token = authHeader.split(" ")[1];
+  const token = auth.replace("Bearer ", "");
+  const user = await verifyToken(token, env);
 
-    const SECRET = new TextEncoder().encode(env.JWT_SECRET);
-
-    const { payload } = await jwtVerify(token, SECRET);
-
-    return {
-      ok: true,
-      user: {
-        id: payload.id,
-        email: payload.email,
-        role: payload.role
-      }
-    };
-
-  } catch (err) {
+  if (!user) {
     return { ok: false, message: "Invalid token" };
   }
+
+  return {
+    ok: true,
+    user
+  };
 }

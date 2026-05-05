@@ -1,6 +1,6 @@
 import { jwtVerify } from "jose";
 
-const SECRET = new TextEncoder().encode("MOS360_SECRET_KEY");
+const SECRET = new TextEncoder().encode(env.JWT_SECRET);
 
 export async function authMiddleware(request) {
 

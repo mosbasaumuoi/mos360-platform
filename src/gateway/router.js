@@ -1,4 +1,4 @@
-import { handleAuth } from "../modules/auth/auth.routes.js";
+import { handleLogin, handleMe } from "../modules/auth/auth.routes.js";
 import { handleAdmin } from "../modules/admin/admin.routes.js";
 import { handleCourses } from "../modules/courses/courses.routes.js";
 import { handlePublic } from "../modules/public/public.routes.js";
@@ -8,8 +8,8 @@ import { handlePublic } from "../modules/public/public.routes.js";
 // =============================
 const routes = new Map([
   // AUTH
-  ["POST:/api/auth/login", handleAuth],
-  ["GET:/api/auth/me", handleAuth],
+  ["POST:/api/auth/login", handleLogin],
+  ["GET:/api/auth/me", handleMe],
 
   // ADMIN
   ["GET:/api/admin/analytics", handleAdmin],

@@ -31,7 +31,7 @@ export async function handleAdmin(request, env, ctx) {
   const pathname = url.pathname;
 
   // 📊 ANALYTICS
-  if (pathname === "/api/admin/analytics") {
+ export async function handleAdmin(req, env) {
 
     const keys = ["zalo", "facebook", "messenger"];
     const result = {};

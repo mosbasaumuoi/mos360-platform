@@ -23,22 +23,6 @@ export default {
       pathname.startsWith("/api/auth") ||
       pathname.startsWith("/debug");
 
-    if (isApi && !isPublicApi) {
-
-      const authResult = await authMiddleware(request, env);
-
-      if (!authResult.ok) {
-        return new Response(JSON.stringify(authResult), {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
-
-      request.user = authResult.user;
-    }
-
     // =============================
     // 🚀 ROUTER
     // =============================

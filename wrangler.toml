@@ -3,7 +3,7 @@ main = "src/worker.js"
 compatibility_date = "2026-05-01"
 
 [[kv_namespaces]]
-binding = "MOS_COURSES_KV"
+binding = "MOS360_COURSES_KV"
 id = "31110d6e2db34425accab5d6ae92ca46"
 
 [[kv_namespaces]]

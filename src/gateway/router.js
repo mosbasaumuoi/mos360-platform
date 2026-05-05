@@ -83,25 +83,23 @@ export async function router(request, env, ctx, runtime) {
   // =============================
   // 📈 TRACK CLICK (PUBLIC)
   // =============================
-  if (pathname === "/api/public/track") {
+if (pathname === "/api/public/track") {
 
-    const source = url.searchParams.get("source") || "unknown";
+  const source = url.searchParams.get("source") || "unknown";
 
-    // gọi service (event-driven)
-    const { trackClick } = await import("../services/tracking.service.js");
+  await runtime.events.emit("track.click", {
+    source
+  });
 
-    await trackClick(runtime, source);
-
-    return new Response(JSON.stringify({
-      ok: true,
-      source
-    }), {
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      },
-    });
-  }
+  return new Response(JSON.stringify({
+    ok: true,
+    source
+  }), {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+}
 
   // =============================
   // 📦 PUBLIC COURSES API

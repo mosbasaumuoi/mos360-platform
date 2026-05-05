@@ -35,7 +35,7 @@ export async function handleAdmin(request, env) {
     const kvKey = `track:${date}:${key}`;
 
     try {
-      const value = await env.MOS360_TRACKING.get(kvKey);
+      const value = await env.MOS360_TRACKING_KV.get(kvKey);
       result[key] = value ? parseInt(value) : 0;
     } catch (err) {
       console.error("ADMIN KV ERROR:", kvKey, err);

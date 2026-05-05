@@ -1,24 +1,38 @@
 function getDateKey() {
   const d = new Date();
-  return d.toISOString().slice(0, 10); // 2026-05-04
+  return d.toISOString().slice(0, 10);
 }
 
 export function registerTrackingEvents(runtime) {
-
   runtime.events.on("track.click", async ({ source }) => {
 
     const date = getDateKey();
 
-    const key = `track:${date}:${source}`;
+    const dailyKey = `track:${date}:${source}`;
+    const totalKey = `track_total:${source}`;
 
-    const current = await runtime.env.MOS360_TRACKING.get(key);
-    const count = current ? parseInt(current) : 0;
+    // =============================
+    // 📊 DAILY COUNT
+    // =============================
+    const currentDaily = await runtime.env.MOS360_TRACKING.get(dailyKey);
+    const dailyCount = currentDaily ? parseInt(currentDaily) : 0;
 
-    const newCount = count + 1;
+    await runtime.env.MOS360_TRACKING.put(
+      dailyKey,
+      String(dailyCount + 1)
+    );
 
-    await runtime.env.MOS360_TRACKING.put(key, String(newCount));
+    // =============================
+    // 🚀 TOTAL COUNT (NEW)
+    // =============================
+    const currentTotal = await runtime.env.MOS360_TRACKING.get(totalKey);
+    const totalCount = currentTotal ? parseInt(currentTotal) : 0;
 
-    console.log("TRACK:", key, newCount);
+    await runtime.env.MOS360_TRACKING.put(
+      totalKey,
+      String(totalCount + 1)
+    );
+
+    console.log("TRACK:", source, "daily:", dailyCount + 1, "total:", totalCount + 1);
   });
-
 }

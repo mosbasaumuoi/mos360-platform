@@ -14,12 +14,12 @@ export async function handlePublic(request, env, ctx, runtime) {
       return json("Missing source", 400);
     }
 
-    // 🔥 QUAN TRỌNG NHẤT
+    // 🔥 EMIT EVENT (QUAN TRỌNG NHẤT)
     runtime.events.emit("track.click", { source });
 
+    // ⚠️ KHÔNG bọc ok:true nữa
     return json({
-      ok: true,
-      source,
+      source
     });
   }
 

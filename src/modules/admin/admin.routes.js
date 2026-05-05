@@ -21,7 +21,7 @@ export async function handleAdmin(request, env, ctx) {
   if (guard instanceof Response) return guard;
 
   const sources = ["zalo", "facebook", "messenger"];
-  const dates = getLastNDays(7); // 👈 lấy 7 ngày
+  const dates = getLastNDays(7);
 
   const result = {};
 
@@ -32,8 +32,10 @@ export async function handleAdmin(request, env, ctx) {
       const key = `track:${date}:${source}`;
       const value = await env.MOS360_TRACKING.get(key);
 
-      if (value) {
-        total += parseInt(value);
+      const num = value ? parseInt(value) : 0;
+
+      if (!isNaN(num)) {
+        total += num;
       }
     }
 

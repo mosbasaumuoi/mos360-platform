@@ -20,6 +20,7 @@ export default {
     const isApi = pathname.startsWith("/api");
     const isPublicApi =
       pathname.startsWith("/api/public") ||
+      pathname.startsWith("/api/auth") ||
       pathname.startsWith("/debug");
 
     if (isApi && !isPublicApi) {

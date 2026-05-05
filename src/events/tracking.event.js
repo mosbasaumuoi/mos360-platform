@@ -1,38 +1,36 @@
 function getDateKey() {
   const d = new Date();
-  return d.toISOString().slice(0, 10); // ví dụ: 2026-05-05
+  return d.toISOString().slice(0, 10);
 }
 
 export function registerTrackingEvents(runtime) {
 
-  console.log("⚡ registerTrackingEvents INIT"); // check có đăng ký chưa
-
   runtime.events.on("track.click", async ({ source }) => {
 
-    try {
-      const date = getDateKey();
+    const date = getDateKey();
 
-      const key = `track:${date}:${source}`;
+    const dailyKey = `track:${date}:${source}`;
+    const totalKey = `track_total:${source}`;
 
-      console.log("👉 EVENT RECEIVED:", source);
-      console.log("👉 KV KEY:", key);
+    // 🔹 DAILY
+    const currentDaily = await runtime.env.MOS360_TRACKING.get(dailyKey);
+    const dailyCount = currentDaily ? parseInt(currentDaily) : 0;
 
-      const current = await runtime.env.MOS360_TRACKING.get(key);
+    await runtime.env.MOS360_TRACKING.put(
+      dailyKey,
+      String(dailyCount + 1)
+    );
 
-      console.log("👉 CURRENT VALUE:", current);
+    // 🔥 TOTAL (CHÍNH)
+    const currentTotal = await runtime.env.MOS360_TRACKING.get(totalKey);
+    const totalCount = currentTotal ? parseInt(currentTotal) : 0;
 
-      const count = current ? parseInt(current) : 0;
+    await runtime.env.MOS360_TRACKING.put(
+      totalKey,
+      String(totalCount + 1)
+    );
 
-      const newCount = count + 1;
-
-      await runtime.env.MOS360_TRACKING.put(key, String(newCount));
-
-      console.log("🔥 UPDATED:", key, newCount);
-
-    } catch (err) {
-      console.error("❌ TRACK ERROR:", err);
-    }
-
+    console.log("TRACK:", source, "daily:", dailyCount + 1, "total:", totalCount + 1);
   });
 
 }

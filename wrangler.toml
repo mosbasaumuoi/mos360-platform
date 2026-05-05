@@ -9,3 +9,6 @@ id = "9f4d266d92784d749ceac0e8831adf70"
 [[kv_namespaces]]
 binding = "MOS360_TRACKING"
 id = "eee76ad74d4845458898a143a514ed84"
+
+[vars]
+JWT_SECRET = "MOS360_SECRET_KEY"

@@ -10,10 +10,8 @@ export async function handlePublic(request, env, ctx, runtime) {
       return json("Missing source", 400);
     }
 
-    // 🔥 FIX QUAN TRỌNG
-    ctx.waitUntil(
-      runtime.events.emit("track.click", { source })
-    );
+    // 🔥 FIX ĐÚNG
+    await runtime.events.emit("track.click", { source });
 
     return json({ source });
   }

@@ -4,9 +4,7 @@ import { json } from "../../utils/response.js";
 
 export async function handleAdmin(request, env, ctx) {
 
-  // =============================
   // 🔐 AUTH
-  // =============================
   const auth = await authMiddleware(request, env);
 
   if (!auth.ok) {
@@ -15,37 +13,21 @@ export async function handleAdmin(request, env, ctx) {
 
   request.user = auth.user;
 
-  // =============================
-  // 👑 ADMIN GUARD
-  // =============================
-  const guard = await adminOnly(request, env, ctx);
+  // 👑 ADMIN CHECK
+  const guard = await adminOnly(request);
 
   if (guard instanceof Response) {
     return guard;
   }
 
-  // =============================
-  // 🎯 ROUTE HANDLER
-  // =============================
-  const url = new URL(request.url);
-  const pathname = url.pathname;
-
   // 📊 ANALYTICS
- export async function handleAdmin(req, env) {
+  const keys = ["zalo", "facebook", "messenger"];
+  const result = {};
 
-    const keys = ["zalo", "facebook", "messenger"];
-    const result = {};
-
-    for (const key of keys) {
-      const value = await env.MOS360_TRACKING.get(key);
-      result[key] = value ? parseInt(value) : 0;
-    }
-
-    return json(result);
+  for (const key of keys) {
+    const value = await env.MOS360_TRACKING.get(key);
+    result[key] = value ? parseInt(value) : 0;
   }
 
-  return json({
-    message: "Admin OK",
-    user: request.user
-  });
+  return json(result);
 }

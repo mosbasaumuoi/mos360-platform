@@ -6,7 +6,7 @@ import { registerTrackingEvents } from "./events/tracking.event.js";
 export default {
   async fetch(request, env, ctx) {
 
-    const runtime = createRuntimeContext(env);
+    const runtime = createRuntimeContext(request, env);
     const url = new URL(request.url);
     const pathname = url.pathname;
 

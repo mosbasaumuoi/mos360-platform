@@ -11,9 +11,7 @@ export function registerTrackingEvents(runtime) {
     const dailyKey = `track:${date}:${source}`;
     const totalKey = `track_total:${source}`;
 
-    // =============================
-    // 📊 DAILY COUNT
-    // =============================
+    // DAILY
     const currentDaily = await runtime.env.MOS360_TRACKING.get(dailyKey);
     const dailyCount = currentDaily ? parseInt(currentDaily) : 0;
 
@@ -22,9 +20,7 @@ export function registerTrackingEvents(runtime) {
       String(dailyCount + 1)
     );
 
-    // =============================
-    // 🚀 TOTAL COUNT (NEW)
-    // =============================
+    // TOTAL
     const currentTotal = await runtime.env.MOS360_TRACKING.get(totalKey);
     const totalCount = currentTotal ? parseInt(currentTotal) : 0;
 

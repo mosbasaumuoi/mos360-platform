@@ -1,33 +1,37 @@
 import { authMiddleware } from "../../middleware/auth.middleware.js";
 import { adminOnly } from "../auth/admin.guard.js";
+import { json } from "../../utils/response.js";
 
 export async function handleAdmin(request, env, ctx) {
 
+  // =============================
   // 🔐 AUTH
-  const authResult = await authMiddleware(request, env);
+  // =============================
+  const auth = await authMiddleware(request, env);
 
-  if (!authResult.ok) {
-    return new Response(JSON.stringify(authResult), {
-      status: 401,
-      headers: { "Content-Type": "application/json" }
-    });
+  if (!auth.ok) {
+    return json(auth.message, 401);
   }
 
-  request.user = authResult.user;
+  request.user = auth.user;
 
-  // 🔐 ADMIN GUARD
-  const guard = await adminOnly(request);
+  // =============================
+  // 👑 ADMIN GUARD
+  // =============================
+  const guard = await adminOnly(request, env, ctx);
 
   if (guard instanceof Response) {
     return guard;
   }
 
   // =============================
-  // 📊 ANALYTICS
+  // 🎯 ROUTE HANDLER
   // =============================
   const url = new URL(request.url);
+  const pathname = url.pathname;
 
-  if (url.pathname === "/api/admin/analytics") {
+  // 📊 ANALYTICS
+  if (pathname === "/api/admin/analytics") {
 
     const keys = ["zalo", "facebook", "messenger"];
     const result = {};
@@ -37,16 +41,11 @@ export async function handleAdmin(request, env, ctx) {
       result[key] = value ? parseInt(value) : 0;
     }
 
-    return new Response(JSON.stringify({
-      ok: true,
-      data: result
-    }), {
-      headers: { "Content-Type": "application/json" }
-    });
+    return json(result);
   }
 
-  return new Response(JSON.stringify({
-    ok: true,
-    message: "Admin OK"
-  }));
+  return json({
+    message: "Admin OK",
+    user: request.user
+  });
 }

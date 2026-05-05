@@ -11,7 +11,6 @@ export async function authMiddleware(request, env) {
   try {
     const token = authHeader.split(" ")[1];
 
-    // ✅ env chỉ được dùng trong function
     const SECRET = new TextEncoder().encode(env.JWT_SECRET);
 
     const { payload } = await jwtVerify(token, SECRET);
@@ -26,7 +25,6 @@ export async function authMiddleware(request, env) {
     };
 
   } catch (err) {
-    console.error("JWT ERROR:", err);
     return { ok: false, message: "Invalid token" };
   }
 }

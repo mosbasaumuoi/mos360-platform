@@ -28,39 +28,62 @@ export function renderLoginPage() {
 
     <script>
 
-      async function loginDemo() {
+  // ========================================
+  // LOGIN DEMO
+  // ========================================
 
-        // ====================================
-        // LOGIN API
-        // ====================================
+  window.loginDemo = async function () {
 
-        const response =
-          await fetch(
-            "/api/auth/login",
-            {
-              method: "POST"
-            }
-          );
+    try {
 
-        const result =
-          await response.json();
+      // ====================================
+      // LOGIN API
+      // ====================================
 
-        // ====================================
-        // SAVE TOKEN
-        // ====================================
-
-        localStorage.setItem(
-          "mos360_token",
-          result.data.token
+      const response =
+        await fetch(
+          "/api/auth/login",
+          {
+            method: "POST"
+          }
         );
 
-        // ====================================
-        // REDIRECT
-        // ====================================
+      const result =
+        await response.json();
 
-        window.location.href =
-          "/dashboard";
-      }
+      console.log(
+        "[LOGIN RESULT]",
+        result
+      );
+
+      // ====================================
+      // SAVE TOKEN
+      // ====================================
+
+      localStorage.setItem(
+        "mos360_token",
+        result.data.token
+      );
+
+      console.log(
+        "[TOKEN SAVED]"
+      );
+
+      // ====================================
+      // REDIRECT
+      // ====================================
+
+      window.location.href =
+        "/dashboard";
+
+    } catch (error) {
+
+      console.error(
+        "[LOGIN ERROR]",
+        error
+      );
+    }
+  };
 
     </script>
 

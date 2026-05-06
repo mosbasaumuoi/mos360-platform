@@ -1,24 +1,47 @@
-import { renderAnalytics } from "../views/analytics.js";
+// ============================================
+// FRONTEND ROUTER SYSTEM
+// Điều phối page theo URL
+// ============================================
 
-export function router() {
-  const path = window.location.pathname;
+import { renderHomePage } from "../pages/home/homePage.js";
 
-  if (path === "/analytics") {
-    renderAnalytics();
-    return;
+export async function resolveRoute(pathname) {
+
+  // ============================================
+  // HOME PAGE
+  // ============================================
+
+  if (pathname === "/") {
+    return renderHomePage();
   }
 
-  // default
-  document.body.innerHTML = `
-    <h1>MOS360</h1>
+  // ============================================
+  // DASHBOARD
+  // ============================================
 
-    <button onclick="goAnalytics()">Xem Analytics</button>
+  if (pathname === "/dashboard") {
+
+    return `
+      <h1>DASHBOARD PAGE</h1>
+    `;
+  }
+
+  // ============================================
+  // COURSES
+  // ============================================
+
+  if (pathname === "/courses") {
+
+    return `
+      <h1>COURSES PAGE</h1>
+    `;
+  }
+
+  // ============================================
+  // NOT FOUND
+  // ============================================
+
+  return `
+    <h1>404 - PAGE NOT FOUND</h1>
   `;
 }
-
-window.goAnalytics = () => {
-  history.pushState({}, "", "/analytics");
-  router();
-};
-
-window.onpopstate = router;

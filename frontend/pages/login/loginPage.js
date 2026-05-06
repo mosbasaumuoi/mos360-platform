@@ -41,12 +41,22 @@ export function renderLoginPage() {
       // ====================================
 
       const response =
-        await fetch(
-          "/api/auth/login",
-          {
-            method: "POST"
-          }
-        );
+      await fetch(
+      "/api/auth/login",
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type":
+          "application/json"
+      },
+
+      body: JSON.stringify({
+        email: "admin@mos360.vn",
+        password: "123456"
+      })
+    }
+  );
 
       const result =
         await response.json();

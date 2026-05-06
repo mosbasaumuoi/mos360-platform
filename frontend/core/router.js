@@ -4,6 +4,8 @@
 // ============================================
 
 import { renderHomePage } from "../pages/home/homePage.js";
+import { renderDashboardPage }
+from "../pages/dashboard/dashboardPage.js";
 
 export async function resolveRoute(pathname) {
 
@@ -21,9 +23,7 @@ export async function resolveRoute(pathname) {
 
   if (pathname === "/dashboard") {
 
-    return `
-      <h1>DASHBOARD PAGE</h1>
-    `;
+    return renderDashboardPage();
   }
 
   // ============================================

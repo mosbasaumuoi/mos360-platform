@@ -9,6 +9,5 @@ export function createRuntimeContext(request, env) {
     request,
     url,
 
-    }
   };
 }

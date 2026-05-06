@@ -1,6 +1,5 @@
 import { router } from "./gateway/router.js";
 import { createRuntimeContext } from "./runtime/runtimeContext.js";
-import { registerTrackingEvents } from "./events/tracking.event.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -10,11 +9,6 @@ export default {
       // ⚡ Runtime Layer
       // =============================
       const runtime = createRuntimeContext(request, env);
-
-      // =============================
-      // 🔥 Register Event System
-      // =============================
-      registerTrackingEvents(runtime);
 
       // =============================
       // 🚀 Gateway Router (NO AUTH HERE)

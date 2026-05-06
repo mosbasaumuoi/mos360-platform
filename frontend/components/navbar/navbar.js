@@ -14,17 +14,21 @@ export function renderNavbar() {
 
       <nav class="navbar-menu">
 
-        <a href="/">
-          Trang chủ
-        </a>
+      <a href="/">
+      Trang chủ
+      </a>
 
-        <a href="/courses">
-          Khóa học
-        </a>
+      <a href="/courses">
+      Khóa học
+      </a>
 
-        <a href="/dashboard">
-          Dashboard
-        </a>
+      <a href="/dashboard">
+      Dashboard
+      </a>
+
+      <a href="/login">
+      Login
+      </a>
 
       </nav>
 

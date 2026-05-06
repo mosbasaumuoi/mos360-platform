@@ -1,36 +1,46 @@
+// ============================================
+// MAIN WORKER ENTRY
+// Điều phối toàn hệ thống
+// ============================================
+
+import { renderApp } from "../frontend/app.js";
+
 import { router } from "./gateway/router.js";
-import { createRuntimeContext } from "./runtime/runtimeContext.js";
+
+import { createRuntimeContext }
+from "./runtime/runtimeContext.js";
 
 export default {
+
   async fetch(request, env, ctx) {
 
-    try {
-      // =============================
-      // ⚡ Runtime Layer
-      // =============================
-      const runtime = createRuntimeContext(request, env);
+    // ========================================
+    // URL
+    // ========================================
 
-      // =============================
-      // 🚀 Gateway Router (NO AUTH HERE)
-      // =============================
-      return await router(request, env, ctx, runtime);
+    const url = new URL(request.url);
 
-    } catch (err) {
-      // =============================
-      // ❌ GLOBAL ERROR HANDLER
-      // =============================
-      console.error("🔥 Worker Error:", err);
+    // ========================================
+    // API REQUEST
+    // ========================================
 
-      return new Response(JSON.stringify({
-        ok: false,
-        message: "Internal Server Error",
-        error: err.message || "Unknown error"
-      }), {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
+    if (url.pathname.startsWith("/api/")) {
+
+      const runtime =
+        createRuntimeContext(request, env);
+
+      return router(
+        request,
+        env,
+        ctx,
+        runtime
+      );
     }
-  },
+
+    // ========================================
+    // FRONTEND REQUEST
+    // ========================================
+
+    return renderApp(request);
+  }
 };

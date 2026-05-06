@@ -1,26 +1,111 @@
 import { json } from "../../utils/response.js";
-import { login, verifyToken } from "./auth.service.js";
+import {
+  login,
+  verifyToken
+}
+from "./auth.service.js";
 
-export async function handleLogin(request, env) {
-  const body = await request.json();
-  const result = await login(body.email, body.password, env);
+export async function handleLogin(
+  request,
+  env
+) {
 
-  if (!result) {
-    return json("Invalid credentials", 401);
+  try {
+
+    // ======================================
+    // BODY
+    // ======================================
+
+    const body =
+      await request.json();
+
+    console.log(
+      "[LOGIN BODY]",
+      body
+    );
+
+    // ======================================
+    // LOGIN
+    // ======================================
+
+    const result =
+      await login(
+        body.email,
+        body.password,
+        env
+      );
+
+    console.log(
+      "[LOGIN RESULT]",
+      result
+    );
+
+    // ======================================
+    // INVALID
+    // ======================================
+
+    if (!result) {
+
+      return json(
+        "Invalid credentials",
+        401
+      );
+    }
+
+    // ======================================
+    // SUCCESS
+    // ======================================
+
+    return json(result);
+
+  } catch (error) {
+
+    console.error(
+      "[LOGIN ERROR]",
+      error
+    );
+
+    return json(
+      error.message ||
+      "Internal Error",
+      500
+    );
   }
-
-  return json(result);
 }
 
-export async function handleMe(request, env) {
-  const auth = request.headers.get("Authorization");
+export async function handleMe(
+  request,
+  env
+) {
 
-  if (!auth) return json("No token", 401);
+  const auth =
+    request.headers.get(
+      "Authorization"
+    );
 
-  const token = auth.replace("Bearer ", "");
-  const user = await verifyToken(token, env);
+  if (!auth)
+    return json(
+      "No token",
+      401
+    );
 
-  if (!user) return json("Invalid token", 401);
+  const token =
+    auth.replace(
+      "Bearer ",
+      ""
+    );
+
+  const user =
+    await verifyToken(
+      token,
+      env
+    );
+
+  if (!user)
+    return json(
+      "Invalid token",
+      401
+    );
 
   return json({ user });
 }

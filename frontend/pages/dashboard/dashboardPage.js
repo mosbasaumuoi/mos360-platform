@@ -6,32 +6,7 @@
 import { renderMainLayout }
 from "../../layouts/mainLayout.js";
 
-import { apiGet }
-from "../../core/api/apiClient.js";
-
-export async function renderDashboardPage() {
-
-  // ==========================================
-  // FETCH ANALYTICS
-  // ==========================================
-
-  const analytics =
-    await apiGet("/admin/analytics");
-
-  // ==========================================
-  // SAFE DATA
-  // ==========================================
-
-  const data = analytics?.data || {};
-
-  const zalo =
-    data.zalo || 0;
-
-  const facebook =
-    data.facebook || 0;
-
-  const messenger =
-    data.messenger || 0;
+export function renderDashboardPage() {
 
   // ==========================================
   // PAGE CONTENT
@@ -45,23 +20,86 @@ export async function renderDashboardPage() {
         DASHBOARD
       </h1>
 
-      <div>
+      <div id="analytics-container">
 
-        <p>
-          Zalo: ${zalo}
-        </p>
-
-        <p>
-          Facebook: ${facebook}
-        </p>
-
-        <p>
-          Messenger: ${messenger}
-        </p>
+        <p>Loading analytics...</p>
 
       </div>
 
     </section>
+
+    <script type="module">
+
+      // ======================================
+      // IMPORT API CLIENT
+      // ======================================
+
+      import {
+        apiGet
+      }
+      from "/frontend/core/api/apiClient.js";
+
+      // ======================================
+      // LOAD ANALYTICS
+      // ======================================
+
+      async function loadAnalytics() {
+
+        const analytics =
+          await apiGet(
+            "/admin/analytics"
+          );
+
+        console.log(
+          "[ANALYTICS]",
+          analytics
+        );
+
+        // ====================================
+        // SAFE DATA
+        // ====================================
+
+        const data =
+          analytics?.data || {};
+
+        const zalo =
+          data.zalo || 0;
+
+        const facebook =
+          data.facebook || 0;
+
+        const messenger =
+          data.messenger || 0;
+
+        // ====================================
+        // UPDATE DOM
+        // ====================================
+
+        document.getElementById(
+          "analytics-container"
+        ).innerHTML = \`
+          <p>Zalo: \${zalo}</p>
+          <p>Facebook: \${facebook}</p>
+          <p>Messenger: \${messenger}</p>
+        \`;
+      }
+
+      // ======================================
+      // INITIAL LOAD
+      // ======================================
+
+      loadAnalytics();
+
+      // ======================================
+      // REALTIME POLLING
+      // ======================================
+
+      setInterval(
+        loadAnalytics,
+        2000
+      );
+
+    </script>
 
   `;
 

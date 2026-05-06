@@ -3,8 +3,7 @@ import { adminOnly } from "../auth/admin.guard.js";
 import { json } from "../../utils/response.js";
 
 function getDateKey() {
-  const d = new Date();
-  return d.toISOString().slice(0, 10);
+  return new Date().toLocaleDateString("en-CA");
 }
 
 export async function handleAdmin(request, env) {

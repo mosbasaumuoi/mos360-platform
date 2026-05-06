@@ -1,37 +1,27 @@
 function getDateKey() {
-  const d = new Date();
-  return d.toISOString().slice(0, 10);
+  return new Date().toLocaleDateString("en-CA");
 }
 
-export function registerTrackingEvents(runtime) {
+export async function trackClick(runtime, source) {
 
-  runtime.events.on("track.click", async ({ source }) => {
+  const safeSource = (source || "").trim().toLowerCase();
 
-    // 🔒 chuẩn hóa input (tránh lỗi lệch key)
-    const safeSource = (source || "").trim().toLowerCase();
+  if (!safeSource) return;
 
-    if (!safeSource) {
-      console.log("❌ Invalid source");
-      return;
-    }
+  const date = getDateKey();
 
-    const date = getDateKey();
-    const key = `track:${date}:${safeSource}`;
+  const key = `track:${date}:${safeSource}`;
 
-    try {
-      const current = await runtime.env.MOS360_TRACKING_KV.get(key);
-      const count = current ? parseInt(current) : 0;
+  const current = await runtime.env.MOS360_TRACKING_KV.get(key);
 
-      const newCount = count + 1;
+  const count = current ? parseInt(current) : 0;
 
-      await runtime.env.MOS360_TRACKING_KV.put(key, String(newCount));
+  const newCount = count + 1;
 
-      console.log("TRACK:", key, "=>", newCount);
+  await runtime.env.MOS360_TRACKING_KV.put(
+    key,
+    String(newCount)
+  );
 
-    } catch (err) {
-      console.error("TRACK ERROR:", err);
-    }
-
-  });
-
+  console.log("TRACK:", key, "=>", newCount);
 }

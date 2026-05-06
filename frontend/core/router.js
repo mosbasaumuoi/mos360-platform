@@ -6,6 +6,8 @@
 import { renderHomePage } from "../pages/home/homePage.js";
 import { renderDashboardPage }
 from "../pages/dashboard/dashboardPage.js";
+import { renderLoginPage }
+from "../pages/login/loginPage.js";
 
 export async function resolveRoute(pathname) {
 
@@ -36,7 +38,15 @@ export async function resolveRoute(pathname) {
       <h1>COURSES PAGE</h1>
     `;
   }
+  
+// ============================================
+// LOGIN PAGE
+// ============================================
 
+  if (pathname === "/login") {
+
+    return renderLoginPage();
+  }  
   // ============================================
   // NOT FOUND
   // ============================================

@@ -1,10 +1,31 @@
-import { router } from "./core/router.js";
-import { login, api } from "./core/apiClient.js";
+// ============================================
+// FRONTEND APPLICATION ENTRY
+// Điểm khởi động frontend system
+// ============================================
 
-// expose ra window để test
-window.login = login;
-window.api = api;
+import { resolveRoute } from "./core/router.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  router();
-});
+export async function renderApp(request) {
+
+  // ============================================
+  // LẤY URL
+  // ============================================
+
+  const url = new URL(request.url);
+
+  // ============================================
+  // RESOLVE PAGE
+  // ============================================
+
+  const html = await resolveRoute(url.pathname);
+
+  // ============================================
+  // RETURN HTML
+  // ============================================
+
+  return new Response(html, {
+    headers: {
+      "Content-Type": "text/html;charset=UTF-8"
+    }
+  });
+}

@@ -1,27 +1,56 @@
-/* ============================================
-   MOS360 GLOBAL STYLES
-============================================ */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
-body {
-  background: #050505;
-  color: white;
-
-  font-family:
-    Arial,
-    sans-serif;
+body{
+  background:#050505;
+  color:white;
+  font-family:Arial;
 }
 
-.container {
-  padding: 40px;
+.container{
+  width:1200px;
+  margin:auto;
+  padding:40px;
 }
 
-h1 {
-  color: orange;
-  margin-bottom: 16px;
+h1{
+  color:#ff6b00;
+  margin-bottom:40px;
+}
+
+.stats{
+  display:flex;
+  gap:20px;
+}
+
+.card{
+  background:#111;
+  border:1px solid #222;
+  border-radius:16px;
+  padding:30px;
+  width:250px;
+}
+
+.card h3{
+  color:#888;
+  margin-bottom:20px;
+}
+
+.card p{
+  font-size:42px;
+  color:#ff6b00;
+  font-weight:bold;
+}
+
+button{
+  background:#ff6b00;
+  border:none;
+  color:white;
+  padding:14px 24px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:16px;
 }

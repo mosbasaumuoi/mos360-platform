@@ -39,3 +39,12 @@ export function clearToken() {
     TOKEN_KEY
   );
 }
+
+// ============================================
+// CHECK AUTH
+// ============================================
+
+export function isAuthenticated() {
+
+  return !!getToken();
+}

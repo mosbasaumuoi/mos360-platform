@@ -9,8 +9,26 @@ import {
 }
 from "./core/router";
 
+import {
+  appContext
+}
+from "./core/appContext.js";
+
+import {
+  getCurrentUser
+}
+from "./services/auth.js";
+
 // ============================================
 // START APP
 // ============================================
 
-loadRoute();
+async function bootstrap() {
+
+  appContext.user =
+    await getCurrentUser();
+
+  loadRoute();
+}
+
+bootstrap();

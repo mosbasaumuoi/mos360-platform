@@ -33,6 +33,11 @@ import {
 }
 from "../../components/states/emptyState.js";
 
+import {
+  logout
+}
+from "../../services/auth.js";
+
 // ============================================
 // LOAD ANALYTICS
 // ============================================
@@ -177,13 +182,24 @@ export async function renderDashboardPage() {
   // ==========================================
   // RENDER PAGE
   // ==========================================
-
+      
   document.querySelector(
     "#app"
   ).innerHTML =
     renderAppLayout(
-      content
-    );
+  content
+  );
+
+    const logoutBtn =
+  document.querySelector(
+    "#logoutBtn"
+  );
+
+if (logoutBtn) {
+
+  logoutBtn.onclick =
+    logout;
+}
 
   // ==========================================
   // INITIAL LOAD
@@ -195,6 +211,7 @@ export async function renderDashboardPage() {
   // REALTIME REFRESH
   // ==========================================
 
+  window.analyticsInterval =
   setInterval(
     loadAnalytics,
     2000

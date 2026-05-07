@@ -12,6 +12,11 @@ from "../pages/login/loginPage";
 import { renderDashboardPage }
 from "../pages/dashboard/dashboardPage.js";
 
+import {
+  renderCoursesPage
+}
+from "../pages/courses/coursesPage.js";
+
 // ============================================
 // ROUTES
 // ============================================
@@ -25,7 +30,10 @@ const routes = {
     renderLoginPage,
 
   "/dashboard":
-    renderDashboardPage
+    renderDashboardPage,
+
+    "/courses":
+    renderCoursesPage
 };
 
 // ============================================

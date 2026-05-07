@@ -3,7 +3,17 @@
 // Shared application shell
 // ============================================
 
-export function renderAppLayout(content) {
+import {
+  appContext
+}
+from "../core/appContext.js";
+
+export function renderAppLayout(
+  content
+) {
+
+  const user =
+  appContext.user;
 
   return `
 
@@ -19,6 +29,26 @@ export function renderAppLayout(content) {
           MOS360
         </h2>
 
+        <div class="sidebar-user">
+
+  <div class="sidebar-avatar">
+    M
+  </div>
+
+  <div class="sidebar-user-info">
+
+    <div class="sidebar-user-email">
+      ${user?.email || "Guest"}
+    </div>
+
+    <div class="sidebar-user-role">
+      ${user?.role || "visitor"}
+    </div>
+
+  </div>
+
+</div>
+
         <nav class="menu">
 
           <button data-link="/">
@@ -32,6 +62,14 @@ export function renderAppLayout(content) {
           <button data-link="/login">
             Login
           </button>
+
+          <button id="logoutBtn">
+           Logout
+          </button>
+
+          <a href="/courses">
+           Courses
+          </a>
 
         </nav>
 

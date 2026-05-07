@@ -441,3 +441,270 @@ a {
   color:
     #aaa;
 }
+
+/* =========================================
+   AUTH
+========================================= */
+
+.auth-page {
+
+  display:
+    flex;
+
+  justify-content:
+    center;
+
+  align-items:
+    center;
+
+  min-height:
+    100vh;
+}
+
+.auth-form {
+
+  width:
+    360px;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    16px;
+
+  padding:
+    32px;
+
+  border:
+    1px solid #222;
+
+  border-radius:
+    20px;
+
+  background:
+    #111;
+}
+
+.auth-form h1 {
+
+  color:
+    #ff6b00;
+
+  margin-bottom:
+    12px;
+}
+
+.auth-form input {
+
+  padding:
+    14px;
+
+  border:
+    1px solid #333;
+
+  border-radius:
+    12px;
+
+  background:
+    #000;
+
+  color:
+    white;
+
+  font-size:
+    16px;
+}
+
+.auth-form button {
+
+  padding:
+    14px;
+
+  border:
+    none;
+
+  border-radius:
+    12px;
+
+  background:
+    #ff6b00;
+
+  color:
+    white;
+
+  font-weight:
+    bold;
+
+  cursor:
+    pointer;
+}
+
+.auth-form button:disabled {
+
+  opacity:
+    0.6;
+
+  cursor:
+    not-allowed;
+}
+
+/* =========================================
+   SIDEBAR USER
+========================================= */
+
+.sidebar-user {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    12px;
+
+  margin:
+    24px 0;
+
+  padding:
+    12px;
+
+  border:
+    1px solid #222;
+
+  border-radius:
+    14px;
+
+  background:
+    #111;
+}
+
+.sidebar-avatar {
+
+  width:
+    42px;
+
+  height:
+    42px;
+
+  border-radius:
+    50%;
+
+  background:
+    #ff6b00;
+
+  color:
+    white;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  font-weight:
+    bold;
+}
+
+.sidebar-user-email {
+
+  color:
+    white;
+
+  font-size:
+    14px;
+}
+
+.sidebar-user-role {
+
+  color:
+    #999;
+
+  font-size:
+    12px;
+
+  text-transform:
+    uppercase;
+}
+
+/* =========================================
+   COURSES
+========================================= */
+
+.courses-grid {
+
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(auto-fill, minmax(260px, 1fr));
+
+  gap:
+    24px;
+}
+
+.course-card {
+
+  background:
+    #111;
+
+  border:
+    1px solid #222;
+
+  border-radius:
+    18px;
+
+  padding:
+    20px;
+}
+
+.course-image {
+
+  height:
+    140px;
+
+  border-radius:
+    14px;
+
+  background:
+    #ff6b00;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  font-size:
+    32px;
+
+  font-weight:
+    bold;
+
+  margin-bottom:
+    16px;
+}
+
+.course-price {
+
+  color:
+    #ff6b00;
+
+  font-size:
+    22px;
+
+  font-weight:
+    bold;
+
+  margin-top:
+    12px;
+}

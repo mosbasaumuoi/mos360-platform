@@ -17,6 +17,12 @@ import {
 }
 from "../../core/router";
 
+import {
+  showToast
+}
+from "../../components/toast/toast.js";
+
+
 export async function renderLoginPage() {
 
   document.querySelector("#app")
@@ -41,6 +47,10 @@ export async function renderLoginPage() {
     .onclick =
       async () => {
 
+        // ====================================
+        // LOGIN REQUEST
+        // ====================================
+
         const result =
           await apiPost(
             "/auth/login",
@@ -53,6 +63,10 @@ export async function renderLoginPage() {
             }
           );
 
+        // ====================================
+        // LOGIN SUCCESS
+        // ====================================
+
         if (
           result.ok &&
           result.data?.token
@@ -62,8 +76,23 @@ export async function renderLoginPage() {
             result.data.token
           );
 
+          showToast(
+            "Login success"
+          );
+
           navigate(
             "/dashboard"
+          );
+        }
+
+        // ====================================
+        // LOGIN FAILED
+        // ====================================
+
+        else {
+
+          showToast(
+            "Login failed"
           );
         }
       };

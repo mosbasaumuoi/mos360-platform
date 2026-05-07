@@ -29,6 +29,26 @@ const routes = {
 };
 
 // ============================================
+// BIND LINKS
+// ============================================
+
+function bindLinks() {
+
+  document
+    .querySelectorAll("[data-link]")
+
+    .forEach(button => {
+
+      button.onclick = () => {
+
+        const path =
+          button.dataset.link;
+
+        navigate(path);
+      };
+    });
+}
+// ============================================
 // LOAD ROUTE
 // ============================================
 
@@ -56,6 +76,8 @@ export async function loadRoute() {
   }
 
   await page();
+
+  bindLinks();
 }
 
 // ============================================
@@ -72,3 +94,12 @@ export function navigate(path) {
 
   loadRoute();
 }
+
+// ============================================
+// BROWSER BACK/FORWARD
+// ============================================
+
+window.onpopstate =
+  loadRoute;
+
+

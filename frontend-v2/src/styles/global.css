@@ -1,56 +1,443 @@
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+/* =========================================
+   MOS360 GLOBAL DESIGN SYSTEM
+========================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-body{
-  background:#050505;
-  color:white;
-  font-family:Arial;
+/* =========================================
+   ROOT
+========================================= */
+
+:root {
+
+  --bg-primary:
+    #050505;
+
+  --bg-secondary:
+    #101010;
+
+  --border-color:
+    #262626;
+
+  --text-primary:
+    #ffffff;
+
+  --text-secondary:
+    #9ca3af;
+
+  --accent:
+    #ff6b00;
+
+  --sidebar-width:
+    240px;
 }
 
-.container{
-  width:1200px;
-  margin:auto;
-  padding:40px;
+/* =========================================
+   BODY
+========================================= */
+
+body {
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  background:
+    var(--bg-primary);
+
+  color:
+    var(--text-primary);
 }
 
-h1{
-  color:#ff6b00;
-  margin-bottom:40px;
+/* =========================================
+   LINKS
+========================================= */
+
+a {
+
+  text-decoration:
+    none;
+
+  color:
+    inherit;
 }
 
-.stats{
-  display:flex;
-  gap:20px;
+/* =========================================
+   APP LAYOUT
+========================================= */
+
+.app-layout {
+
+  display:
+    flex;
+
+  min-height:
+    100vh;
 }
 
-.card{
-  background:#111;
-  border:1px solid #222;
-  border-radius:16px;
-  padding:30px;
-  width:250px;
+/* =========================================
+   SIDEBAR
+========================================= */
+
+.sidebar {
+
+  width:
+    var(--sidebar-width);
+
+  background:
+    var(--bg-secondary);
+
+  border-right:
+    1px solid var(--border-color);
+
+  padding:
+    24px;
 }
 
-.card h3{
-  color:#888;
-  margin-bottom:20px;
+/* =========================================
+   LOGO
+========================================= */
+
+.logo {
+
+  font-size:
+    28px;
+
+  color:
+    var(--accent);
+
+  margin-bottom:
+    40px;
 }
 
-.card p{
-  font-size:42px;
-  color:#ff6b00;
-  font-weight:bold;
+/* =========================================
+   MENU
+========================================= */
+
+.menu {
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    16px;
 }
 
-button{
-  background:#ff6b00;
-  border:none;
-  color:white;
-  padding:14px 24px;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:16px;
+.menu a {
+
+  color:
+    var(--text-secondary);
+
+  transition:
+    0.2s;
+}
+
+.menu a:hover {
+
+  color:
+    var(--accent);
+}
+
+/* =========================================
+   MAIN CONTENT
+========================================= */
+
+.main-content {
+
+  flex:
+    1;
+
+  padding:
+    40px;
+}
+
+/* =========================================
+   PAGE
+========================================= */
+
+.page h1 {
+
+  font-size:
+    52px;
+
+  color:
+    var(--accent);
+
+  margin-bottom:
+    24px;
+}
+
+/* =========================================
+   STATS
+========================================= */
+
+.stats {
+
+  display:
+    flex;
+
+  gap:
+    24px;
+
+  margin-top:
+    40px;
+}
+
+/* =========================================
+   CARD
+========================================= */
+
+.card {
+
+  width:
+    260px;
+
+  padding:
+    32px;
+
+  border:
+    1px solid var(--border-color);
+
+  border-radius:
+    20px;
+
+  background:
+    #0f0f0f;
+}
+
+.card h3 {
+
+  color:
+    var(--text-secondary);
+
+  margin-bottom:
+    24px;
+
+  font-size:
+    28px;
+}
+
+.card p {
+
+  font-size:
+    64px;
+
+  color:
+    var(--accent);
+
+  font-weight:
+    bold;
+}
+
+/* =========================================
+   TOAST
+========================================= */
+
+.toast {
+
+  position:
+    fixed;
+
+  top:
+    24px;
+
+  right:
+    24px;
+
+  background:
+    var(--accent);
+
+  color:
+    white;
+
+  padding:
+    16px 24px;
+
+  border-radius:
+    12px;
+
+  font-weight:
+    bold;
+
+  z-index:
+    9999;
+
+  animation:
+    toastIn 0.3s ease;
+}
+
+/* =========================================
+   TOAST ANIMATION
+========================================= */
+
+@keyframes toastIn {
+
+  from {
+
+    opacity:
+      0;
+
+    transform:
+      translateY(-10px);
+  }
+
+  to {
+
+    opacity:
+      1;
+
+    transform:
+      translateY(0);
+  }
+}
+
+/* =========================================
+   LOADING OVERLAY
+========================================= */
+
+.loading-overlay {
+
+  position:
+    fixed;
+
+  inset:
+    0;
+
+  background:
+    rgba(0, 0, 0, 0.6);
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  z-index:
+    99999;
+}
+
+/* =========================================
+   SPINNER
+========================================= */
+
+.loading-spinner {
+
+  width:
+    60px;
+
+  height:
+    60px;
+
+  border:
+    5px solid #333;
+
+  border-top:
+    5px solid var(--accent);
+
+  border-radius:
+    50%;
+
+  animation:
+    spin 1s linear infinite;
+}
+
+/* =========================================
+   SPIN
+========================================= */
+
+@keyframes spin {
+
+  from {
+    transform:
+      rotate(0deg);
+  }
+
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+/* =========================================
+   ERROR STATE
+========================================= */
+
+.error-state {
+
+  padding:
+    40px;
+
+  border:
+    1px solid #5c1f1f;
+
+  border-radius:
+    20px;
+
+  background:
+    rgba(120, 0, 0, 0.15);
+
+  margin-top:
+    40px;
+}
+
+.error-state h2 {
+
+  color:
+    #ff4d4f;
+
+  margin-bottom:
+    12px;
+}
+
+.error-state p {
+
+  color:
+    #ffb3b3;
+}
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.empty-state {
+
+  padding:
+    40px;
+
+  border:
+    1px dashed #444;
+
+  border-radius:
+    20px;
+
+  background:
+    #111;
+
+  margin-top:
+    40px;
+}
+
+.empty-state h2 {
+
+  color:
+    #888;
+
+  margin-bottom:
+    12px;
+}
+
+.empty-state p {
+
+  color:
+    #aaa;
 }

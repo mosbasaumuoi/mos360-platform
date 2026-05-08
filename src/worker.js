@@ -10,6 +10,12 @@ import { router } from "./gateway/router.js";
 import { createRuntimeContext }
 from "./runtime/runtimeContext.js";
 
+import {
+  handleCourses,
+  handleCourseDetail
+}
+from "./modules/courses/courses.routes.js";
+
 export default {
 
   async fetch(request, env, ctx) {
@@ -19,6 +25,13 @@ export default {
     // ========================================
 
     const url = new URL(request.url);
+
+    // ========================================
+    // pathname
+    // ========================================
+
+    const pathname =
+    url.pathname;
 
     // ========================================
     // API REQUEST
@@ -36,6 +49,28 @@ export default {
         runtime
       );
     }
+
+    if (
+  pathname.startsWith(
+    "/courses/"
+  )
+) {
+
+  return handleCourseDetail(
+    request
+  );
+}
+
+// ========================================
+// COURSES API
+// ========================================
+
+if (
+  pathname === "/courses"
+) {
+
+  return handleCourses();
+}
 
     // ========================================
     // FRONTEND REQUEST

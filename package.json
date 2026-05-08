@@ -1,7 +1,25 @@
 {
   "name": "mos360-platform",
+
   "version": "1.0.0",
+
+  "type": "module",
+
+  "scripts": {
+
+    "dev":
+      "wrangler dev"
+  },
+
   "dependencies": {
-    "jose": "^5.2.3"
+
+    "jose":
+      "^5.10.0"
+  },
+
+  "devDependencies": {
+
+    "wrangler":
+      "^3.114.0"
   }
 }

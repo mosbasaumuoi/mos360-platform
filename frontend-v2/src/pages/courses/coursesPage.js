@@ -7,7 +7,99 @@ import {
 }
 from "../../layouts/appLayout.js";
 
+import {
+  apiGet
+}
+from "../../services/api.js";
+
+import {
+  renderCourseCard
+}
+from "../../components/cards/courseCard.js";
+
+import {
+  renderErrorState
+}
+from "../../components/states/errorState.js";
+
+import {
+  renderEmptyState
+}
+from "../../components/states/emptyState.js";
+
 export async function renderCoursesPage() {
+
+  document.querySelector(
+  "#app"
+).innerHTML =
+  renderAppLayout(`
+
+    <div class="page">
+
+      <h1>
+        COURSES
+      </h1>
+
+      <p>
+        Loading courses...
+      </p>
+
+    </div>
+
+  `);
+  
+  const result =
+    await apiGet(
+      "/courses",
+      {
+        silent: true
+      }
+    );
+  
+  if (!result.ok) {
+
+  document.querySelector(
+    "#app"
+  ).innerHTML =
+    renderAppLayout(
+      renderErrorState(
+        "Failed to load courses"
+      )
+    );
+
+  return;
+  }
+
+  const courses =
+    result.data || [];
+
+console.log(
+  "COURSES:",
+  JSON.stringify(
+    courses,
+    null,
+    2
+  )
+);  
+
+if (courses.length === 0) {
+
+  document.querySelector(
+    "#app"
+  ).innerHTML =
+    renderAppLayout(
+      renderEmptyState(
+        "No courses found"
+      )
+    );
+
+  return;
+}
+
+  const cards =
+  courses.map(
+    renderCourseCard
+  ).join("");
 
   const content = `
 
@@ -19,36 +111,18 @@ export async function renderCoursesPage() {
 
       <div class="courses-grid">
 
-        <div class="course-card">
-
-          <div class="course-image">
-            MOS
-          </div>
-
-          <h3>
-            MOS Excel Expert
-          </h3>
-
-          <p>
-            Teacher: MOS360
-          </p>
-
-          <div class="course-price">
-            2.900.000đ
-          </div>
-
-        </div>
+        ${cards}
 
       </div>
 
     </div>
 
   `;
-  
+
   document.querySelector(
     "#app"
   ).innerHTML =
     renderAppLayout(
-  content
-  );
+      content
+    );
 }

@@ -17,6 +17,11 @@ import {
 }
 from "../pages/courses/coursesPage.js";
 
+import {
+  renderCourseDetailPage
+}
+from "../pages/courses/courseDetailPage.js";
+
 // ============================================
 // ROUTES
 // ============================================
@@ -65,6 +70,9 @@ export async function loadRoute() {
   const path =
     window.location.pathname;
 
+  const pathname =
+  window.location.pathname;  
+
   const page =
     routes[path];
 
@@ -82,6 +90,17 @@ export async function loadRoute() {
 
     return;
   }
+
+  if (
+  pathname.startsWith(
+    "/courses/"
+  )
+) {
+
+  renderCourseDetailPage();
+
+  return;
+}
 
   await page();
 

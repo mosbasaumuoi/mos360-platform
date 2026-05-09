@@ -22,6 +22,11 @@ import {
 }
 from "../pages/courses/courseDetailPage.js";
 
+import {
+  renderLearnPage
+}
+from "../pages/learn/learnPage.js";
+
 // ============================================
 // ROUTES
 // ============================================
@@ -87,6 +92,21 @@ function bindLinks() {
 
     return;
   }
+
+// ========================================
+// LEARN PAGE
+// ========================================
+
+if (
+  pathname.startsWith(
+    "/learn/"
+  )
+) {
+
+  renderLearnPage();
+
+  return;
+}
 
     const page =
     routes[path];

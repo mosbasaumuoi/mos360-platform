@@ -4,11 +4,10 @@ from "../modules/public/public.routes.js";
 import { handleAdmin }
 from "../modules/admin/admin.routes.js";
 
-import { handleCourses }
-from "../modules/courses/courses.routes.js";
-
 import {
-  handleCourseDetail
+  handleCourses,
+  handleCourseDetail,
+  handleLessonDetail
 }
 from "../modules/courses/courses.routes.js";
 
@@ -129,7 +128,51 @@ return new Response(
   }
 );
 }
-  
+
+// ==========================================
+// LESSON DETAIL
+// ==========================================
+
+if (
+
+  request.method === "GET"
+
+  &&
+
+  url.pathname.startsWith(
+    "/api/learn/"
+  )
+
+) {
+
+  const response =
+    await handleLessonDetail(
+      request
+    );
+
+  const headers =
+    new Headers(
+      response.headers
+    );
+
+  Object.entries(corsHeaders)
+    .forEach(([key, value]) => {
+
+      headers.set(key, value);
+
+    });
+
+  return new Response(
+    response.body,
+    {
+      status:
+        response.status,
+
+      headers
+    }
+  );
+}
+
     const handler =
     routes.get(key);
 

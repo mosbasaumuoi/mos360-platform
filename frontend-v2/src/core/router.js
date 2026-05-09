@@ -65,15 +65,30 @@ function bindLinks() {
 // LOAD ROUTE
 // ============================================
 
-export async function loadRoute() {
+  export async function loadRoute() {
 
   const path =
     window.location.pathname;
 
   const pathname =
-  window.location.pathname;  
+    window.location.pathname;
 
-  const page =
+  // ========================================
+  // COURSE DETAIL
+  // ========================================
+
+  if (
+    pathname.startsWith(
+      "/courses/"
+    )
+  ) {
+
+    renderCourseDetailPage();
+
+    return;
+  }
+
+    const page =
     routes[path];
 
   if (!page) {
@@ -91,18 +106,7 @@ export async function loadRoute() {
     return;
   }
 
-  if (
-  pathname.startsWith(
-    "/courses/"
-  )
-) {
-
-  renderCourseDetailPage();
-
-  return;
-}
-
-  await page();
+    await page();
 
   bindLinks();
 }

@@ -8,6 +8,11 @@ import { handleCourses }
 from "../modules/courses/courses.routes.js";
 
 import {
+  handleCourseDetail
+}
+from "../modules/courses/courses.routes.js";
+
+import {
   handleLogin,
   handleMe
 }
@@ -81,7 +86,51 @@ export async function router(
   const key =
     `${request.method}:${url.pathname}`;
 
-  const handler =
+  // ==========================================
+// COURSE DETAIL
+// ==========================================
+
+if (
+
+  request.method === "GET"
+
+  &&
+
+  url.pathname.startsWith(
+    "/api/courses/"
+  )
+
+) {
+
+  const response =
+  await handleCourseDetail(
+    request
+  );
+
+const headers =
+  new Headers(
+    response.headers
+  );
+
+Object.entries(corsHeaders)
+  .forEach(([key, value]) => {
+
+    headers.set(key, value);
+
+  });
+
+return new Response(
+  response.body,
+  {
+    status:
+      response.status,
+
+    headers
+  }
+);
+}
+  
+    const handler =
     routes.get(key);
 
   // ==========================================

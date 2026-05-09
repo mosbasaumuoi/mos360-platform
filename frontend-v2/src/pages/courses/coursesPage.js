@@ -27,6 +27,11 @@ import {
 }
 from "../../components/states/emptyState.js";
 
+import {
+  navigate
+}
+from "../../core/router.js";
+
 export async function renderCoursesPage() {
 
   document.querySelector(
@@ -125,4 +130,30 @@ if (courses.length === 0) {
     renderAppLayout(
       content
     );
-}
+
+  document
+  .querySelectorAll(
+    ".course-card"
+  )
+  .forEach((card) => {
+
+    card.addEventListener(
+      "click",
+      () => {
+
+        const id =
+          card.dataset.id;
+
+        console.log(
+          "CLICK ID:",
+          id
+        );
+
+        navigate(
+          `/courses/${id}`
+        );
+      }
+    );
+
+  });
+  }

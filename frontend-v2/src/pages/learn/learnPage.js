@@ -25,6 +25,49 @@ export async function renderLearnPage() {
   const lessonId =
     Number(parts[3]);
 
+// ========================================
+// ENROLL CHECK
+// ========================================
+
+const enrolledCourses =
+
+  JSON.parse(
+
+    localStorage.getItem(
+      "enrolled_courses"
+    ) || "[]"
+
+  );
+
+if (
+
+  !enrolledCourses.includes(
+    courseId
+  )
+
+) {
+
+  document.querySelector(
+    "#app"
+  ).innerHTML =
+
+    renderAppLayout(`
+
+      <div class="page">
+
+        <h1>
+
+          Please enroll first
+
+        </h1>
+
+      </div>
+
+    `);
+
+  return;
+}
+
   // ========================================
   // CURRENT LESSON
   // ========================================
@@ -39,6 +82,46 @@ export async function renderLearnPage() {
 
   if (!result.ok) {
 
+// ========================================
+// STREAK
+// ========================================
+
+const today =
+
+  new Date()
+    .toDateString();
+
+const lastDate =
+
+  localStorage.getItem(
+    "last_learning_date"
+  );
+
+let streak =
+
+  Number(
+
+    localStorage.getItem(
+      "learning_streak"
+    ) || 0
+
+  );
+
+if (lastDate !== today) {
+
+  streak += 1;
+
+  localStorage.setItem(
+    "learning_streak",
+    streak
+  );
+
+  localStorage.setItem(
+    "last_learning_date",
+    today
+  );
+}
+    
     document.querySelector(
       "#app"
     ).innerHTML =

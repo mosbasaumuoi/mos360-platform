@@ -47,6 +47,26 @@ export async function renderCourseDetailPage() {
   const course =
     result.data;
 
+// ========================================
+// ENROLLED
+// ========================================
+
+const enrolledCourses =
+
+  JSON.parse(
+
+    localStorage.getItem(
+      "enrolled_courses"
+    ) || "[]"
+
+  );
+
+const isEnrolled =
+
+  enrolledCourses.includes(
+    course.id
+  );  
+
   const content = `
 
   <div class="page">
@@ -135,7 +155,15 @@ export async function renderCourseDetailPage() {
     id="startLearning"
   >
 
-    START LEARNING
+    ${
+
+  isEnrolled
+
+    ? "START LEARNING"
+
+    : "ENROLL NOW"
+
+}
 
   </button>
 
@@ -205,26 +233,47 @@ document.querySelector(
 // ========================================
 
 document.querySelector(
-  "#continueLearning"
+  "#startLearning"
 ).onclick = () => {
 
-  const lastLesson =
+  // ======================================
+  // ENROLL
+  // ======================================
 
-    localStorage.getItem(
+  if (!isEnrolled) {
 
-      `last_lesson_${
-        course.id
-      }`
+    enrolledCourses.push(
+      course.id
+    );
+
+    localStorage.setItem(
+
+      "enrolled_courses",
+
+      JSON.stringify(
+        enrolledCourses
+      )
 
     );
+
+    alert(
+      "Enroll success!"
+    );
+
+    renderCourseDetailPage();
+
+    return;
+  }
+
+  // ======================================
+  // START LEARNING
+  // ======================================
 
   navigate(
 
     `/learn/${
       course.id
-    }/${
-      lastLesson || 1
-    }`
+    }/1`
 
   );
 };

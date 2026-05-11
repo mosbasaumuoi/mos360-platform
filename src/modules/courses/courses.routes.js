@@ -40,42 +40,51 @@ const courses = [
     lessons: [
 
       {
-        id: 1,
+    id: 1,
 
-        title:
-          "Excel Basics",
+    title:
+    "Excel Basics",
 
-        content:
-          "Giới thiệu giao diện Excel, workbook, worksheet và các thao tác cơ bản.",
+    duration:
+    "12:40",
 
-        video:
-         "https://www.youtube.com/embed/UB1O30fR-EE"
-      },
+    thumbnail:
+    "EXCEL",
 
-      {
-        id: 2,
-
-        title:
-          "Functions & Formulas",
-
-        content:
-           "Học cách sử dụng SUM, IF, VLOOKUP và các công thức quan trọng.",
-
-        video:
-            "https://www.youtube.com/embed/k1VUZEVuDJ8"
-      },
+    content:
+    "Học các thao tác cơ bản trong Excel."
+   },
 
       {
-        id: 3,
+    id: 2,
+  
+    title:
+    "Functions & Formulas",
 
-        title:
-          "Pivot Table",
+     duration:
+    "24:10",
 
-        content:
-           "Phân tích dữ liệu bằng Pivot Table và Dashboard.",
+     thumbnail:
+    "FORMULA",
 
-        video:
-           "https://www.youtube.com/embed/eKYhwGjxsro"
+     content:
+    "Học cách sử dụng SUM, IF, VLOOKUP..."
+   },
+
+      {
+      id: 3,
+
+      title:
+      "Pivot Table",
+
+      duration:
+       "18:20",
+
+      thumbnail:
+       "PIVOT",
+
+  content:
+    "Phân tích dữ liệu bằng Pivot Table và Dashboard."
       }
 
     ]

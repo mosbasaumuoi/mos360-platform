@@ -776,7 +776,7 @@ a {
 
   border-radius: 999px;
 
-  overflow: hidden;
+  overflow-x: hidden;
 
   margin: 16px 0;
 }
@@ -835,20 +835,17 @@ a {
 
 .certificate-modal {
 
-  position: fixed;
+  width: min(1000px, 95vw);
 
-  inset: 0;
+  background: #fff;
 
-  background:
-    rgba(0,0,0,0.8);
+  border-radius: 24px;
 
-  display: none;
+  overflow: hidden;
 
-  align-items: center;
+  margin: auto;
 
-  justify-content: center;
-
-  z-index: 999;
+  flex-shrink: 0;
 }
 
 .certificate-box {
@@ -904,6 +901,32 @@ a {
   font-weight: bold;
 
   cursor: pointer;
+}
+
+.certificate-overlay {
+
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background:
+    rgba(0,0,0,0.75);
+
+  z-index: 999999;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: flex-start;
+
+  overflow-y: auto;
+
+  padding: 40px 20px;
 }
 
 .analytics-grid {
@@ -1429,7 +1452,7 @@ a {
 
   border-radius: 999px;
 
-  overflow: hidden;
+  overflow-x: hidden;
 
   margin: 12px 0;
 }
@@ -1448,4 +1471,29 @@ a {
   border-radius: 999px;
 
   transition: 0.3s;
+}
+
+.certificate-btn {
+
+  background: #ffb000;
+
+  color: #000;
+
+  border: none;
+
+  font-weight: 700;
+
+  transition: 0.2s;
+
+}
+
+.certificate-btn:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+
+    0 0 15px
+    rgba(255,176,0,0.5);
+
 }

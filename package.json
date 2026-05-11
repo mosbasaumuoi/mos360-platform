@@ -1,25 +1,16 @@
 {
   "name": "mos360-platform",
-
   "version": "1.0.0",
-
   "type": "module",
-
   "scripts": {
-
-    "dev":
-      "wrangler dev"
+    "dev": "wrangler dev"
   },
-
   "dependencies": {
-
-    "jose":
-      "^5.10.0"
+    "html2canvas": "^1.4.1",
+    "jose": "^5.10.0",
+    "jspdf": "^4.2.1"
   },
-
   "devDependencies": {
-
-    "wrangler":
-      "^3.114.0"
+    "wrangler": "^3.114.0"
   }
 }

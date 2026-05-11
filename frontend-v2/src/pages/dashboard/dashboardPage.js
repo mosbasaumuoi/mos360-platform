@@ -16,6 +16,14 @@ from "../../core/router.js";
 import html2canvas
 from "html2canvas";
 
+import jsPDF
+from "jspdf";
+
+import {
+  openCertificateModal
+}
+from "../../components/certificate/certificateModal.js";
+
 export async function renderDashboardPage() {
 
   // ========================================
@@ -411,7 +419,15 @@ export async function renderDashboardPage() {
 
             >
 
-              Continue Learning
+              ${
+
+            isCompleted
+
+               ? "🔁 Review Learning"
+
+               : "Continue Learning"
+
+            }
 
             </button>
 
@@ -690,17 +706,17 @@ export async function renderDashboardPage() {
 
   `;
 
-  // ========================================
-  // RENDER
-  // ========================================
+// ========================================
+// RENDER
+// ========================================
 
-  document.querySelector(
-    "#app"
-  ).innerHTML =
+document.querySelector(
+  "#app"
+).innerHTML =
 
-    renderAppLayout(
-      content
-    );
+  renderAppLayout(
+    content
+  );
 
   // ========================================
   // CONTINUE BUTTON
@@ -786,5 +802,33 @@ export async function renderDashboardPage() {
         renderDashboardPage();
       };
     });
+
+// ========================================
+// CERTIFICATE MODAL
+// ========================================
+
+document
+  .querySelectorAll(
+    ".certificate-btn"
+  )
+  .forEach((button) => {
+
+    button.onclick = () => {
+
+      openCertificateModal({
+
+        studentName:
+
+          user?.name ||
+
+          "Student",
+
+        courseTitle:
+
+          button.dataset.courseTitle
+
+      });
+    };
+  });
 
 }

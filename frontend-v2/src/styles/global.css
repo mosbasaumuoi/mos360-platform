@@ -945,3 +945,362 @@ a {
 
   color: orange;
 }
+
+/* =========================================
+   LEARN LAYOUT
+========================================= */
+
+.learn-layout {
+
+  display: flex;
+
+  gap: 24px;
+
+  padding: 24px;
+}
+
+/* =========================================
+   SIDEBAR
+========================================= */
+
+.learn-sidebar {
+
+  width: 300px;
+
+  background: #111;
+
+  border: 1px solid #222;
+
+  border-radius: 16px;
+
+  padding: 20px;
+
+  height: fit-content;
+}
+
+.learn-sidebar h2 {
+
+  color: orange;
+
+  margin-bottom: 20px;
+}
+
+/* =========================================
+   LESSON ITEM
+========================================= */
+
+.lesson-sidebar-item {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 14px;
+
+  border-radius: 10px;
+
+  margin-bottom: 10px;
+
+  background: #181818;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.lesson-sidebar-item:hover {
+
+  background: #222;
+}
+
+.lesson-sidebar-item.active {
+
+  background: orange;
+
+  color: black;
+
+  font-weight: bold;
+}
+
+/* =========================================
+   CONTENT
+========================================= */
+
+.learn-content {
+
+  flex: 1;
+}
+
+.learn-content h1 {
+
+  color: orange;
+
+  font-size: 52px;
+
+  margin-bottom: 10px;
+}
+
+/* =========================================
+   VIDEO
+========================================= */
+
+.video-player {
+
+  height: 360px;
+
+  background: #111;
+
+  border-radius: 16px;
+
+  border: 1px solid #222;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 32px;
+
+  margin: 24px 0;
+}
+
+/* =========================================
+   CONTENT BOX
+========================================= */
+
+.lesson-content-box {
+
+  background: #111;
+
+  padding: 24px;
+
+  border-radius: 16px;
+
+  border: 1px solid #222;
+
+  line-height: 1.8;
+}
+
+/* =========================================
+   ACTIONS
+========================================= */
+
+.lesson-actions {
+
+  margin-top: 24px;
+}
+
+.lesson-actions button {
+
+  background: orange;
+
+  border: none;
+
+  padding: 14px 22px;
+
+  border-radius: 10px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.completed-btn {
+
+  background: limegreen !important;
+
+  color: white;
+}
+
+/* =========================================
+   VIDEO PLAYER UI
+========================================= */
+
+.video-player {
+
+  position: relative;
+
+  height: 420px;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #222,
+      #111
+    );
+
+  border: 1px solid #333;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin: 24px 0;
+}
+
+/* PLAY BUTTON */
+
+.video-overlay {
+
+  width: 100px;
+
+  height: 100px;
+
+  border-radius: 50%;
+
+  background: rgba(
+    255,
+    165,
+    0,
+    0.9
+  );
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 48px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.video-overlay:hover {
+
+  transform: scale(1.08);
+}
+
+/* INFO */
+
+.video-info {
+
+  position: absolute;
+
+  left: 24px;
+
+  bottom: 60px;
+}
+
+.video-info h3 {
+
+  font-size: 28px;
+
+  margin-bottom: 6px;
+}
+
+/* PROGRESS */
+
+.video-progress {
+
+  position: absolute;
+
+  left: 24px;
+
+  right: 24px;
+
+  bottom: 24px;
+
+  height: 8px;
+
+  border-radius: 999px;
+
+  background: #333;
+
+  overflow: hidden;
+}
+
+.video-progress-fill {
+
+  width: 35%;
+
+  height: 100%;
+
+  background: orange;
+}
+
+/* =========================================
+   VIDEO STATUS
+========================================= */
+
+.video-status {
+
+  position: absolute;
+
+  top: 24px;
+
+  left: 24px;
+
+  background: rgba(
+    0,
+    0,
+    0,
+    0.6
+  );
+
+  padding: 10px 16px;
+
+  border-radius: 999px;
+
+  font-size: 14px;
+
+  border: 1px solid #333;
+}
+
+/* =========================================
+   BADGES
+========================================= */
+
+.badges-section {
+
+  margin-bottom: 28px;
+}
+
+.badges-section h2 {
+
+  margin-bottom: 16px;
+
+  color: orange;
+}
+
+.badges-list {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 14px;
+}
+
+.badge-item {
+
+  background: #111;
+
+  border: 1px solid #222;
+
+  padding: 14px 18px;
+
+  border-radius: 999px;
+
+  font-weight: bold;
+
+  transition: 0.2s;
+}
+
+.badge-item:hover {
+
+  transform: translateY(-2px);
+
+  border-color: orange;
+}

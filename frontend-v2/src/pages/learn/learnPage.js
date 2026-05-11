@@ -16,6 +16,7 @@ from "../../core/router.js";
 export async function renderLearnPage() {
 
   const parts =
+
     window.location.pathname
       .split("/");
 
@@ -25,54 +26,45 @@ export async function renderLearnPage() {
   const lessonId =
     Number(parts[3]);
 
-// ========================================
-// ENROLL CHECK
-// ========================================
+  // ========================================
+  // LOAD COURSE
+  // ========================================
 
-const enrolledCourses =
+  const courseResult =
 
-  JSON.parse(
+    await apiGet(
+      `/courses/${courseId}`,
+      {
+        silent: true
+      }
+    );
 
-    localStorage.getItem(
-      "enrolled_courses"
-    ) || "[]"
+  if (!courseResult.ok) {
 
-  );
+    document.querySelector(
+      "#app"
+    ).innerHTML =
 
-if (
-
-  !enrolledCourses.includes(
-    courseId
-  )
-
-) {
-
-  document.querySelector(
-    "#app"
-  ).innerHTML =
-
-    renderAppLayout(`
-
-      <div class="page">
+      renderAppLayout(`
 
         <h1>
-
-          Please enroll first
-
+          Course not found
         </h1>
 
-      </div>
+      `);
 
-    `);
+    return;
+  }
 
-  return;
-}
+  const course =
+    courseResult.data;
 
   // ========================================
-  // CURRENT LESSON
+  // LOAD LESSON
   // ========================================
 
-  const result =
+  const lessonResult =
+
     await apiGet(
       `/learn/${courseId}/${lessonId}`,
       {
@@ -80,51 +72,12 @@ if (
       }
     );
 
-  if (!result.ok) {
+  if (!lessonResult.ok) {
 
-// ========================================
-// STREAK
-// ========================================
-
-const today =
-
-  new Date()
-    .toDateString();
-
-const lastDate =
-
-  localStorage.getItem(
-    "last_learning_date"
-  );
-
-let streak =
-
-  Number(
-
-    localStorage.getItem(
-      "learning_streak"
-    ) || 0
-
-  );
-
-if (lastDate !== today) {
-
-  streak += 1;
-
-  localStorage.setItem(
-    "learning_streak",
-    streak
-  );
-
-  localStorage.setItem(
-    "last_learning_date",
-    today
-  );
-}
-    
     document.querySelector(
       "#app"
     ).innerHTML =
+
       renderAppLayout(`
 
         <h1>
@@ -136,131 +89,188 @@ if (lastDate !== today) {
     return;
   }
 
-  // ========================================
-  // COURSE DETAIL
-  // ========================================
-
-  const courseResult =
-    await apiGet(
-      `/courses/${courseId}`,
-      {
-        silent: true
-      }
-    );
-
-  const course =
-    courseResult.data;
+  const data =
+    lessonResult.data;
 
   const lesson =
-    result.data.lesson;
+    data.lesson;
 
-    // ========================================
-    // SAVE LAST LESSON
-    // ========================================
+  // ========================================
+  // STREAK
+  // ========================================
 
-localStorage.setItem(
+  const today =
 
-  `last_lesson_${courseId}`,
+    new Date()
+      .toDateString();
 
-  lesson.id
-
-);
-
-    // ========================================
-    // PROGRESS
-    // ========================================
-
-const progressKey =
-
-  `course_progress_${courseId}`;
-
-const completedLessons =
-
-  JSON.parse(
+  const lastDate =
 
     localStorage.getItem(
-      progressKey
-    ) || "[]"
+      "last_learning_date"
+    );
 
-  );
+  let streak =
 
-if (
+    Number(
 
-  !completedLessons.includes(
-    lesson.id
-  )
+      localStorage.getItem(
+        "learning_streak"
+      ) || 0
 
-) {
+    );
 
-  completedLessons.push(
-    lesson.id
-  );
+  if (lastDate !== today) {
+
+    streak += 1;
+
+    localStorage.setItem(
+      "learning_streak",
+      streak
+    );
+
+    localStorage.setItem(
+      "last_learning_date",
+      today
+    );
+  }
+
+  // ========================================
+  // SAVE LAST LESSON
+  // ========================================
 
   localStorage.setItem(
 
-    progressKey,
+    `last_lesson_${courseId}`,
 
-    JSON.stringify(
-      completedLessons
-    )
+    lessonId
 
   );
-}
+
+  // ========================================
+  // PROGRESS
+  // ========================================
+
+  const progressKey =
+
+    `course_progress_${courseId}`;
+
+  let completedLessons =
+
+    JSON.parse(
+
+      localStorage.getItem(
+        progressKey
+      ) || "[]"
+
+    );
+
+  if (
+    !completedLessons.includes(
+      lessonId
+    )
+  ) {
+
+    completedLessons.push(
+      lessonId
+    );
+
+    localStorage.setItem(
+
+      progressKey,
+
+      JSON.stringify(
+        completedLessons
+      )
+
+    );
+  }
 
   // ========================================
   // SIDEBAR
   // ========================================
 
-  const lessonList =
+  const lessonsHtml =
+
     course.lessons.map(
-      item => `
+      (item) => {
 
-        <div
+        const completed =
 
-          class="
-            lesson-sidebar-item
+          completedLessons.includes(
+            item.id
+          );
 
-            ${
-              item.id === lesson.id
-              ? "active"
-              : ""
-            }
-          "
+        const active =
 
-          data-lesson-id="${item.id}"
+          item.id === lessonId;
 
-        >
+        return `
 
-          ${
+          <div
 
-  completedLessons.includes(
-    item.id
-  )
+            class="
+              lesson-sidebar-item
 
-    ? "✓"
+              ${
+                active
+                  ? "active"
+                  : ""
+              }
+            "
 
-    : item.id === lesson.id
+            data-lesson-id="${item.id}"
 
-      ? "▶"
+          >
 
-      : "○"
+            <span>
 
-}
+              ${
+                completed
+                  ? "✅"
+                  : "📘"
+              }
 
-${item.title}
+            </span>
 
-        </div>
+            <span>
 
-      `
+              ${item.title}
+
+            </span>
+
+          </div>
+
+        `;
+      }
     ).join("");
 
   // ========================================
-  // CONTENT
+  // NEXT LESSON
+  // ========================================
+
+  const currentIndex =
+
+    course.lessons.findIndex(
+      item =>
+        item.id === lessonId
+    );
+
+  const nextLesson =
+
+    course.lessons[
+      currentIndex + 1
+    ];
+
+  // ========================================
+  // PAGE
   // ========================================
 
   const content = `
 
     <div class="learn-layout">
+
+      <!-- SIDEBAR -->
 
       <div class="learn-sidebar">
 
@@ -270,11 +280,13 @@ ${item.title}
 
         </h2>
 
-        ${lessonList}
+        ${lessonsHtml}
 
       </div>
 
-      <div class="learn-main">
+      <!-- CONTENT -->
+
+      <div class="learn-content">
 
         <h1>
 
@@ -290,24 +302,50 @@ ${item.title}
 
         <div class="video-player">
 
-  <iframe
+        <div
+        class="video-overlay"
+        id="playVideoBtn"
+        >
 
-    width="100%"
-    height="500"
+    ▶
 
-    src="${lesson.video}"
+       </div>
 
-    title="Lesson Video"
+       <div class="video-info">
 
-    frameborder="0"
+      <h3>
 
-    allowfullscreen
+      ${lesson.title}
 
-  ></iframe>
+      </h3>
+
+      <p>
+
+      ${lesson.duration}
+
+      </p>
+
+      <div
+      class="video-status"
+      id="videoStatus"
+      >
+
+       Ready to play
+
+      </div>
+      </div>
+
+     <div class="video-progress">
+
+     <div
+      class="video-progress-fill"
+    ></div>
+
+       </div>
 
         </div>
 
-        <div class="lesson-content">
+        <div class="lesson-content-box">
 
           ${lesson.content}
 
@@ -315,21 +353,33 @@ ${item.title}
 
         <div class="lesson-actions">
 
-          <button
-            id="prevLesson"
-          >
+          ${
+            nextLesson
 
-            Previous
+              ? `
 
-          </button>
+                <button
+                  id="nextLessonBtn"
+                >
 
-          <button
-            id="nextLesson"
-          >
+                  Next Lesson →
 
-            Next
+                </button>
 
-          </button>
+              `
+
+              : `
+
+                <button
+                  class="completed-btn"
+                >
+
+                  🎉 Course Completed
+
+                </button>
+
+              `
+          }
 
         </div>
 
@@ -342,12 +392,13 @@ ${item.title}
   document.querySelector(
     "#app"
   ).innerHTML =
+
     renderAppLayout(
       content
     );
 
   // ========================================
-  // SIDEBAR NAVIGATION
+  // SIDEBAR CLICK
   // ========================================
 
   document
@@ -371,63 +422,14 @@ ${item.title}
     });
 
   // ========================================
-  // NEXT / PREVIOUS
+  // NEXT LESSON
   // ========================================
-
-  const currentIndex =
-    course.lessons.findIndex(
-      item =>
-        item.id === lesson.id
-    );
-
-  const prevLesson =
-    course.lessons[
-      currentIndex - 1
-    ];
-
-  const nextLesson =
-    course.lessons[
-      currentIndex + 1
-    ];
-
-  // PREVIOUS
-
-  const prevButton =
-    document.querySelector(
-      "#prevLesson"
-    );
-
-  if (prevLesson) {
-
-    prevButton.onclick = () => {
-
-      navigate(
-
-        `/learn/${
-          courseId
-        }/${
-          prevLesson.id
-        }`
-
-      );
-    };
-
-  } else {
-
-    prevButton.disabled =
-      true;
-  }
-
-  // NEXT
-
-  const nextButton =
-    document.querySelector(
-      "#nextLesson"
-    );
 
   if (nextLesson) {
 
-    nextButton.onclick = () => {
+    document.querySelector(
+      "#nextLessonBtn"
+    ).onclick = () => {
 
       navigate(
 
@@ -439,10 +441,100 @@ ${item.title}
 
       );
     };
-
-  } else {
-
-    nextButton.disabled =
-      true;
   }
+
+// ========================================
+// VIDEO PLAYER
+// ========================================
+
+const playBtn =
+
+  document.querySelector(
+    "#playVideoBtn"
+  );
+
+const videoStatus =
+
+  document.querySelector(
+    "#videoStatus"
+  );
+
+const progressBar =
+
+  document.querySelector(
+    ".video-progress-fill"
+  );
+
+let playing = false;
+
+playBtn.onclick = () => {
+
+  if (playing) {
+    return;
+  }
+
+  playing = true;
+
+  playBtn.innerHTML =
+    "⏸";
+
+  videoStatus.innerText =
+    "Loading video...";
+
+  setTimeout(() => {
+
+    videoStatus.innerText =
+      "Playing lesson...";
+
+    let progress = 35;
+
+    const interval =
+
+      setInterval(() => {
+
+        progress += 1;
+
+        progressBar.style.width =
+
+          `${progress}%`;
+
+        if (progress >= 100) {
+
+          clearInterval(
+            interval
+          );
+
+          videoStatus.innerText =
+
+            "Lesson completed ✅";
+// ======================================
+// XP
+// ======================================
+
+let xp =
+
+  Number(
+
+    localStorage.getItem(
+      "user_xp"
+    ) || 0
+
+  );
+
+xp += 50;
+
+localStorage.setItem(
+  "user_xp",
+  xp
+);  
+
+          playBtn.innerHTML =
+            "✓";
+        }
+
+      }, 120);
+
+  }, 1000);
+};  
+
 }

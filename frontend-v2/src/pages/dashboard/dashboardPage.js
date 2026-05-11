@@ -33,7 +33,7 @@ export async function renderDashboardPage() {
     );
 
   // ========================================
-  // ENROLLED
+  // ENROLLED COURSES
   // ========================================
 
   const enrolledCourses =
@@ -47,7 +47,7 @@ export async function renderDashboardPage() {
     );
 
   // ========================================
-  // EMPTY
+  // EMPTY STATE
   // ========================================
 
   if (
@@ -86,6 +86,7 @@ export async function renderDashboardPage() {
   // ========================================
 
   const result =
+
     await apiGet(
       "/courses",
       {
@@ -97,6 +98,7 @@ export async function renderDashboardPage() {
     result.data || [];
 
   const courses =
+
     allCourses.filter(
       course =>
 
@@ -106,10 +108,150 @@ export async function renderDashboardPage() {
     );
 
   // ========================================
-  // ITEMS
+  // COMPLETED COURSES
+  // ========================================
+
+  const completedCourses =
+
+    courses.filter(
+      course => {
+
+        const completedLessons =
+
+          JSON.parse(
+
+            localStorage.getItem(
+
+              `course_progress_${
+                course.id
+              }`
+
+            ) || "[]"
+
+          );
+
+        return (
+
+          completedLessons.length
+          ===
+          course.lessons.length
+
+        );
+      }
+    );
+
+  // ========================================
+  // CERTIFICATES
+  // ========================================
+
+  const certificates =
+
+    JSON.parse(
+
+      localStorage.getItem(
+        "generated_certificates"
+      ) || "[]"
+
+    );
+
+  // ========================================
+  // STREAK
+  // ========================================
+
+  const streak =
+
+    Number(
+
+      localStorage.getItem(
+        "learning_streak"
+      ) || 0
+
+    );
+
+  // ========================================
+  // XP + LEVEL
+  // ========================================
+
+  const xp =
+
+    Number(
+
+      localStorage.getItem(
+        "user_xp"
+      ) || 0
+
+    );
+
+  const level =
+
+    Math.floor(
+      xp / 200
+    ) + 1;
+
+  const nextLevelXp =
+
+    level * 200;
+
+  // ========================================
+  // BADGES
+  // ========================================
+
+  const badges = [];
+
+  if (streak >= 1) {
+
+    badges.push(
+      "🔥 First Streak"
+    );
+  }
+
+  if (streak >= 7) {
+
+    badges.push(
+      "🔥 7 Day Streak"
+    );
+  }
+
+  if (
+    completedCourses.length >= 1
+  ) {
+
+    badges.push(
+      "📘 First Course"
+    );
+  }
+
+  if (
+    completedCourses.length >= 5
+  ) {
+
+    badges.push(
+      "🎓 Course Master"
+    );
+  }
+
+  if (level >= 5) {
+
+    badges.push(
+      "⚡ Level 5"
+    );
+  }
+
+  if (
+    certificates.length >= 1
+  ) {
+
+    badges.push(
+      "🏆 First Certificate"
+    );
+  }
+
+  // ========================================
+  // COURSE ITEMS
   // ========================================
 
   const items =
+
     courses.map((course) => {
 
       const progressKey =
@@ -260,25 +402,6 @@ export async function renderDashboardPage() {
     }).join("");
 
   // ========================================
-  // CERTIFICATES
-  // ========================================
-  const streak =
-
-  localStorage.getItem(
-    "learning_streak"
-  ) || 0;
-    
-  const certificates =
-
-    JSON.parse(
-
-      localStorage.getItem(
-        "generated_certificates"
-      ) || "[]"
-
-    );
-
-  // ========================================
   // PAGE
   // ========================================
 
@@ -291,6 +414,8 @@ export async function renderDashboardPage() {
         MOS360 DASHBOARD
 
       </h1>
+
+      <!-- ANALYTICS -->
 
       <div
         class="analytics-grid"
@@ -326,36 +451,7 @@ export async function renderDashboardPage() {
 
           <h2>
 
-            ${
-
-              courses.filter(
-                course => {
-
-                  const completedLessons =
-
-                    JSON.parse(
-
-                      localStorage.getItem(
-
-                        `course_progress_${
-                          course.id
-                        }`
-
-                      ) || "[]"
-
-                    );
-
-                  return (
-
-                    completedLessons.length
-                    ===
-                    course.lessons.length
-
-                  );
-                }
-              ).length
-
-            }
+            ${completedCourses.length}
 
           </h2>
 
@@ -380,30 +476,93 @@ export async function renderDashboardPage() {
         </div>
 
         <div
-  class="analytics-card"
->
+          class="analytics-card"
+        >
 
-  <h3>
+          <h3>
 
-    Learning Streak
+            Learning Streak
 
-  </h3>
+          </h3>
 
-  <h2>
+          <h2>
 
-    🔥 ${streak}
+            🔥 ${streak}
 
-  </h2>
+          </h2>
 
-</div>
+        </div>
+
+        <div
+          class="analytics-card"
+        >
+
+          <h3>
+
+            LEVEL
+
+          </h3>
+
+          <h2>
+
+            ${level}
+
+          </h2>
+
+          <p>
+
+            XP:
+            ${xp}
+            /
+            ${nextLevelXp}
+
+          </p>
+
+        </div>
 
       </div>
+
+      <!-- BADGES -->
+
+      <div class="badges-section">
+
+        <h2>
+
+          🏅 Achievements
+
+        </h2>
+
+        <div class="badges-list">
+
+          ${badges.map(
+
+            badge => `
+
+              <div
+                class="badge-item"
+              >
+
+                ${badge}
+
+              </div>
+
+            `
+
+          ).join("")}
+
+        </div>
+
+      </div>
+
+      <!-- COURSES -->
 
       <div class="dashboard-list">
 
         ${items}
 
       </div>
+
+      <!-- CERTIFICATE MODAL -->
 
       <div
         id="certificateModal"
@@ -486,6 +645,10 @@ export async function renderDashboardPage() {
 
   `;
 
+  // ========================================
+  // RENDER
+  // ========================================
+
   document.querySelector(
     "#app"
   ).innerHTML =
@@ -495,7 +658,7 @@ export async function renderDashboardPage() {
     );
 
   // ========================================
-  // CONTINUE
+  // CONTINUE BUTTON
   // ========================================
 
   document
@@ -519,7 +682,7 @@ export async function renderDashboardPage() {
     });
 
   // ========================================
-  // CERTIFICATE
+  // OPEN CERTIFICATE
   // ========================================
 
   document
@@ -557,7 +720,7 @@ export async function renderDashboardPage() {
     });
 
   // ========================================
-  // CLOSE
+  // CLOSE CERTIFICATE
   // ========================================
 
   document.querySelector(
@@ -571,7 +734,7 @@ export async function renderDashboardPage() {
   };
 
   // ========================================
-  // DOWNLOAD
+  // DOWNLOAD CERTIFICATE
   // ========================================
 
   document.querySelector(
@@ -609,7 +772,7 @@ export async function renderDashboardPage() {
     link.click();
 
     // ======================================
-    // TRACK
+    // SAVE CERTIFICATE
     // ======================================
 
     certificates.push({

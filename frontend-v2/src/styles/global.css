@@ -1304,3 +1304,148 @@ a {
 
   border-color: orange;
 }
+
+/* =========================================
+   DAILY MISSIONS
+========================================= */
+
+.missions-section {
+
+  margin-bottom: 28px;
+}
+
+.missions-section h2 {
+
+  color: orange;
+
+  margin-bottom: 16px;
+}
+
+.missions-list {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.mission-item {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 16px;
+
+  background: #111;
+
+  border: 1px solid #222;
+
+  padding: 16px 18px;
+
+  border-radius: 14px;
+}
+
+.mission-item.completed {
+
+  border-color: limegreen;
+
+  background: rgba(
+    50,
+    205,
+    50,
+    0.08
+  );
+}
+
+.mission-reward {
+
+  color: orange;
+
+  font-weight: bold;
+}
+
+/* =========================================
+   MISSION
+========================================= */
+
+.mission-left,
+.mission-right {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+}
+
+/* CLAIM BUTTON */
+
+.claim-btn {
+
+  background: orange;
+
+  border: none;
+
+  color: black;
+
+  font-weight: bold;
+
+  padding: 10px 16px;
+
+  border-radius: 999px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.claim-btn:hover {
+
+  transform: scale(1.05);
+}
+
+/* CLAIMED */
+
+.claim-btn.claimed {
+
+  background: limegreen;
+
+  color: white;
+}
+
+/* =========================================
+   XP BAR
+========================================= */
+
+.xp-bar {
+
+  height: 10px;
+
+  background: #222;
+
+  border-radius: 999px;
+
+  overflow: hidden;
+
+  margin: 12px 0;
+}
+
+.xp-fill {
+
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      orange,
+      gold
+    );
+
+  border-radius: 999px;
+
+  transition: 0.3s;
+}

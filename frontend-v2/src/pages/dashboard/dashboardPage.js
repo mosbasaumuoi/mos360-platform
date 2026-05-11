@@ -63,15 +63,11 @@ export async function renderDashboardPage() {
         <div class="page">
 
           <h1>
-
             DASHBOARD
-
           </h1>
 
           <p>
-
             No enrolled courses yet.
-
           </p>
 
         </div>
@@ -116,25 +112,15 @@ export async function renderDashboardPage() {
     courses.filter(
       course => {
 
-        const completedLessons =
-
-          JSON.parse(
-
-            localStorage.getItem(
-
-              `course_progress_${
-                course.id
-              }`
-
-            ) || "[]"
-
-          );
-
         return (
 
-          completedLessons.length
-          ===
-          course.lessons.length
+          localStorage.getItem(
+
+            `course_completed_${
+              course.id
+            }`
+
+          ) === "true"
 
         );
       }
@@ -193,6 +179,84 @@ export async function renderDashboardPage() {
     level * 200;
 
   // ========================================
+  // CLAIMED REWARDS
+  // ========================================
+
+  const claimedRewards =
+
+    JSON.parse(
+
+      localStorage.getItem(
+        "claimed_rewards"
+      ) || "[]"
+
+    );
+
+  // ========================================
+  // DAILY MISSIONS
+  // ========================================
+
+  const watchedLessons =
+
+    Number(
+
+      localStorage.getItem(
+        "watched_lessons_today"
+      ) || 0
+
+    );
+
+  const generatedCertificates =
+
+    certificates.length;
+
+  const dailyMissions = [
+
+    {
+      id:
+        "complete_1",
+
+      title:
+        "Complete 1 lesson",
+
+      completed:
+        watchedLessons >= 1,
+
+      reward:
+        "+50 XP"
+    },
+
+    {
+      id:
+        "watch_3",
+
+      title:
+        "Watch 3 lessons",
+
+      completed:
+        watchedLessons >= 3,
+
+      reward:
+        "+150 XP"
+    },
+
+    {
+      id:
+        "certificate",
+
+      title:
+        "Earn certificate",
+
+      completed:
+        generatedCertificates >= 1,
+
+      reward:
+        "+300 XP"
+    }
+
+  ];
+
+  // ========================================
   // BADGES
   // ========================================
 
@@ -205,13 +269,6 @@ export async function renderDashboardPage() {
     );
   }
 
-  if (streak >= 7) {
-
-    badges.push(
-      "🔥 7 Day Streak"
-    );
-  }
-
   if (
     completedCourses.length >= 1
   ) {
@@ -221,28 +278,10 @@ export async function renderDashboardPage() {
     );
   }
 
-  if (
-    completedCourses.length >= 5
-  ) {
-
-    badges.push(
-      "🎓 Course Master"
-    );
-  }
-
   if (level >= 5) {
 
     badges.push(
       "⚡ Level 5"
-    );
-  }
-
-  if (
-    certificates.length >= 1
-  ) {
-
-    badges.push(
-      "🏆 First Certificate"
     );
   }
 
@@ -288,7 +327,13 @@ export async function renderDashboardPage() {
 
       const isCompleted =
 
-        progress === 100;
+        localStorage.getItem(
+
+          `course_completed_${
+            course.id
+          }`
+
+        ) === "true";
 
       const lastLesson =
 
@@ -426,15 +471,11 @@ export async function renderDashboardPage() {
         >
 
           <h3>
-
             Enrolled Courses
-
           </h3>
 
           <h2>
-
             ${courses.length}
-
           </h2>
 
         </div>
@@ -444,15 +485,11 @@ export async function renderDashboardPage() {
         >
 
           <h3>
-
             Completed Courses
-
           </h3>
 
           <h2>
-
             ${completedCourses.length}
-
           </h2>
 
         </div>
@@ -462,15 +499,11 @@ export async function renderDashboardPage() {
         >
 
           <h3>
-
             Certificates
-
           </h3>
 
           <h2>
-
             ${certificates.length}
-
           </h2>
 
         </div>
@@ -480,15 +513,11 @@ export async function renderDashboardPage() {
         >
 
           <h3>
-
             Learning Streak
-
           </h3>
 
           <h2>
-
             🔥 ${streak}
-
           </h2>
 
         </div>
@@ -498,23 +527,42 @@ export async function renderDashboardPage() {
         >
 
           <h3>
-
             LEVEL
-
           </h3>
 
           <h2>
-
             ${level}
-
           </h2>
+
+          <div
+            class="xp-bar"
+          >
+
+            <div
+
+              class="xp-fill"
+
+              style="
+                width:
+                ${
+                  (
+                    xp
+                    /
+                    nextLevelXp
+                  ) * 100
+                }%
+              "
+
+            ></div>
+
+          </div>
 
           <p>
 
-            XP:
             ${xp}
             /
             ${nextLevelXp}
+            XP
 
           </p>
 
@@ -522,27 +570,103 @@ export async function renderDashboardPage() {
 
       </div>
 
-      <!-- BADGES -->
+      <!-- DAILY MISSIONS -->
 
-      <div class="badges-section">
+      <div
+        class="missions-section"
+      >
 
         <h2>
 
-          🏅 Achievements
+          📅 Daily Missions
 
         </h2>
 
-        <div class="badges-list">
+        <div
+          class="missions-list"
+        >
 
-          ${badges.map(
+          ${dailyMissions.map(
 
-            badge => `
+            mission => `
 
               <div
-                class="badge-item"
+                class="
+                  mission-item
+
+                  ${
+                    mission.completed
+                      ? "completed"
+                      : ""
+                  }
+                "
               >
 
-                ${badge}
+                <div
+                  class="mission-left"
+                >
+
+                  <span>
+
+                    ${
+                      mission.completed
+                        ? "✅"
+                        : "⬜"
+                    }
+
+                  </span>
+
+                  <span>
+
+                    ${mission.title}
+
+                  </span>
+
+                </div>
+
+                <div
+                  class="mission-right"
+                >
+
+                  <span
+                    class="mission-reward"
+                  >
+
+                    ${mission.reward}
+
+                  </span>
+
+                  ${
+
+                    mission.completed
+                    &&
+                    !claimedRewards.includes(
+                      mission.id
+                    )
+
+                      ? `
+
+                        <button
+
+                          class="claim-btn"
+
+                          data-reward="${mission.reward}"
+
+                          data-mission-id="${mission.id}"
+
+                        >
+
+                          CLAIM
+
+                        </button>
+
+                      `
+
+                      : ""
+
+                  }
+
+                </div>
 
               </div>
 
@@ -559,85 +683,6 @@ export async function renderDashboardPage() {
       <div class="dashboard-list">
 
         ${items}
-
-      </div>
-
-      <!-- CERTIFICATE MODAL -->
-
-      <div
-        id="certificateModal"
-        class="certificate-modal"
-      >
-
-        <div
-          class="certificate-box"
-        >
-
-          <h1>
-
-            CERTIFICATE
-
-          </h1>
-
-          <h2>
-
-            OF COMPLETION
-
-          </h2>
-
-          <p>
-
-            This certifies that
-
-          </p>
-
-          <h3
-            id="certificateUser"
-          >
-
-          </h3>
-
-          <p>
-
-            has successfully completed
-
-          </p>
-
-          <h2
-            id="certificateCourse"
-          >
-
-          </h2>
-
-          <p
-            id="certificateDate"
-          >
-
-          </p>
-
-          <div
-            class="certificate-actions"
-          >
-
-            <button
-              id="closeCertificate"
-            >
-
-              Close
-
-            </button>
-
-            <button
-              id="downloadCertificate"
-            >
-
-              Download
-
-            </button>
-
-          </div>
-
-        </div>
 
       </div>
 
@@ -682,120 +727,64 @@ export async function renderDashboardPage() {
     });
 
   // ========================================
-  // OPEN CERTIFICATE
+  // CLAIM REWARD
   // ========================================
 
   document
     .querySelectorAll(
-      ".certificate-btn"
+      ".claim-btn"
     )
     .forEach((button) => {
 
       button.onclick = () => {
 
-        document.querySelector(
-          "#certificateModal"
-        ).style.display =
-          "flex";
+        const reward =
 
-        document.querySelector(
-          "#certificateUser"
-        ).innerText =
+          Number(
 
-          user.email || "Student";
+            button.dataset.reward
+              .replace("+", "")
+              .replace(" XP", "")
 
-        document.querySelector(
-          "#certificateCourse"
-        ).innerText =
+          );
 
-          button.dataset.courseTitle;
+        let xp =
 
-        document.querySelector(
-          "#certificateDate"
-        ).innerText =
+          Number(
 
-          new Date()
-            .toLocaleDateString();
+            localStorage.getItem(
+              "user_xp"
+            ) || 0
+
+          );
+
+        xp += reward;
+
+        localStorage.setItem(
+          "user_xp",
+          xp
+        );
+
+        claimedRewards.push(
+          button.dataset.missionId
+        );
+
+        localStorage.setItem(
+
+          "claimed_rewards",
+
+          JSON.stringify(
+            claimedRewards
+          )
+
+        );
+
+        // ====================================
+        // RERENDER
+        // ====================================
+
+        renderDashboardPage();
       };
     });
 
-  // ========================================
-  // CLOSE CERTIFICATE
-  // ========================================
-
-  document.querySelector(
-    "#closeCertificate"
-  ).onclick = () => {
-
-    document.querySelector(
-      "#certificateModal"
-    ).style.display =
-      "none";
-  };
-
-  // ========================================
-  // DOWNLOAD CERTIFICATE
-  // ========================================
-
-  document.querySelector(
-    "#downloadCertificate"
-  ).onclick = async () => {
-
-    const element =
-
-      document.querySelector(
-        ".certificate-box"
-      );
-
-    const canvas =
-
-      await html2canvas(
-        element
-      );
-
-    const url =
-
-      canvas.toDataURL(
-        "image/png"
-      );
-
-    const link =
-      document.createElement(
-        "a"
-      );
-
-    link.href = url;
-
-    link.download =
-      "certificate.png";
-
-    link.click();
-
-    // ======================================
-    // SAVE CERTIFICATE
-    // ======================================
-
-    certificates.push({
-
-      course:
-        document.querySelector(
-          "#certificateCourse"
-        ).innerText,
-
-      date:
-        new Date()
-          .toISOString()
-
-    });
-
-    localStorage.setItem(
-
-      "generated_certificates",
-
-      JSON.stringify(
-        certificates
-      )
-
-    );
-  };
 }

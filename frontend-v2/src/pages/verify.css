@@ -1,0 +1,297 @@
+.verify-page {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background:
+        linear-gradient(135deg,
+            #f3f3f3,
+            #e9e9e9);
+
+    padding: 40px;
+}
+
+.verify-container {
+
+    width: 100%;
+
+    max-width: 760px;
+
+    background: white;
+
+    border-radius: 32px;
+
+    padding: 50px;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.12);
+
+    border:
+        4px solid #f5a000;
+}
+
+.verify-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 60px;
+}
+
+.verify-logo {
+
+    width: 180px;
+
+    object-fit: contain;
+}
+
+.verify-status {
+
+    background: #e9fff1;
+
+    color: #00a651;
+
+    font-weight: 700;
+
+    padding:
+        12px 20px;
+
+    border-radius: 999px;
+
+    font-size: 14px;
+}
+
+.verify-body {
+
+    text-align: center;
+
+    margin-bottom: 50px;
+}
+
+.verify-label {
+
+    color: #777;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 20px;
+}
+
+.verify-student {
+
+    font-size: 64px;
+
+    color: #f5a000;
+
+    font-family: cursive;
+
+    margin-bottom: 24px;
+}
+
+.verify-course {
+
+    font-size: 52px;
+
+    font-weight: 900;
+
+    color: #111;
+
+    line-height: 1.1;
+}
+
+.verify-meta {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 24px;
+
+    margin-bottom: 50px;
+}
+
+.verify-meta-item {
+
+    background: #fafafa;
+
+    border-radius: 18px;
+
+    padding: 24px;
+
+    text-align: center;
+}
+
+.verify-meta-item span {
+
+    display: block;
+
+    color: #888;
+
+    font-size: 13px;
+
+    margin-bottom: 10px;
+}
+
+.verify-meta-item strong {
+
+    color: #111;
+
+    font-size: 15px;
+}
+
+.verify-security {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+    margin-bottom: 40px;
+}
+
+.verify-qr {
+
+    width: 140px;
+
+    height: 140px;
+
+    border-radius: 16px;
+
+    background: white;
+
+    padding: 10px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.verify-security-text {
+
+    flex: 1;
+
+    color: #666;
+
+    line-height: 1.8;
+
+    font-size: 16px;
+}
+
+.verify-actions {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 18px;
+}
+
+.verify-btn {
+
+    border: none;
+
+    padding:
+        16px 28px;
+
+    border-radius: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    background: #f2f2f2;
+}
+
+.verify-btn-primary {
+
+    background: #f5a000;
+
+    color: white;
+}
+
+.verify-container {
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.verify-watermark {
+
+    position: absolute;
+
+    top: 50%;
+
+    left: 50%;
+
+    transform:
+        translate(-50%, -50%) rotate(-25deg);
+
+    font-size: 180px;
+
+    font-weight: 900;
+
+    color:
+        rgba(245, 160, 0, 0.04);
+
+    pointer-events: none;
+
+    user-select: none;
+
+    white-space: nowrap;
+}
+
+.verify-actions {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 18px;
+
+    margin-top: 40px;
+}
+
+.verify-btn {
+
+    border: none;
+
+    background: #f1f1f1;
+
+    padding:
+        14px 24px;
+
+    border-radius: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.verify-btn:hover {
+
+    transform:
+        translateY(-2px);
+}
+
+.verify-btn-primary {
+
+    background: #f5a000;
+
+    color: white;
+}

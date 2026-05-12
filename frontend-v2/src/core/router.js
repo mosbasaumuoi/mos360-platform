@@ -27,6 +27,11 @@ import {
 }
 from "../pages/learn/learnPage.js";
 
+import {
+  renderVerifyPage,
+  initVerifyActions
+} from "../pages/verifyPage";
+
 // ============================================
 // ROUTES
 // ============================================
@@ -107,6 +112,36 @@ if (
 
   return;
 }
+
+
+    // ========================================
+    // VERIFY PAGE
+    // ========================================
+
+    if (
+      pathname.startsWith(
+        "/verify/"
+      )
+    ) {
+
+      const certificateId =
+
+        pathname.split(
+          "/verify/"
+        )[1];
+
+      document.querySelector(
+        "#app"
+      ).innerHTML =
+
+        renderVerifyPage(
+          certificateId
+        );
+
+      initVerifyActions();
+
+      return;
+    }
 
     const page =
     routes[path];

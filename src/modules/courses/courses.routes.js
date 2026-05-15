@@ -8,7 +8,7 @@ from "../../utils/response.js";
 const courses = [
 
   {
-    id: 1,
+    id: "mos-excel-expert",
 
     title:
       "MOS Excel Expert",
@@ -40,7 +40,7 @@ const courses = [
     lessons: [
 
       {
-    id: 1,
+        id: "excel-basics",
 
     title:
     "Excel Basics",
@@ -56,7 +56,7 @@ const courses = [
    },
 
       {
-    id: 2,
+        id: "functions-formulas",
   
     title:
     "Functions & Formulas",
@@ -72,7 +72,7 @@ const courses = [
    },
 
       {
-      id: 3,
+      id: "pivot-table",
 
       title:
       "Pivot Table",
@@ -91,7 +91,7 @@ const courses = [
   },
 
   {
-    id: 2,
+    id: "mos-word-specialist",
 
     title:
       "MOS Word Specialist",
@@ -123,7 +123,7 @@ const courses = [
     lessons: [
 
       {
-        id: 1,
+        id: "word-basics",
 
         title:
           "Word Basics",
@@ -133,7 +133,7 @@ const courses = [
       },
 
       {
-        id: 2,
+        id: "formatting",
 
         title:
           "Formatting",
@@ -143,7 +143,7 @@ const courses = [
       },
 
       {
-        id: 3,
+        id: "professional-documents",
 
         title:
           "Professional Documents",
@@ -180,11 +180,9 @@ export async function handleCourseDetail(
     new URL(request.url);
 
   const id =
-    Number(
-      url.pathname
-        .split("/")
-        .pop()
-    );
+    url.pathname
+      .split("/")
+      .pop();
 
   const course =
     courses.find(
@@ -217,10 +215,10 @@ export async function handleLessonDetail(
     url.pathname.split("/");
 
   const courseId =
-    Number(parts[3]);
+    parts[3];
 
   const lessonId =
-    Number(parts[4]);
+    parts[4];
 
   const course =
     courses.find(

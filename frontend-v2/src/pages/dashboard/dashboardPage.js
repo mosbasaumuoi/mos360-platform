@@ -1,28 +1,68 @@
 import {
   renderAppLayout
 }
-from "../../layouts/appLayout.js";
+  from "../../layouts/appLayout.js";
 
 import {
   apiGet
 }
-from "../../services/api.js";
+  from "../../services/api.js";
 
 import {
   navigate
 }
-from "../../core/router.js";
+  from "../../core/router.js";
 
 import html2canvas
-from "html2canvas";
+  from "html2canvas";
 
 import jsPDF
-from "jspdf";
+  from "jspdf";
 
 import {
   openCertificateModal
 }
-from "../../components/certificate/certificateModal.js";
+  from "../../components/certificate/certificateModal.js";
+
+import {
+  getUserStreak,
+  getDailyMissions
+}
+  from "../../features/progression/missionEngine.js";
+
+import {
+  logDashboard
+}
+  from "../../utils/logger.js";
+
+import {
+  getLevel,
+  getNextLevelXp,
+  getLevelProgress
+}
+  from "../../engines/xpEngine.js";
+
+import {
+  getStorage,
+  setStorage
+}
+  from "../../utils/localStorageHelpers.js";  
+
+import {
+  STORAGE_KEYS
+}
+  from "../../constants/storageKeys.js";  
+
+import {
+  parseXpReward
+}
+  from "../../engines/rewardEngine.js";  
+
+import {
+  getCourseCompletedKey,
+  getLastLessonKey
+}
+  from "../../utils/storageHelpers.js";  
 
 export async function renderDashboardPage() {
 
@@ -30,28 +70,21 @@ export async function renderDashboardPage() {
   // USER
   // ========================================
 
-  const user =
-
-    JSON.parse(
-
-      localStorage.getItem(
-        "user"
-      ) || "{}"
-
+  const user =  
+    getStorage(
+      STORAGE_KEYS.USER,
+      {}
     );
-
+    
   // ========================================
   // ENROLLED COURSES
   // ========================================
 
   const enrolledCourses =
 
-    JSON.parse(
-
-      localStorage.getItem(
-        "enrolled_courses"
-      ) || "[]"
-
+    getStorage(
+      STORAGE_KEYS.ENROLLED_COURSES,
+      []
     );
 
   // ========================================
@@ -120,15 +153,27 @@ export async function renderDashboardPage() {
     courses.filter(
       course => {
 
+        const progressKey =
+
+          STORAGE_KEYS.COURSE_PROGRESS_PREFIX
+          + course.id;
+
+        const completedLessons =
+
+          getStorage(
+            progressKey,
+            []
+          );
+
+        const totalLessons =
+
+          course.lessons?.length || 0;
+
         return (
 
-          localStorage.getItem(
-
-            `course_completed_${
-              course.id
-            }`
-
-          ) === "true"
+          completedLessons.length >= totalLessons
+          &&
+          totalLessons > 0
 
         );
       }
@@ -140,51 +185,44 @@ export async function renderDashboardPage() {
 
   const certificates =
 
-    JSON.parse(
-
-      localStorage.getItem(
-        "generated_certificates"
-      ) || "[]"
-
+    getStorage(
+      STORAGE_KEYS.CREDENTIALS,
+      []
     );
-
-  // ========================================
-  // STREAK
-  // ========================================
-
-  const streak =
-
-    Number(
-
-      localStorage.getItem(
-        "learning_streak"
-      ) || 0
-
-    );
-
   // ========================================
   // XP + LEVEL
   // ========================================
-
+  
   const xp =
 
-    Number(
-
-      localStorage.getItem(
-        "user_xp"
-      ) || 0
-
+    getStorage(
+      STORAGE_KEYS.USER_XP,
+      0
     );
 
   const level =
+    getLevel(xp);
 
-    Math.floor(
-      xp / 200
-    ) + 1;
+  const progressPercent =
+    getLevelProgress(
+      xp,
+      level
+    );
 
   const nextLevelXp =
+    getNextLevelXp(level);
 
-    level * 200;
+  const streak =
+    getUserStreak();
+
+  logDashboard(
+    "dashboard rendered",
+    {
+      xp,
+      level,
+      streak
+    }
+  );
 
   // ========================================
   // CLAIMED REWARDS
@@ -192,77 +230,39 @@ export async function renderDashboardPage() {
 
   const claimedRewards =
 
-    JSON.parse(
-
-      localStorage.getItem(
-        "claimed_rewards"
-      ) || "[]"
-
+    getStorage(
+      STORAGE_KEYS.CLAIMED_REWARDS,
+      []
     );
 
   // ========================================
-  // DAILY MISSIONS
+  // MISSION STATS
   // ========================================
 
   const watchedLessons =
 
-    Number(
-
-      localStorage.getItem(
-        "watched_lessons_today"
-      ) || 0
-
+    getStorage(
+      STORAGE_KEYS.WATCHED_LESSONS_TODAY,
+      0
     );
 
   const generatedCertificates =
 
     certificates.length;
 
-  const dailyMissions = [
+  // ========================================
+  // DAILY MISSIONS
+  // ========================================
 
-    {
-      id:
-        "complete_1",
+  const dailyMissions =
 
-      title:
-        "Complete 1 lesson",
+    getDailyMissions({
 
-      completed:
-        watchedLessons >= 1,
+      watchedLessons,
 
-      reward:
-        "+50 XP"
-    },
+      generatedCertificates
 
-    {
-      id:
-        "watch_3",
-
-      title:
-        "Watch 3 lessons",
-
-      completed:
-        watchedLessons >= 3,
-
-      reward:
-        "+150 XP"
-    },
-
-    {
-      id:
-        "certificate",
-
-      title:
-        "Earn certificate",
-
-      completed:
-        generatedCertificates >= 1,
-
-      reward:
-        "+300 XP"
-    }
-
-  ];
+    });
 
   // ========================================
   // BADGES
@@ -303,18 +303,14 @@ export async function renderDashboardPage() {
 
       const progressKey =
 
-        `course_progress_${
-          course.id
-        }`;
+        STORAGE_KEYS.COURSE_PROGRESS_PREFIX
+        + course.id;
 
       const completedLessons =
 
-        JSON.parse(
-
-          localStorage.getItem(
-            progressKey
-          ) || "[]"
-
+        getStorage(
+          progressKey,
+          []
         );
 
       const totalLessons =
@@ -335,23 +331,23 @@ export async function renderDashboardPage() {
 
       const isCompleted =
 
-        localStorage.getItem(
-
-          `course_completed_${
-            course.id
-          }`
-
-        ) === "true";
+        completedLessons.length >= totalLessons
+        &&
+        totalLessons > 0;
 
       const lastLesson =
 
         localStorage.getItem(
 
-          `last_lesson_${
+          getLastLessonKey(
             course.id
-          }`
+          )
 
-        ) || 1;
+        )
+
+        ||
+
+        course.lessons?.[0]?.id;
 
       return `
 
@@ -419,23 +415,19 @@ export async function renderDashboardPage() {
 
             >
 
-              ${
+              ${isCompleted
 
-            isCompleted
+          ? "🔁 Review Learning"
 
-               ? "🔁 Review Learning"
+          : "Continue Learning"
 
-               : "Continue Learning"
-
-            }
+        }
 
             </button>
 
-            ${
+            ${isCompleted
 
-              isCompleted
-
-                ? `
+          ? `
 
                   <button
 
@@ -451,9 +443,9 @@ export async function renderDashboardPage() {
 
                 `
 
-                : ""
+          : ""
 
-            }
+        }
 
           </div>
 
@@ -560,13 +552,7 @@ export async function renderDashboardPage() {
 
               style="
                 width:
-                ${
-                  (
-                    xp
-                    /
-                    nextLevelXp
-                  ) * 100
-                }%
+                ${progressPercent}%
               "
 
             ></div>
@@ -604,17 +590,16 @@ export async function renderDashboardPage() {
 
           ${dailyMissions.map(
 
-            mission => `
+    mission => `
 
               <div
                 class="
                   mission-item
 
-                  ${
-                    mission.completed
-                      ? "completed"
-                      : ""
-                  }
+                  ${mission.completed
+        ? "completed"
+        : ""
+      }
                 "
               >
 
@@ -624,11 +609,10 @@ export async function renderDashboardPage() {
 
                   <span>
 
-                    ${
-                      mission.completed
-                        ? "✅"
-                        : "⬜"
-                    }
+                    ${mission.completed
+        ? "✅"
+        : "⬜"
+      }
 
                   </span>
 
@@ -652,15 +636,13 @@ export async function renderDashboardPage() {
 
                   </span>
 
-                  ${
+                  ${mission.completed
+        &&
+        !claimedRewards.includes(
+          mission.id
+        )
 
-                    mission.completed
-                    &&
-                    !claimedRewards.includes(
-                      mission.id
-                    )
-
-                      ? `
+        ? `
 
                         <button
 
@@ -678,9 +660,9 @@ export async function renderDashboardPage() {
 
                       `
 
-                      : ""
+        : ""
 
-                  }
+      }
 
                 </div>
 
@@ -688,7 +670,7 @@ export async function renderDashboardPage() {
 
             `
 
-          ).join("")}
+  ).join("")}
 
         </div>
 
@@ -706,17 +688,17 @@ export async function renderDashboardPage() {
 
   `;
 
-// ========================================
-// RENDER
-// ========================================
+  // ========================================
+  // RENDER
+  // ========================================
 
-document.querySelector(
-  "#app"
-).innerHTML =
+  document.querySelector(
+    "#app"
+  ).innerHTML =
 
-  renderAppLayout(
-    content
-  );
+    renderAppLayout(
+      content
+    );
 
   // ========================================
   // CONTINUE BUTTON
@@ -732,10 +714,8 @@ document.querySelector(
 
         navigate(
 
-          `/learn/${
-            button.dataset.courseId
-          }/${
-            button.dataset.lessonId
+          `/learn/${button.dataset.courseId
+          }/${button.dataset.lessonId
           }`
 
         );
@@ -756,12 +736,8 @@ document.querySelector(
 
         const reward =
 
-          Number(
-
+          parseXpReward(
             button.dataset.reward
-              .replace("+", "")
-              .replace(" XP", "")
-
           );
 
         let xp =
@@ -769,7 +745,7 @@ document.querySelector(
           Number(
 
             localStorage.getItem(
-              "user_xp"
+              STORAGE_KEYS.USER_XP
             ) || 0
 
           );
@@ -777,7 +753,7 @@ document.querySelector(
         xp += reward;
 
         localStorage.setItem(
-          "user_xp",
+          STORAGE_KEYS.USER_XP,
           xp
         );
 
@@ -785,50 +761,50 @@ document.querySelector(
           button.dataset.missionId
         );
 
-        localStorage.setItem(
-
-          "claimed_rewards",
-
-          JSON.stringify(
-            claimedRewards
-          )
-
+        setStorage(
+          STORAGE_KEYS.CLAIMED_REWARDS,
+          claimedRewards
         );
-
-        // ====================================
-        // RERENDER
-        // ====================================
 
         renderDashboardPage();
       };
     });
 
-// ========================================
-// CERTIFICATE MODAL
-// ========================================
+  // ========================================
+  // CERTIFICATE
+  // ========================================
 
-document
-  .querySelectorAll(
-    ".certificate-btn"
-  )
-  .forEach((button) => {
+  document
+    .querySelectorAll(
+      ".certificate-btn"
+    )
+    .forEach((button) => {
 
-    button.onclick = () => {
+      button.onclick = () => {
 
-      openCertificateModal({
+        const credential =
 
-        studentName:
+          certificates.find(
 
-          user?.name ||
+            item =>
 
-          "Student",
+              item.courseName
+              ===
+              button.dataset.courseTitle
 
-        courseTitle:
+          );
 
-          button.dataset.courseTitle
+        openCertificateModal({
 
-      });
-    };
-  });
+          studentName:
+            credential?.studentName
+            || "Student",
 
+          courseName:
+            credential?.courseName
+            || button.dataset.courseTitle
+
+        });
+      };
+    });
 }

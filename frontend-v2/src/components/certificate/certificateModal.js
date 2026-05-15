@@ -8,11 +8,15 @@ from "jspdf";
 
 import logo from "../../assets/mos360-logo.png";
 
+import {
+  saveCredential
+} from "../../utils/credentialStorage";
+
 export function openCertificateModal({
 
   studentName,
 
-  courseTitle
+  courseName
 
 }) {
 
@@ -38,6 +42,22 @@ export function openCertificateModal({
   const certificateId =
 
     `MOS-${Date.now()}`;
+
+  const credentialData = {
+
+    certificateId,
+
+    studentName,
+
+    courseName,
+
+    issueDate:
+      new Date().toLocaleDateString()
+  };
+
+  saveCredential(
+    credentialData
+  );  
 
   // ========================================
   // CREATE MODAL
@@ -86,7 +106,7 @@ export function openCertificateModal({
 
   </div>
 
-   </div>
+    </div>
 
       <div class="certificate-body">
 
@@ -110,7 +130,7 @@ export function openCertificateModal({
 
         <div class="certificate-course">
 
-          ${courseTitle}
+          ${courseName}
 
         </div>
 
@@ -149,7 +169,7 @@ export function openCertificateModal({
     >
 
       <img
-        src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://mos360.vn/verify/MOS-${Date.now()}"
+        src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://mos360.vn/verify/${certificateId}"
       />
 
     </div>
@@ -171,7 +191,7 @@ export function openCertificateModal({
   <div>
 
     Credential ID:
-    MOS-${Date.now()}
+    ${certificateId}
 
   </div>
 
@@ -313,9 +333,16 @@ export function openCertificateModal({
       );
 
       pdf.save(
-        `${courseTitle}-certificate.pdf`
+        `${courseName}-certificate.pdf`
       );
 
     }
   );
+
+  // ========================================
+  // RETURN CERTIFICATE ID
+  // ========================================
+
+  return certificateId;
+
 }

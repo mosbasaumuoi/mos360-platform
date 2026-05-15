@@ -17,6 +17,11 @@ import {
 }
 from "../components/toast/toast.js";
 
+import {
+  appContext
+}
+  from "../core/appContext.js";
+
 // ============================================
 // VERIFY SESSION
 // ============================================
@@ -40,18 +45,33 @@ export async function verifySession() {
 
 export function logout() {
 
+  // ========================================
+  // CLEAR ANALYTICS
+  // ========================================
+
   clearInterval(
     window.analyticsInterval
   );
 
+  // ========================================
+  // CLEAR TOKEN
+  // ========================================
+
   clearToken();
+
+  // ========================================
+  // CLEAR USER STATE
+  // ========================================
+
+  appContext.user = null;
+
+  // ========================================
+  // TOAST
+  // ========================================
 
   showToast(
     "Logged out"
   );
-
-  window.location.hash =
-    "/login";
 }
 
 // ============================================

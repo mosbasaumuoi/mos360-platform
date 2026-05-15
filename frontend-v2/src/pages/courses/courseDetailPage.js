@@ -13,6 +13,11 @@ import {
 }
 from "../../core/router.js";
 
+import {
+  STORAGE_KEYS
+}
+  from "../../constants/storageKeys.js";
+
 export async function renderCourseDetailPage() {
 
   const id =
@@ -56,7 +61,7 @@ const enrolledCourses =
   JSON.parse(
 
     localStorage.getItem(
-      "enrolled_courses"
+      STORAGE_KEYS.ENROLLED_COURSES
     ) || "[]"
 
   );
@@ -219,23 +224,6 @@ document.querySelector(
   "#startLearning"
 ).onclick = () => {
 
-  navigate(
-
-    `/learn/${
-      course.id
-    }/1`
-
-  );
-};
-
-// ========================================
-// CONTINUE LEARNING
-// ========================================
-
-document.querySelector(
-  "#startLearning"
-).onclick = () => {
-
   // ======================================
   // ENROLL
   // ======================================
@@ -248,7 +236,7 @@ document.querySelector(
 
     localStorage.setItem(
 
-      "enrolled_courses",
+      STORAGE_KEYS.ENROLLED_COURSES,
 
       JSON.stringify(
         enrolledCourses
@@ -266,6 +254,23 @@ document.querySelector(
   }
 
   // ======================================
+  // FIRST LESSON
+  // ======================================
+
+  const firstLesson =
+
+    course.lessons?.[0];
+
+  if (!firstLesson) {
+
+    alert(
+      "No lessons found."
+    );
+
+    return;
+  }
+
+  // ======================================
   // START LEARNING
   // ======================================
 
@@ -273,8 +278,57 @@ document.querySelector(
 
     `/learn/${
       course.id
-    }/1`
+    }/${
+      firstLesson.id
+    }`
 
   );
 };
+
+  // ========================================
+  // CONTINUE LEARNING
+  // ========================================
+
+  document.querySelector(
+    "#continueLearning"
+  ).onclick = () => {
+
+    const lastLessonId =
+
+      localStorage.getItem(
+        STORAGE_KEYS.LAST_LESSON_PREFIX
+        + course.id
+      );
+
+    // ======================================
+    // FALLBACK
+    // ======================================
+
+    const firstLesson =
+
+      course.lessons?.[0];
+
+    const targetLessonId =
+
+      lastLessonId ||
+
+      firstLesson?.id;
+
+    if (!targetLessonId) {
+
+      alert(
+        "No lessons found."
+      );
+
+      return;
+    }
+
+    navigate(
+
+      `/learn/${course.id
+      }/${targetLessonId
+      }`
+
+    );
+  };
 }

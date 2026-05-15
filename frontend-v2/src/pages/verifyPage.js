@@ -3,11 +3,111 @@ import "./verify.css";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
+import {
+  getCredentialById
+}
+  from "../utils/credentialStorage";
+
+import {
+  validateCredential
+}
+  from "../contracts/credential.contract.js";
+
+import {
+  logWarn,
+  logInfo
+}
+  from "../utils/logger.js";
+
 export function renderVerifyPage(
     certificateId
 ) {
 
+  const credential =
+
+    getCredentialById(
+      certificateId
+    );
+
+  // ========================================
+  // VALIDATE CREDENTIAL
+  // ========================================
+
+  const validCredential =
+
+    credential
+    &&
+    validateCredential(
+      credential
+    );
+
+  if (!validCredential) {
+
+    logWarn(
+
+      "VERIFY",
+
+      "invalid credential runtime",
+
+      {
+        certificateId
+      }
+
+    );
+
     return `
+
+    <div class="verify-page">
+
+      <div class="verify-container">
+
+        <h1>
+          Invalid Certificate
+        </h1>
+
+      </div>
+
+    </div>
+
+  `;
+  }  
+
+  if (!credential) {
+
+    // ========================================
+    // VERIFY TRACE
+    // ========================================
+
+    logInfo(
+
+      "VERIFY",
+
+      "credential verified",
+
+      {
+        certificateId
+      }
+
+    );
+  
+    return `
+
+  <div class="verify-page">
+
+    <div class="verify-container">
+
+      <h1>
+        Certificate Not Found
+      </h1>
+
+    </div>
+
+  </div>
+
+  `;
+  }
+    
+  return `
 
 <div class="verify-page">
 
@@ -47,13 +147,13 @@ export function renderVerifyPage(
 
       <div class="verify-student">
 
-        Student Name
+        ${credential.studentName}
 
       </div>
 
       <div class="verify-course">
 
-        MOS Excel Expert
+        ${credential.courseName}
 
       </div>
 
@@ -76,7 +176,7 @@ export function renderVerifyPage(
         <span>Issue Date</span>
 
         <strong>
-          ${new Date().toLocaleDateString()}
+          ${credential.issueDate}
         </strong>
 
       </div>
@@ -171,6 +271,19 @@ export function renderVerifyPage(
                         "#verify-certificate"
                     );
 
+              if (!element) {
+
+                logWarn(
+
+                  "VERIFY",
+
+                  "missing verify element"
+
+                );
+
+                return;
+              }    
+
                 const canvas =
                     await html2canvas(
                         element,
@@ -229,6 +342,19 @@ export function renderVerifyPage(
 
                 const verifyUrl =
                     window.location.href;
+
+              if (!verifyUrl) {
+
+                logWarn(
+
+                  "VERIFY",
+
+                  "missing verify url"
+
+                );
+
+                return;
+              }    
 
                 const linkedInUrl =
 

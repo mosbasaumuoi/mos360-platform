@@ -1497,3 +1497,101 @@ a {
     rgba(255,176,0,0.5);
 
 }
+
+/* ============================================ */
+/* MOBILE RESPONSIVE */
+/* ============================================ */
+
+@media (max-width: 768px) {
+
+  /* ======================================== */
+  /* APP LAYOUT */
+  /* ======================================== */
+
+  .app-layout {
+
+    flex-direction: column;
+  }
+
+  /* ======================================== */
+  /* SIDEBAR */
+  /* ======================================== */
+
+  .sidebar {
+
+    width: 100%;
+    min-height: auto;
+    padding: 16px;
+  }
+
+  .menu {
+
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+  }
+
+  .menu button,
+  .menu a {
+
+    white-space: nowrap;
+  }
+
+  /* ======================================== */
+  /* MAIN CONTENT */
+  /* ======================================== */
+
+  .main-content {
+
+    padding: 16px;
+  }
+
+  /* ======================================== */
+  /* DASHBOARD */
+  /* ======================================== */
+
+  .dashboard-grid {
+
+    grid-template-columns: 1fr;
+  }
+
+  .course-grid,
+  .courses-grid {
+
+    grid-template-columns: 1fr;
+  }
+
+  .course-detail {
+
+    padding: 16px;
+  }
+
+  .course-actions {
+
+    flex-direction: column;
+  }
+
+  .course-actions button {
+
+    width: 100%;
+  }
+
+  /* ======================================== */
+  /* VERIFY */
+  /* ======================================== */
+
+  .verify-container {
+
+    padding: 20px;
+  }
+
+  .verify-actions {
+
+    flex-direction: column;
+  }
+
+  .verify-btn {
+
+    width: 100%;
+  }
+}

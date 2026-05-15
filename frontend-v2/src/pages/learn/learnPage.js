@@ -1,17 +1,436 @@
+// ============================================
+// LEARN PAGE
+// ============================================
+
 import {
   apiGet
 }
-from "../../services/api.js";
+  from "../../services/api.js";
 
 import {
   renderAppLayout
 }
-from "../../layouts/appLayout.js";
+  from "../../layouts/appLayout.js";
 
 import {
   navigate
 }
-from "../../core/router.js";
+  from "../../core/router.js";
+
+import {
+  STORAGE_KEYS
+}
+  from "../../constants/storageKeys.js";
+
+import {
+  getCourseProgressKey,
+  getCourseCompletedKey,
+  getLastLessonKey
+}
+  from "../../utils/storageHelpers.js";
+
+import {
+  getXpReward
+}
+  from "../../engines/rewardEngine.js";
+
+import {
+  getStorage,
+  setStorage
+}
+  from "../../utils/localStorageHelpers.js";
+
+import {
+  saveCredential
+}
+  from "../../utils/credentialStorage.js";
+
+import {
+  generateCertificateId
+}
+  from "../../utils/idGenerator.js";
+
+import {
+  logLearning,
+  logInfo,
+  logWarn
+}
+  from "../../utils/logger.js";
+
+import {
+  validateLesson
+}
+  from "../../contracts/lesson.contract.js";
+
+import {
+  sendTrackingEvent
+}
+  from "../../services/trackingApi.js";  
+
+import {
+  addXP
+}
+  from "../../services/gamificationApi.js";  
+
+// ============================================
+// BIND SIDEBAR LESSONS
+// ============================================
+
+function bindSidebarLessons(
+  courseId
+) {
+
+  document
+    .querySelectorAll(
+      ".lesson-sidebar-item"
+    )
+    .forEach((item) => {
+
+      item.onclick = () => {
+
+        navigate(
+
+          `/learn/${courseId
+          }/${item.dataset.lessonId
+          }`
+
+        );
+      };
+    });
+}
+
+// ============================================
+// BIND NEXT LESSON
+// ============================================
+
+function bindNextLesson({
+
+  courseId,
+  nextLesson
+
+}) {
+
+  if (!nextLesson) {
+    return;
+  }
+
+  const nextBtn =
+
+    document.querySelector(
+      "#nextLessonBtn"
+    );
+
+  if (!nextBtn) {
+    return;
+  }
+
+  nextBtn.onclick = () => {
+
+    navigate(
+
+      `/learn/${courseId
+      }/${nextLesson.id
+      }`
+
+    );
+  };
+}
+
+// ============================================
+// COMPLETE COURSE FLOW
+// ============================================
+
+function bindCompleteCourse({
+
+  courseId,
+  course,
+  completedLessons
+
+}) {
+
+  const completeBtn =
+
+    document.querySelector(
+      "#completeCourseBtn"
+    );
+
+  if (!completeBtn) {
+    return;
+  }
+
+  completeBtn.onclick = () => {
+
+    // ======================================
+    // CHECK ALL LESSONS
+    // ======================================
+
+    if (
+
+      completedLessons.length
+      <
+      course.lessons.length
+
+    ) {
+
+      alert(
+        "Please complete all lessons first."
+      );
+
+      return;
+    }
+
+    // ======================================
+    // SAVE COMPLETED
+    // ======================================
+
+    setStorage(
+
+      getCourseCompletedKey(
+        courseId
+      ),
+
+      true
+
+    );
+
+    logLearning(
+      "course completed",
+      courseId
+    );
+
+    // ======================================
+    // CREDENTIAL
+    // ======================================
+
+    saveCredential({
+
+      certificateId:
+        generateCertificateId(),
+
+      studentName:
+        "MOS360 Student",
+
+      courseName:
+        course.title,
+
+      issueDate:
+        new Date()
+          .toLocaleDateString()
+
+    });
+
+    // ======================================
+    // XP
+    // ======================================
+
+    let xp =
+
+      getStorage(
+        STORAGE_KEYS.USER_XP,
+        0
+      );
+
+    xp +=
+      getXpReward(
+        course.xpReward
+      );
+
+    setStorage(
+      STORAGE_KEYS.USER_XP,
+      xp
+    );
+
+    // ======================================
+    // RELOAD
+    // ======================================
+
+    renderLearnPage();
+  };
+}
+
+// ============================================
+// VIDEO PLAYER
+// ============================================
+
+function bindVideoPlayer({
+
+  lesson,
+  lessonId,
+  courseId,
+  progressKey,
+  completedLessons
+
+}) {
+
+  const playBtn =
+
+    document.querySelector(
+      "#playVideoBtn"
+    );
+
+  const videoStatus =
+
+    document.querySelector(
+      "#videoStatus"
+    );
+
+  const progressFill =
+
+    document.querySelector(
+      ".video-progress-fill"
+    );
+
+  if (
+    !playBtn
+    ||
+    !videoStatus
+    ||
+    !progressFill
+  ) {
+
+    return;
+  }
+
+  let playing = false;
+
+  playBtn.onclick = () => {
+
+    if (playing) {
+      return;
+    }
+
+    playing = true;
+
+    playBtn.innerHTML =
+      "⏸";
+
+    videoStatus.innerText =
+      "Playing lesson...";
+
+    let progress = 0;
+
+    progressFill.style.width =
+      "0%";
+
+    const interval =
+
+      setInterval(() => {
+
+        progress += 1;
+
+        progressFill.style.width =
+
+          `${progress}%`;
+
+        // ==================================
+        // FINISH
+        // ==================================
+
+        if (progress >= 100) {
+
+          clearInterval(
+            interval
+          );
+
+          playBtn.innerHTML =
+            "↻";
+
+          videoStatus.innerText =
+
+            "✅ Completed • Click to Review";
+
+          // ================================
+          // FIRST TIME ONLY
+          // ================================
+
+          const firstCompletion =
+
+            !completedLessons.includes(
+              lessonId
+            );
+
+          if (firstCompletion) {
+
+            completedLessons.push(
+              lessonId
+            );
+
+            logLearning(
+              "lesson completed",
+              {
+                courseId,
+                lessonId
+              }
+            );
+
+            sendTrackingEvent({
+
+              type:
+                "LESSON_COMPLETED",
+
+              courseId,
+
+              lessonId
+            });
+
+            setStorage(
+              progressKey,
+              completedLessons
+            );
+
+            addXP({
+
+              email:
+                "admin@mos360.vn",
+
+              amount:
+                getXpReward(
+                  lesson.xpReward
+                )
+            });
+
+            logInfo(
+              "XP",
+              "xp updated",
+              {
+                courseId,
+                lessonId,
+                xpReward
+              }
+            );
+
+            // ==============================
+            // WATCHED LESSONS
+            // ==============================
+
+            let watchedLessons =
+
+              getStorage(
+                STORAGE_KEYS.WATCHED_LESSONS_TODAY,
+                0
+              );
+
+            watchedLessons += 1;
+
+            setStorage(
+
+              STORAGE_KEYS.WATCHED_LESSONS_TODAY,
+
+              watchedLessons
+
+            );
+          }
+
+          playing = false;
+        }
+
+      }, 60);
+  };
+}
+
+// ============================================
+// RENDER LEARN PAGE
+// ============================================
 
 export async function renderLearnPage() {
 
@@ -25,10 +444,10 @@ export async function renderLearnPage() {
       .split("/");
 
   const courseId =
-    Number(parts[2]);
+    parts[2];
 
   const lessonId =
-    Number(parts[3]);
+    parts[3];
 
   // ========================================
   // LOAD COURSE
@@ -103,12 +522,51 @@ export async function renderLearnPage() {
     lessonResult.data.lesson;
 
   // ========================================
+  // VALIDATE LESSON
+  // ========================================
+
+  const validLesson =
+
+    validateLesson(
+      lesson
+    );
+
+  if (!validLesson) {
+
+    logWarn(
+
+      "LESSON",
+
+      "invalid lesson contract",
+
+      lesson
+
+    );
+
+    document.querySelector(
+      "#app"
+    ).innerHTML =
+
+      renderAppLayout(`
+
+      <h1>
+        Invalid lesson data
+      </h1>
+
+    `);
+
+    return;
+  }
+
+  // ========================================
   // SAVE LAST LESSON
   // ========================================
 
-  localStorage.setItem(
+  setStorage(
 
-    `last_lesson_${courseId}`,
+    getLastLessonKey(
+      courseId
+    ),
 
     lessonId
 
@@ -125,32 +583,35 @@ export async function renderLearnPage() {
 
   const lastDate =
 
-    localStorage.getItem(
-      "last_learning_date"
+    getStorage(
+      STORAGE_KEYS.LAST_ACTIVE_DATE,
+      null
     );
 
   let streak =
 
-    Number(
-
-      localStorage.getItem(
-        "learning_streak"
-      ) || 0
-
+    getStorage(
+      STORAGE_KEYS.USER_STREAK,
+      0
     );
 
   if (lastDate !== today) {
 
     streak += 1;
 
-    localStorage.setItem(
-      "learning_streak",
+    setStorage(
+      STORAGE_KEYS.USER_STREAK,
       streak
     );
 
-    localStorage.setItem(
-      "last_learning_date",
+    setStorage(
+      STORAGE_KEYS.LAST_ACTIVE_DATE,
       today
+    );
+
+    logLearning(
+      "streak updated",
+      streak
     );
   }
 
@@ -160,16 +621,15 @@ export async function renderLearnPage() {
 
   const progressKey =
 
-    `course_progress_${courseId}`;
+    getCourseProgressKey(
+      courseId
+    );
 
   let completedLessons =
 
-    JSON.parse(
-
-      localStorage.getItem(
-        progressKey
-      ) || "[]"
-
+    getStorage(
+      progressKey,
+      []
     );
 
   // ========================================
@@ -183,7 +643,7 @@ export async function renderLearnPage() {
     );
 
   // ========================================
-  // LESSONS SIDEBAR
+  // SIDEBAR
   // ========================================
 
   const lessonsHtml =
@@ -207,11 +667,10 @@ export async function renderLearnPage() {
 
             class="
               lesson-sidebar-item
-              ${
-                active
-                  ? "active"
-                  : ""
-              }
+              ${active
+            ? "active"
+            : ""
+          }
             "
 
             data-lesson-id="${item.id}"
@@ -220,11 +679,10 @@ export async function renderLearnPage() {
 
             <span>
 
-              ${
-                completed
-                  ? "✅"
-                  : "📘"
-              }
+              ${completed
+            ? "✅"
+            : "📘"
+          }
 
             </span>
 
@@ -238,7 +696,49 @@ export async function renderLearnPage() {
 
         `;
       }
+
     ).join("");
+
+  // ========================================
+  // LESSON EXISTS IN COURSE GRAPH
+  // ========================================
+
+  const lessonExists =
+
+    course.lessons.some(
+      item =>
+        item.id === lessonId
+    );
+
+  if (!lessonExists) {
+
+    logWarn(
+
+      "LESSON",
+
+      "lesson missing from course graph",
+
+      {
+        courseId,
+        lessonId
+      }
+
+    );
+
+    document.querySelector(
+      "#app"
+    ).innerHTML =
+
+      renderAppLayout(`
+
+      <h1>
+        Lesson graph mismatch
+      </h1>
+
+    `);
+
+    return;
+  }
 
   // ========================================
   // NEXT LESSON
@@ -254,7 +754,7 @@ export async function renderLearnPage() {
   const nextLesson =
 
     course.lessons[
-      currentIndex + 1
+    currentIndex + 1
     ];
 
   // ========================================
@@ -263,21 +763,21 @@ export async function renderLearnPage() {
 
   const courseCompleted =
 
-    localStorage.getItem(
+    getStorage(
 
-      `course_completed_${courseId}`
+      getCourseCompletedKey(
+        courseId
+      ),
 
-    ) === "true";
+      false
+
+    );
 
   // ========================================
   // ACTION BUTTON
   // ========================================
 
   let actionButton = "";
-
-  // ========================================
-  // NEXT LESSON
-  // ========================================
 
   if (nextLesson) {
 
@@ -294,10 +794,6 @@ export async function renderLearnPage() {
 
     `;
   }
-
-  // ========================================
-  // FINAL LESSON
-  // ========================================
 
   else {
 
@@ -353,9 +849,7 @@ export async function renderLearnPage() {
       <div class="learn-sidebar">
 
         <h2>
-
           Lessons
-
         </h2>
 
         ${lessonsHtml}
@@ -367,15 +861,11 @@ export async function renderLearnPage() {
       <div class="learn-content">
 
         <h1>
-
           ${course.title}
-
         </h1>
 
         <h2>
-
           ${lesson.title}
-
         </h2>
 
         <!-- VIDEO -->
@@ -387,28 +877,24 @@ export async function renderLearnPage() {
             id="playVideoBtn"
           >
 
-            ${
-              lessonCompleted
-                ? "↻"
-                : "▶"
-            }
+            ${lessonCompleted
+      ? "↻"
+      : "▶"
+    }
 
           </div>
 
           <div class="video-info">
 
             <h3>
-
               ${lesson.title}
-
             </h3>
 
             <p>
 
-              ${
-                lesson.duration
-                || "10:00"
-              }
+              ${lesson.duration
+    || "10:00"
+    }
 
             </p>
 
@@ -419,13 +905,12 @@ export async function renderLearnPage() {
             id="videoStatus"
           >
 
-            ${
-              lessonCompleted
+            ${lessonCompleted
 
-                ? "✅ Completed • Click to Review"
+      ? "✅ Completed • Click to Review"
 
-                : "Ready to play"
-            }
+      : "Ready to play"
+    }
 
           </div>
 
@@ -435,11 +920,10 @@ export async function renderLearnPage() {
               class="video-progress-fill"
               style="
                 width:
-                ${
-                  lessonCompleted
-                    ? "100%"
-                    : "0%"
-                }
+                ${lessonCompleted
+      ? "100%"
+      : "0%"
+    }
               "
             ></div>
 
@@ -447,7 +931,7 @@ export async function renderLearnPage() {
 
         </div>
 
-        <!-- DESCRIPTION -->
+        <!-- CONTENT -->
 
         <div class="lesson-content-box">
 
@@ -482,301 +966,42 @@ export async function renderLearnPage() {
     );
 
   // ========================================
-  // SIDEBAR CLICK
+  // INTERACTIONS
   // ========================================
 
-  document
-    .querySelectorAll(
-      ".lesson-sidebar-item"
-    )
-    .forEach((item) => {
+  bindSidebarLessons(
+    courseId
+  );
 
-      item.onclick = () => {
+  bindNextLesson({
 
-        navigate(
+    courseId,
 
-          `/learn/${
-            courseId
-          }/${
-            item.dataset.lessonId
-          }`
+    nextLesson
 
-        );
-      };
-    });
+  });
 
-  // ========================================
-  // NEXT LESSON
-  // ========================================
+  bindCompleteCourse({
 
-  if (nextLesson) {
+    courseId,
 
-    document.querySelector(
-      "#nextLessonBtn"
-    ).onclick = () => {
+    course,
 
-      navigate(
+    completedLessons
 
-        `/learn/${
-          courseId
-        }/${
-          nextLesson.id
-        }`
+  });
 
-      );
-    };
-  }
+  bindVideoPlayer({
 
-  // ========================================
-  // COMPLETE COURSE
-  // ========================================
+    lesson,
 
-  const completeBtn =
+    lessonId,
 
-    document.querySelector(
-      "#completeCourseBtn"
-    );
+    courseId,
 
-  if (completeBtn) {
+    progressKey,
 
-    completeBtn.onclick = () => {
+    completedLessons
 
-      // ====================================
-      // CHECK ALL LESSONS
-      // ====================================
-
-      if (
-
-        completedLessons.length
-        <
-        course.lessons.length
-
-      ) {
-
-        alert(
-
-          "Please complete all lessons first."
-
-        );
-
-        return;
-      }
-
-      // ====================================
-      // SAVE COMPLETED
-      // ====================================
-
-      localStorage.setItem(
-
-        `course_completed_${
-          courseId
-        }`,
-
-        "true"
-
-      );
-
-      // ====================================
-      // CERTIFICATE
-      // ====================================
-
-      let certificates =
-
-        JSON.parse(
-
-          localStorage.getItem(
-            "certificates"
-          ) || "[]"
-
-        );
-
-      const exists =
-
-        certificates.find(
-          item =>
-            item.courseId === courseId
-        );
-
-      if (!exists) {
-
-        certificates.push({
-
-          courseId,
-
-          title:
-            course.title,
-
-          date:
-            new Date()
-              .toLocaleDateString()
-
-        });
-
-        localStorage.setItem(
-
-          "certificates",
-
-          JSON.stringify(
-            certificates
-          )
-
-        );
-      }
-
-      // ====================================
-      // XP
-      // ====================================
-
-      let xp =
-
-        Number(
-
-          localStorage.getItem(
-            "xp"
-          ) || 0
-
-        );
-
-      xp += 300;
-
-      localStorage.setItem(
-        "xp",
-        xp
-      );
-
-      // ====================================
-      // RELOAD
-      // ====================================
-
-      renderLearnPage();
-    };
-  }
-
-  // ========================================
-  // VIDEO PLAYER
-  // ========================================
-
-  const playBtn =
-
-    document.querySelector(
-      "#playVideoBtn"
-    );
-
-  const videoStatus =
-
-    document.querySelector(
-      "#videoStatus"
-    );
-
-  const progressFill =
-
-    document.querySelector(
-      ".video-progress-fill"
-    );
-
-  let playing = false;
-
-  playBtn.onclick = () => {
-
-    if (playing) {
-      return;
-    }
-
-    playing = true;
-
-    playBtn.innerHTML =
-      "⏸";
-
-    videoStatus.innerText =
-      "Playing lesson...";
-
-    let progress = 0;
-
-    progressFill.style.width =
-      "0%";
-
-    const interval =
-
-      setInterval(() => {
-
-        progress += 1;
-
-        progressFill.style.width =
-
-          `${progress}%`;
-
-        // ==================================
-        // FINISH
-        // ==================================
-
-        if (progress >= 100) {
-
-          clearInterval(
-            interval
-          );
-
-          playBtn.innerHTML =
-            "↻";
-
-          videoStatus.innerText =
-
-            "✅ Completed • Click to Review";
-
-          // ================================
-          // FIRST TIME ONLY
-          // ================================
-
-          const firstCompletion =
-
-            !completedLessons.includes(
-              lessonId
-            );
-
-          if (firstCompletion) {
-
-            completedLessons.push(
-              lessonId
-            );
-
-            localStorage.setItem(
-
-              progressKey,
-
-              JSON.stringify(
-                completedLessons
-              )
-
-            );
-
-            // ==============================
-            // WATCHED LESSONS
-            // ==============================
-
-            let watchedLessons =
-
-              Number(
-
-                localStorage.getItem(
-                  "watched_lessons_today"
-                ) || 0
-
-              );
-
-            watchedLessons += 1;
-
-            localStorage.setItem(
-
-              "watched_lessons_today",
-
-              watchedLessons
-
-            );
-          }
-
-          playing = false;
-        }
-
-      }, 60);
-  };
-
+  });
 }

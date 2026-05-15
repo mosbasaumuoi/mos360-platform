@@ -1,38 +1,68 @@
-function getDateKey() {
-  return new Date().toLocaleDateString("en-CA");
+import {
+  EVENT_TYPES
 }
+  from "./tracking.events.js";
 
-export async function trackClick(runtime, source) {
+export async function trackEvent(
+  env,
+  event
+) {
 
-  const safeSource = (source || "").trim().toLowerCase();
+  const id = crypto.randomUUID();
 
-  if (!safeSource) {
-    console.log("Invalid source");
-    return;
+  // ========================================
+  // EVENT TYPE VALIDATION
+  // ========================================
+
+  if (
+
+    !Object.values(
+      EVENT_TYPES
+    ).includes(
+      event.type
+    )
+
+  ) {
+
+    throw new Error(
+      `Invalid event type: ${event.type}`
+    );
   }
 
-  const date = getDateKey();
+  const trackingEvent = {
 
-  const key = `track:${date}:${safeSource}`;
+    id,
 
-  const current =
-    await runtime.env.MOS360_TRACKING_KV.get(key);
+    type:
+      event.type,
 
-  const count = current
-    ? parseInt(current)
-    : 0;
+    userId:
+      event.userId || null,
 
-  const newCount = count + 1;
+    email:
+      event.email || null,
 
-  await runtime.env.MOS360_TRACKING_KV.put(
-    key,
-    String(newCount)
+    courseId:
+      event.courseId || null,
+
+    lessonId:
+      event.lessonId || null,
+
+    metadata:
+      event.metadata || {},
+
+    createdAt:
+      Date.now()
+  };
+
+  await env.MOS360_TRACKING_KV.put(
+
+    `event:${id}`,
+
+    JSON.stringify(
+      trackingEvent
+    )
   );
 
-  console.log(
-    "TRACK:",
-    key,
-    "=>",
-    newCount
-  );
+  return trackingEvent;
 }

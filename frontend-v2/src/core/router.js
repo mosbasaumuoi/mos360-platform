@@ -4,33 +4,54 @@
 // ============================================
 
 import { renderHomePage }
-from "../pages/home/homePage.js";
+  from "../pages/home/homePage.js";
 
 import { renderLoginPage }
-from "../pages/login/loginPage";
+  from "../pages/login/loginPage";
 
 import { renderDashboardPage }
-from "../pages/dashboard/dashboardPage.js";
+  from "../pages/dashboard/dashboardPage.js";
 
 import {
   renderCoursesPage
 }
-from "../pages/courses/coursesPage.js";
+  from "../pages/courses/coursesPage.js";
 
 import {
   renderCourseDetailPage
 }
-from "../pages/courses/courseDetailPage.js";
+  from "../pages/courses/courseDetailPage.js";
 
 import {
   renderLearnPage
 }
-from "../pages/learn/learnPage.js";
+  from "../pages/learn/learnPage.js";
 
 import {
   renderVerifyPage,
   initVerifyActions
-} from "../pages/verifyPage";
+}
+  from "../pages/verifyPage";
+
+import {
+  logout
+}
+  from "../services/auth.js";
+
+import {
+  logRoute
+}
+  from "../utils/logger.js";
+
+import {
+  requireAuth
+}
+  from "../utils/authGuard.js";
+
+import {
+  renderAdminPage
+}
+  from "../pages/admin/adminPage.js";  
 
 // ============================================
 // ROUTES
@@ -47,9 +68,76 @@ const routes = {
   "/dashboard":
     renderDashboardPage,
 
-    "/courses":
-    renderCoursesPage
+  "/courses":
+    renderCoursesPage,
+
+  "/admin":
+    renderAdminPage  
 };
+
+// ============================================
+// DYNAMIC ROUTES
+// ============================================
+
+const dynamicRoutes = [
+
+  {
+    match:
+      "/courses/",
+
+    handler:
+      renderCourseDetailPage
+  },
+
+  {
+    match:
+      "/learn/",
+
+    handler:
+      renderLearnPage
+  },
+
+  {
+    match:
+      "/verify/",
+
+    handler:
+      renderVerifyRoute
+  }
+
+];
+
+// ============================================
+// VERIFY ROUTE
+// ============================================
+
+function renderVerifyRoute() {
+
+  const certificateId =
+
+    window.location.pathname
+      .split("/verify/")[1];
+
+  document.querySelector(
+    "#app"
+  ).innerHTML =
+
+    renderVerifyPage(
+      certificateId
+    );
+
+  initVerifyActions();
+}
+
+// ============================================
+// PROTECTED ROUTES
+// ============================================
+
+const protectedRoutes = [
+
+  "/dashboard"
+
+];
 
 // ============================================
 // BIND LINKS
@@ -58,7 +146,9 @@ const routes = {
 function bindLinks() {
 
   document
-    .querySelectorAll("[data-link]")
+    .querySelectorAll(
+      "[data-link]"
+    )
 
     .forEach(button => {
 
@@ -70,12 +160,33 @@ function bindLinks() {
         navigate(path);
       };
     });
+
+  // ========================================
+  // LOGOUT
+  // ========================================
+
+  const logoutBtn =
+
+    document.querySelector(
+      "#logoutBtn"
+    );
+
+  if (logoutBtn) {
+
+    logoutBtn.onclick = () => {
+
+      logout();
+
+      navigate("/login");
+    };
+  }
 }
+
 // ============================================
 // LOAD ROUTE
 // ============================================
 
-  export async function loadRoute() {
+export async function loadRoute() {
 
   const path =
     window.location.pathname;
@@ -84,66 +195,94 @@ function bindLinks() {
     window.location.pathname;
 
   // ========================================
-  // COURSE DETAIL
+  // PROTECTED ROUTE CHECK
   // ========================================
 
-  if (
-    pathname.startsWith(
-      "/courses/"
-    )
-  ) {
+  const isProtected =
 
-    renderCourseDetailPage();
+    protectedRoutes.includes(
+      pathname
+    );
+
+  if (
+    isProtected
+    &&
+    !requireAuth()
+  ) {
 
     return;
   }
 
-// ========================================
-// LEARN PAGE
-// ========================================
+  // ========================================
+  // ROUTE LOG
+  // ========================================
 
-if (
-  pathname.startsWith(
-    "/learn/"
-  )
-) {
+  logRoute(
+    "loadRoute",
+    pathname
+  );
 
-  renderLearnPage();
+  // ========================================
+  // LEARN ROUTE VALIDATION
+  // ========================================
 
-  return;
-}
+  if (
+    pathname.startsWith(
+      "/learn/"
+    )
+  ) {
 
+    const parts =
 
-    // ========================================
-    // VERIFY PAGE
-    // ========================================
+      pathname
+        .split("/")
+        .filter(Boolean);
 
-    if (
-      pathname.startsWith(
-        "/verify/"
-      )
-    ) {
+    // ======================================
+    // REQUIRE:
+    // /learn/courseId/lessonId
+    // ======================================
 
-      const certificateId =
+    if (parts.length < 3) {
 
-        pathname.split(
-          "/verify/"
-        )[1];
+      console.error(
+        "[ROUTER] Invalid learn route:",
+        pathname
+      );
 
-      document.querySelector(
-        "#app"
-      ).innerHTML =
-
-        renderVerifyPage(
-          certificateId
-        );
-
-      initVerifyActions();
+      navigate("/courses");
 
       return;
     }
+  }
 
-    const page =
+  // ========================================
+  // DYNAMIC ROUTES
+  // ========================================
+
+  const dynamicRoute =
+
+    dynamicRoutes.find(
+      route =>
+
+        pathname.startsWith(
+          route.match
+        )
+    );
+
+  if (dynamicRoute) {
+
+    await dynamicRoute.handler();
+
+    bindLinks();
+
+    return;
+  }
+  // ========================================
+  // STATIC ROUTE
+  // ========================================
+
+  const page =
     routes[path];
 
   if (!page) {
@@ -161,7 +300,7 @@ if (
     return;
   }
 
-    await page();
+  await page();
 
   bindLinks();
 }
@@ -170,7 +309,14 @@ if (
 // NAVIGATE
 // ============================================
 
-export function navigate(path) {
+export function navigate(
+  path
+) {
+
+  logRoute(
+    "navigate",
+    path
+  );
 
   window.history.pushState(
     {},
@@ -187,5 +333,3 @@ export function navigate(path) {
 
 window.onpopstate =
   loadRoute;
-
-

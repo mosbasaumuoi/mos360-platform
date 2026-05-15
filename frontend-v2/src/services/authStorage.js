@@ -1,10 +1,12 @@
 // ============================================
 // MOS360 AUTH STORAGE
-// Quản lý token frontend
+// Frontend auth persistence
 // ============================================
 
-const TOKEN_KEY =
-  "mos360_token";
+import {
+  STORAGE_KEYS
+}
+  from "../constants/storageKeys.js";
 
 // ============================================
 // SAVE TOKEN
@@ -13,7 +15,7 @@ const TOKEN_KEY =
 export function saveToken(token) {
 
   localStorage.setItem(
-    TOKEN_KEY,
+    STORAGE_KEYS.TOKEN,
     token
   );
 }
@@ -25,18 +27,18 @@ export function saveToken(token) {
 export function getToken() {
 
   return localStorage.getItem(
-    TOKEN_KEY
+    STORAGE_KEYS.TOKEN
   );
 }
 
 // ============================================
-// REMOVE TOKEN
+// CLEAR TOKEN
 // ============================================
 
 export function clearToken() {
 
   localStorage.removeItem(
-    TOKEN_KEY
+    STORAGE_KEYS.TOKEN
   );
 }
 

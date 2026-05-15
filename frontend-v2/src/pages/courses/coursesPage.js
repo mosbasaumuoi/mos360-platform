@@ -32,6 +32,17 @@ import {
 }
 from "../../core/router.js";
 
+import {
+  logCourse,
+  logWarn
+}
+  from "../../utils/logger.js";
+
+import {
+  validateCourse
+}
+  from "../../contracts/course.contract.js";
+
 export async function renderCoursesPage() {
 
   document.querySelector(
@@ -75,19 +86,46 @@ export async function renderCoursesPage() {
   return;
   }
 
-  const courses =
+  const rawCourses =
     result.data || [];
 
-console.log(
-  "COURSES:",
-  JSON.stringify(
-    courses,
-    null,
-    2
-  )
-);  
+  // ========================================
+  // VALIDATE COURSES
+  // ========================================
 
-if (courses.length === 0) {
+  const courses =
+
+    rawCourses.filter(
+      course => {
+
+        const valid =
+
+          validateCourse(
+            course
+          );
+
+        // ====================================
+        // INVALID CONTRACT
+        // ====================================
+
+        if (!valid) {
+
+          logWarn(
+
+            "COURSE",
+
+            "invalid course contract",
+
+            course
+
+          );
+        }
+
+        return valid;
+      }
+    );
+
+  if (courses.length === 0) {
 
   document.querySelector(
     "#app"
@@ -144,9 +182,12 @@ if (courses.length === 0) {
         const id =
           card.dataset.id;
 
-        console.log(
-          "CLICK ID:",
-          id
+        logCourse(
+          "navigate course detail",
+          {
+            courseId:
+              id
+          }
         );
 
         navigate(

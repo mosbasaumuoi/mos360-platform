@@ -12,3 +12,11 @@ id = "eee76ad74d4845458898a143a514ed84"
 
 [vars]
 JWT_SECRET = "MOS360_SECRET_KEY"
+
+[[kv_namespaces]]
+binding = "MOS360_USERS_KV"
+id = "dc0ad0df05914e888863c95abe080a3f"
+
+[[kv_namespaces]]
+binding = "MOS360_CREDENTIALS_KV"
+id = "dc0ad0df05914e888863c95abe080a3f"

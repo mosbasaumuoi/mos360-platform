@@ -4,29 +4,42 @@
 // ============================================
 
 import { CONFIG }
-from "../core/config";
+  from "../core/config.js";
 
 import {
   getToken,
   clearToken
 }
-from "./authStorage";
+  from "./authStorage.js";
 
 import {
   showToast
 }
-from "../components/toast/toast.js";
+  from "../components/toast/toast.js";
 
 import {
   showLoading,
   hideLoading
 }
-from "../components/loading/loading.js";
+  from "../components/loading/loading.js";
 
 import {
-  navigate
+  STORAGE_KEYS
 }
-from "../core/router.js";
+  from "../constants/storageKeys.js";
+
+import {
+  removeStorage
+}
+  from "../utils/localStorageHelpers.js";
+
+import {
+  logAuth,
+  logInfo,
+  logWarn,
+  logError
+}
+  from "../utils/logger.js";
 
 // ============================================
 // MAIN REQUEST
@@ -66,6 +79,23 @@ async function request(
       getToken();
 
     // ========================================
+    // TRACE REQUEST
+    // ========================================
+
+    logInfo(
+
+      "API",
+
+      "request start",
+
+      {
+        method,
+        path
+      }
+
+    );
+
+    // ========================================
     // REQUEST
     // ========================================
 
@@ -97,8 +127,37 @@ async function request(
     // JSON
     // ========================================
 
-    const result =
-      await response.json();
+    let result = null;
+
+    try {
+
+      result =
+        await response.json();
+
+    } catch (error) {
+
+      logError(
+
+        "API",
+
+        "invalid json response",
+
+        {
+          method,
+          path,
+          error
+        }
+
+      );
+
+      return {
+
+        ok: false,
+
+        error:
+          "Invalid server response"
+      };
+    }
 
     // ========================================
     // UNAUTHORIZED
@@ -108,24 +167,78 @@ async function request(
       response.status === 401
     ) {
 
+      logWarn(
+
+        "AUTH",
+
+        "session expired",
+
+        {
+          path
+        }
+
+      );
+
       clearToken();
+
+      removeStorage(
+        STORAGE_KEYS.USER
+      );
 
       showToast(
         "Session expired"
       );
 
-      navigate(
-        "/login"
-      );
+      return {
+
+        ok: false,
+
+        unauthorized: true,
+
+        error:
+          "Unauthorized"
+      };
     }
 
+    // ========================================
+    // TRACE RESPONSE
+    // ========================================
+
+    logInfo(
+
+      "API",
+
+      "request success",
+
+      {
+        method,
+        path,
+        ok:
+          result?.ok
+      }
+
+    );
+    
     return result;
 
   } catch (error) {
 
-    console.error(
-      "[API ERROR]",
-      error
+    // ========================================
+    // API ERROR
+    // ========================================
+
+    logError(
+
+      "API",
+
+      "request failed",
+
+      {
+        method,
+        path,
+        error
+      }
+
     );
 
     showToast(
@@ -133,8 +246,11 @@ async function request(
     );
 
     return {
+
       ok: false,
-      error: "Network Error"
+
+      error:
+        "Network Error"
     };
 
   } finally {

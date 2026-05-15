@@ -27,6 +27,16 @@ import {
 }
 from "../../services/authStorage.js";
 
+import {
+  logAuth
+}
+  from "../../utils/logger.js";
+
+import {
+  updateStreak
+}
+  from "../../services/gamificationApi.js";  
+
 // ============================================
 // LOGIN PAGE
 // ============================================
@@ -36,15 +46,6 @@ export async function renderLoginPage() {
   // ========================================
   // AUTH REDIRECT
   // ========================================
-
-  if (isAuthenticated()) {
-
-    navigate(
-      "/dashboard"
-    );
-
-    return;
-  }
 
   document.querySelector("#app")
     .innerHTML = `
@@ -139,6 +140,11 @@ export async function renderLoginPage() {
         // API
         // ====================================
 
+        logAuth(
+          "login attempt",
+          email
+        ); 
+        
         const result =
           await apiPost(
             "/auth/login",
@@ -166,10 +172,34 @@ export async function renderLoginPage() {
           result.data?.token
         ) {
 
+          logAuth(
+            "login success",
+            email
+          ); 
+
+          updateStreak({
+
+            email:
+              "admin@mos360.vn"
+          });
+          
           saveToken(
             result.data.token
           );
 
+          localStorage.setItem(
+            "user",
+            JSON.stringify({
+              email,
+              role: "ADMIN"
+            })
+          );
+
+          logAuth(
+            "login failed",
+            email
+          ); 
+          
           showToast(
             "Login success"
           );

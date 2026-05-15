@@ -1,5 +1,8 @@
 import { json } from "../../utils/response.js";
-import { trackClick } from "../tracking/tracking.service.js";
+import {
+  trackEvent
+}
+  from "../tracking/tracking.service.js";
 
 export async function handlePublic(request, env, ctx, runtime) {
 
@@ -10,7 +13,7 @@ export async function handlePublic(request, env, ctx, runtime) {
     return json("Missing source", 400);
   }
 
-  await trackClick(runtime, source);
+  await trackEvent(runtime, source);
 
   return json({ source });
 }

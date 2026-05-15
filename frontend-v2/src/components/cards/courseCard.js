@@ -1,15 +1,25 @@
 // ============================================
 // COURSE CARD
 // ============================================
+import {
+  logCourse
+}
+  from "../../utils/logger.js";
 
 export function renderCourseCard(
   course
 ) {
 
-console.log(
-  "COURSE CARD:",
-  course
-);
+  logCourse(
+    "render course card",
+    {
+      id:
+        course.id,
+
+      title:
+        course.title
+    }
+  );
 
   return `
 

@@ -20,6 +20,51 @@ import {
 from "./services/auth.js";
 
 // ============================================
+// GLOBAL RUNTIME ERROR SHIELD
+// ============================================
+
+window.onerror = (
+
+  message,
+  source,
+  line,
+  column,
+  error
+
+) => {
+
+  console.error(
+
+    "[MOS360:RUNTIME_ERROR]",
+
+    {
+      message,
+      source,
+      line,
+      column,
+      error
+    }
+
+  );
+};
+
+// ============================================
+// UNHANDLED PROMISE REJECTION
+// ============================================
+
+window.onunhandledrejection = (
+  event
+) => {
+
+  console.error(
+
+    "[MOS360:UNHANDLED_REJECTION]",
+
+    event.reason
+  );
+};
+
+// ============================================
 // START APP
 // ============================================
 

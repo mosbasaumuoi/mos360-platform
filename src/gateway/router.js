@@ -17,6 +17,28 @@ import {
 }
 from "../modules/auth/auth.routes.js";
 
+import {
+  handleTrackEvent
+}
+  from "../modules/tracking/tracking.routes.js";
+
+import {
+  handleIssueCredential,
+  handleVerifyCredential
+}
+  from "../modules/credentials/credentials.routes.js";
+  
+import {
+  handleAnalytics
+}
+  from "../modules/analytics/analytics.routes.js";  
+
+import {
+  handleAddXP,
+  handleDailyStreak
+}
+  from "../modules/gamification/gamification.routes.js";
+
 // ============================================
 // ROUTES API
 // ============================================
@@ -33,6 +55,20 @@ const routes = new Map([
 
   ["GET:/api/public/track", handlePublic],
 
+  ["POST:/api/track", handleTrackEvent],
+
+  ["POST:/api/tracking/event", handleTrackEvent],
+
+  ["POST:/api/credentials", handleIssueCredential],
+
+  ["GET:/api/credentials/:certificateId", handleVerifyCredential],
+
+  ["GET:/api/analytics", handleAnalytics],
+
+  ["POST:/api/gamification/xp", handleAddXP],
+
+  ["POST:/api/gamification/streak", handleDailyStreak],
+
 ]);
 
 // ============================================
@@ -48,7 +84,7 @@ const corsHeaders = {
     "GET, POST, OPTIONS",
 
   "Access-Control-Allow-Headers":
-    "Content-Type, Authorization"
+    "Content-Type, Authorization",
 };
 
 // ============================================
@@ -172,6 +208,47 @@ if (
     }
   );
 }
+
+  if (
+
+    request.method === "GET"
+
+    &&
+
+    url.pathname.startsWith(
+      "/api/credentials/"
+    )
+
+  ) {
+
+    const response =
+      await handleVerifyCredential(
+        request,
+        env
+      );
+
+    const headers =
+      new Headers(
+        response.headers
+      );
+
+    Object.entries(corsHeaders)
+      .forEach(([key, value]) => {
+
+        headers.set(key, value);
+
+      });
+
+    return new Response(
+      response.body,
+      {
+        status:
+          response.status,
+
+        headers
+      }
+    );
+  }
 
     const handler =
     routes.get(key);

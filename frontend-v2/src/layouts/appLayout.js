@@ -6,14 +6,17 @@
 import {
   appContext
 }
-from "../core/appContext.js";
+  from "../core/appContext.js";
 
 export function renderAppLayout(
   content
 ) {
 
   const user =
-  appContext.user;
+    appContext.user;
+
+  const isLoggedIn =
+    !!user;
 
   return `
 
@@ -25,53 +28,119 @@ export function renderAppLayout(
 
       <aside class="sidebar">
 
-        <h2 class="logo">
-          MOS360
-        </h2>
+        <!-- LOGO -->
+
+        <div class="sidebar-top">
+
+          <h2 class="logo">
+            MOS360
+          </h2>
+
+          <div class="sidebar-tagline">
+
+            Học thật.
+            Tiến bộ thật.
+
+          </div>
+
+        </div>
+
+        <!-- USER -->
 
         <div class="sidebar-user">
 
-  <div class="sidebar-avatar">
-    M
-  </div>
+          <div class="sidebar-avatar">
 
-  <div class="sidebar-user-info">
+            ${isLoggedIn
+      ? user.email
+        .charAt(0)
+        .toUpperCase()
+      : "M"}
 
-    <div class="sidebar-user-email">
-      ${user?.email || "Guest"}
-    </div>
+          </div>
 
-    <div class="sidebar-user-role">
-      ${user?.role || "visitor"}
-    </div>
+          <div class="sidebar-user-info">
 
-  </div>
+            <div class="sidebar-user-email">
 
-</div>
+              ${user?.email || "Khách truy cập"}
+
+            </div>
+
+            <div class="sidebar-user-role">
+
+              ${user?.role || "Bắt đầu hành trình học tập"}
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- NAVIGATION -->
 
         <nav class="menu">
 
           <button data-link="/">
-            Home
+
+            Trang chủ
+
+          </button>
+
+          <button data-link="/courses">
+
+            Khóa học
+
           </button>
 
           <button data-link="/dashboard">
-            Dashboard
+
+            Tiến trình
+
           </button>
 
-          <button data-link="/login">
-            Login
-          </button>
+          ${!isLoggedIn
+      ? `
 
-          <button id="logoutBtn">
-           Logout
-          </button>
+              <button data-link="/login">
 
-          <a href="/courses">
-           Courses
-          </a>
+                Đăng nhập
+
+              </button>
+
+            `
+      : `
+            
+              <button id="logoutBtn">
+
+                Đăng xuất
+
+              </button>
+
+            `
+    }
 
         </nav>
+
+        <!-- SIDEBAR FOOT -->
+
+        <div class="sidebar-foot">
+
+          <div class="sidebar-foot-title">
+
+            MOS360
+
+          </div>
+
+          <div class="sidebar-foot-text">
+
+            Học MOS và kỹ năng Office
+            theo hướng thực hành,
+            dễ tiếp cận và liên tục.
+
+          </div>
+
+        </div>
 
       </aside>
 

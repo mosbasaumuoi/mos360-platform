@@ -255,6 +255,7 @@ function bindCompleteCourse({
 function bindVideoPlayer({
 
   lesson,
+  course,
   lessonId,
   courseId,
   progressKey,
@@ -395,7 +396,8 @@ function bindVideoPlayer({
               {
                 courseId,
                 lessonId,
-                xpReward
+                xpReward:
+                  course.xpReward
               }
             );
 
@@ -994,6 +996,8 @@ export async function renderLearnPage() {
   bindVideoPlayer({
 
     lesson,
+
+    course,
 
     lessonId,
 

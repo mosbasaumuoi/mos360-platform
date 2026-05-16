@@ -10,81 +10,109 @@ const courses = [
   {
     id: "mos-excel-expert",
 
-    title:
-      "MOS Excel Expert",
+    slug: "mos-excel-expert",
 
-    teacher:
-      "MOS360",
+    category: "excel",
 
-    price:
-      2900000,
+    xpReward: 500,
 
-    thumbnail:
-      "MOS",
+    title: "MOS Excel Expert",
 
-    status:
-      "published",
+    teacher: "MOS360",
+
+    price: 2900000,
+
+    thumbnail: "MOS",
+
+    status: "published",
 
     description:
       "Khóa học MOS Excel từ cơ bản tới Expert dành cho học sinh, sinh viên và nhân sự văn phòng.",
 
-    students:
-      1250,
+    students: 1250,
 
-    duration:
-      "24 giờ",
+    duration: "24 giờ",
 
-    level:
-      "Intermediate",
+    level: "Intermediate",
 
     lessons: [
 
       {
         id: "excel-basics",
 
-    title:
-    "Excel Basics",
+        courseId: "mos-excel-expert",
 
-    duration:
-    "12:40",
+        slug: "excel-basics",
 
-    thumbnail:
-    "EXCEL",
+        title: "Excel Basics",
 
-    content:
-    "Học các thao tác cơ bản trong Excel."
-   },
+        description:
+          "Học các thao tác cơ bản trong Excel.",
+
+        type: "video",
+
+        duration: 12,
+
+        xpReward: 20,
+
+        order: 1,
+
+        thumbnail: "EXCEL",
+
+        content:
+          "Học các thao tác cơ bản trong Excel."
+      },
 
       {
         id: "functions-formulas",
-  
-    title:
-    "Functions & Formulas",
 
-     duration:
-    "24:10",
+        courseId: "mos-excel-expert",
 
-     thumbnail:
-    "FORMULA",
+        slug: "functions-formulas",
 
-     content:
-    "Học cách sử dụng SUM, IF, VLOOKUP..."
-   },
+        title: "Functions & Formulas",
+
+        description:
+          "Học cách sử dụng SUM, IF, VLOOKUP.",
+
+        type: "video",
+
+        duration: 24,
+
+        xpReward: 25,
+
+        order: 2,
+
+        thumbnail: "FORMULA",
+
+        content:
+          "Học cách sử dụng SUM, IF, VLOOKUP."
+      },
 
       {
-      id: "pivot-table",
+        id: "pivot-table",
 
-      title:
-      "Pivot Table",
+        courseId: "mos-excel-expert",
 
-      duration:
-       "18:20",
+        slug: "pivot-table",
 
-      thumbnail:
-       "PIVOT",
+        title: "Pivot Table",
 
-  content:
-    "Phân tích dữ liệu bằng Pivot Table và Dashboard."
+        description:
+          "Phân tích dữ liệu bằng Pivot Table.",
+
+        type: "video",
+
+        duration: 18,
+
+        xpReward: 30,
+
+        order: 3,
+
+        thumbnail: "PIVOT",
+
+        content:
+          "Phân tích dữ liệu bằng Pivot Table và Dashboard."
       }
 
     ]
@@ -93,50 +121,80 @@ const courses = [
   {
     id: "mos-word-specialist",
 
-    title:
-      "MOS Word Specialist",
+    slug: "mos-word-specialist",
 
-    teacher:
-      "MOS360",
+    category: "word",
 
-    price:
-      1900000,
+    xpReward: 400,
 
-    thumbnail:
-      "WORD",
+    title: "MOS Word Specialist",
 
-    status:
-      "published",
+    teacher: "MOS360",
+
+    price: 1900000,
+
+    thumbnail: "WORD",
+
+    status: "published",
 
     description:
-      "Khóa học MOS Word giúp bạn thành thạo định dạng văn bản và xử lý tài liệu chuyên nghiệp.",
+      "Khóa học MOS Word giúp thành thạo định dạng văn bản và xử lý tài liệu chuyên nghiệp.",
 
-    students:
-      860,
+    students: 860,
 
-    duration:
-      "16 giờ",
+    duration: "16 giờ",
 
-    level:
-      "Beginner",
+    level: "Beginner",
 
     lessons: [
 
       {
         id: "word-basics",
 
-        title:
-          "Word Basics",
+        courseId: "mos-word-specialist",
+
+        slug: "word-basics",
+
+        title: "Word Basics",
+
+        description:
+          "Giới thiệu giao diện Word và thao tác cơ bản.",
+
+        type: "video",
+
+        duration: 10,
+
+        xpReward: 20,
+
+        order: 1,
+
+        thumbnail: "WORD",
 
         content:
-          "Giới thiệu giao diện Word và các thao tác cơ bản."
+          "Giới thiệu giao diện Word và thao tác cơ bản."
       },
 
       {
-        id: "formatting",
+        id: "word-formatting",
 
-        title:
-          "Formatting",
+        courseId: "mos-word-specialist",
+
+        slug: "word-formatting",
+
+        title: "Formatting",
+
+        description:
+          "Học cách định dạng văn bản chuyên nghiệp.",
+
+        type: "video",
+
+        duration: 15,
+
+        xpReward: 25,
+
+        order: 2,
+
+        thumbnail: "FORMAT",
 
         content:
           "Học cách định dạng văn bản chuyên nghiệp."
@@ -145,8 +203,24 @@ const courses = [
       {
         id: "professional-documents",
 
-        title:
-          "Professional Documents",
+        courseId: "mos-word-specialist",
+
+        slug: "professional-documents",
+
+        title: "Professional Documents",
+
+        description:
+          "Xây dựng tài liệu chuyên nghiệp cho công việc.",
+
+        type: "video",
+
+        duration: 22,
+
+        xpReward: 30,
+
+        order: 3,
+
+        thumbnail: "DOC",
 
         content:
           "Xây dựng tài liệu chuyên nghiệp cho công việc."
@@ -156,7 +230,7 @@ const courses = [
   }
 
 ];
-
+    
 // ============================================
 // GET COURSES
 // ============================================

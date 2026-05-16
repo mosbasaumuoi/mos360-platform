@@ -140,25 +140,124 @@ export async function renderCoursesPage() {
 }
 
   const cards =
-  courses.map(
-    renderCourseCard
-  ).join("");
+    courses.map(
+      renderCourseCard
+    ).join("");
+
+  logCourse(
+    "courses loaded",
+    {
+      total:
+        courses.length
+    }
+  );
 
   const content = `
 
-    <div class="page">
+    <div class="page courses-page">
+
+  <!-- ==================================== -->
+  <!-- HERO -->
+  <!-- ==================================== -->
+
+  <section class="courses-hero">
+
+    <div class="courses-hero-content">
+
+      <div class="courses-badge">
+
+        ⚡ Lộ trình học MOS & kỹ năng Office
+
+      </div>
 
       <h1>
-        COURSES
+
+        Học theo lộ trình
+        dễ tiếp cận và thực tế.
+
       </h1>
 
-      <div class="courses-grid">
+      <p>
 
-        ${cards}
+        MOS360 giúp người học luyện thi MOS,
+        xây dựng kỹ năng Office thực hành và
+        từng bước tự tin hơn trong học tập
+        cũng như công việc thực tế.
+
+      </p>
+
+    </div>
+
+    <div class="courses-hero-card">
+
+      <div class="courses-hero-label">
+
+        CONTINUITY
+
+      </div>
+
+      <h3>
+
+        Học tập liên tục,
+        không áp lực.
+
+      </h3>
+
+      <div class="courses-hero-points">
+
+        <div class="courses-point">
+          ✅ Luyện thi MOS sát thực tế
+        </div>
+
+        <div class="courses-point">
+          ✅ Video học dễ tiếp cận
+        </div>
+
+        <div class="courses-point">
+          ✅ Quiz & thực hành liên tục
+        </div>
+
+        <div class="courses-point">
+          ✅ Tài liệu & tiện ích hỗ trợ
+        </div>
 
       </div>
 
     </div>
+
+  </section>
+
+  <!-- ==================================== -->
+  <!-- PATH SECTION -->
+  <!-- ==================================== -->
+
+  <section class="learning-path-section">
+
+    <div class="section-heading">
+
+      <h2>
+        Lộ trình học hiện tại
+      </h2>
+
+      <p>
+
+        Bắt đầu từ nền tảng MOS cơ bản,
+        luyện tập theo từng kỹ năng và
+        dần xây dựng sự tự tin trong môi trường thực tế.
+
+      </p>
+
+    </div>
+
+    <div class="courses-grid">
+
+      ${cards}
+
+    </div>
+
+  </section>
+
+</div>
 
   `;
 

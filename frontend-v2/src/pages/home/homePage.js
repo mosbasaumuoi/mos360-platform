@@ -14,7 +14,52 @@ import {
 }
   from "../../core/router.js";
 
+import {
+  appContext
+}
+  from "../../core/appContext.js";
+
+import {
+  getStorage
+}
+  from "../../utils/localStorageHelpers.js";
+
+import {
+  STORAGE_KEYS
+}
+  from "../../constants/storageKeys.js";  
+
 export async function renderHomePage() {
+
+  const user =
+    appContext.user;
+
+  const streak =
+
+    getStorage(
+      STORAGE_KEYS.USER_STREAK,
+      0
+    );
+
+  const lastCourse =
+
+    getStorage(
+      STORAGE_KEYS.LAST_COURSE,
+      null
+    );
+
+  const lastLesson =
+
+    getStorage(
+      STORAGE_KEYS.LAST_LESSON,
+      null
+    );
+
+  const hasContinuity =
+
+    user &&
+    lastCourse &&
+    lastLesson;
 
   const content = `
 
@@ -28,30 +73,30 @@ export async function renderHomePage() {
 
 <div class="hero-badge">
 
-⚡ Practical Office Skills & MOS Progression
+⚡ Học MOS & kỹ năng Office theo hướng thực hành
 
 </div>
 
 <h1 class="hero-title">
 
-Learn Office Skills
-<span>
-Calmly.
-</span>
+  Học kỹ năng Office
+  <span>
+    dễ tiếp cận.
+  </span>
 
-Progress
-<span>
-Confidently.
-</span>
+  Tiến bộ
+  <span>
+    từng ngày.
+  </span>
 
 </h1>
 
 <p class="hero-description">
 
-MOS360 helps students and office workers
-build real Microsoft Office skills through
-practical learning, real exam simulation,
-and continuous progression.
+  MOS360 giúp sinh viên và nhân viên văn phòng
+  học Excel, Word và kỹ năng Office theo hướng
+  thực hành, dễ hiểu và sát với nhu cầu học tập
+  cũng như công việc thực tế.
 
 </p>
 
@@ -62,7 +107,7 @@ class="hero-primary-btn"
 id="startLearningBtn"
 >
 
-Start Learning →
+Bắt đầu học →
 
 </button>
 
@@ -71,7 +116,7 @@ class="hero-secondary-btn"
 id="exploreCoursesBtn"
 >
 
-Explore Courses
+Xem khóa học
 
 </button>
 
@@ -84,7 +129,7 @@ Explore Courses
 <div class="hero-card">
 
 <div class="hero-card-label">
-REAL RESULTS
+  KẾT QUẢ THỰC TẾ
 </div>
 
 <div class="hero-card-score">
@@ -93,26 +138,25 @@ REAL RESULTS
 
 <p class="hero-card-text">
 
-              MOS360 helps learners practice in an
-              environment close to the real exam while
-              building practical office confidence for
-              study and work.
+  Học viên được luyện tập trong môi trường
+  sát với bài thi MOS thực tế, đồng thời xây dựng
+  kỹ năng Office hữu ích cho học tập và công việc.
 
-            </p>
+</p>
 
             <div class="hero-card-list">
 
               <div class="hero-card-item">
-                ✅ Real exam simulation
-              </div>
+  ✅ Luyện thi MOS sát thi thật
+</div>
 
-              <div class="hero-card-item">
-                ✅ Practical Office learning
-              </div>
+<div class="hero-card-item">
+  ✅ Học kỹ năng Office ứng dụng
+</div>
 
-              <div class="hero-card-item">
-                ✅ Calm progression experience
-              </div>
+<div class="hero-card-item">
+  ✅ Lộ trình học dễ tiếp cận
+</div>
 
             </div>
 
@@ -121,6 +165,62 @@ REAL RESULTS
         </div>
 
       </section>
+
+${hasContinuity ? `
+
+<section class="continuity-section">
+
+  <div class="continuity-card">
+
+    <div class="continuity-top">
+
+      <div>
+
+        <div class="continuity-label">
+
+          TIẾP TỤC HÀNH TRÌNH
+
+        </div>
+
+        <h3>
+
+          Chào mừng quay lại,
+          ${user.email}
+
+        </h3>
+
+      </div>
+
+      <div class="continuity-streak">
+
+        🔥 ${streak} ngày
+
+      </div>
+
+    </div>
+
+    <p class="continuity-description">
+
+      Bạn đang duy trì tiến trình học tập rất tốt.
+      Hãy tiếp tục bài học gần nhất để giữ nhịp học tự nhiên.
+
+    </p>
+
+    <button
+      class="continuity-btn"
+      id="continueLearningBtn"
+    >
+
+      Tiếp tục học →
+
+    </button>
+
+  </div>
+
+</section>
+
+` : ""}
+
 <!-- TRUST -->
 
 <section class="trust-section">
@@ -142,17 +242,16 @@ REAL RESULTS
     <div class="proof-content">
 
       <h3>
-        Real MOS Exam Readiness
+          Luyện thi MOS sát thi thật
       </h3>
 
       <p>
 
-        MOS360 learners practice in environments
-        closely aligned with the real MOS exam,
-        helping them build familiarity, confidence,
-        and strong performance under real conditions.
+  Học viên được luyện tập với giao diện và cấu trúc
+  tương tự bài thi MOS thật, giúp làm quen tốt hơn,
+  tự tin hơn và đạt kết quả cao trong kỳ thi thực tế.
 
-      </p>
+</p>
 
     </div>
 
@@ -201,15 +300,15 @@ REAL RESULTS
   <div class="trust-card">
 
     <h3>
-      Practical Confidence
+  Tự tin sử dụng Office
     </h3>
 
     <p>
 
-      MOS360 is not only about passing exams.
-      Learners gradually become more confident
-      using Excel, Word, and Office tools in
-      real university and workplace situations.
+  MOS360 không chỉ hướng tới việc thi đậu.
+  Học viên còn dần tự tin hơn khi sử dụng
+  Excel, Word và các công cụ Office trong
+  học tập cũng như công việc thực tế.
 
     </p>
 
@@ -218,14 +317,14 @@ REAL RESULTS
   <div class="trust-card">
 
     <h3>
-      Calm Progression
+  Học tập nhẹ nhàng & liên tục
     </h3>
 
     <p>
 
-      The platform is designed to feel lightweight,
-      approachable, and continuous — helping learners
-      keep progressing without pressure or overwhelm.
+  Nền tảng được thiết kế theo hướng dễ tiếp cận,
+  nhẹ nhàng và liên tục, giúp người học duy trì
+  việc học mà không cảm thấy áp lực hay quá tải.
 
     </p>
 
@@ -240,16 +339,15 @@ REAL RESULTS
 <div class="progression-content">
 
 <h2>
-A smoother way
-to build Office skills.
+  Một cách học Office
+  dễ tiếp cận hơn.
 </h2>
 
 <p>
 
-MOS360 focuses on calm continuity.
-Learners can start easily, practice
-consistently, and gradually build practical
-confidence without feeling overwhelmed.
+  MOS360 tập trung vào trải nghiệm học liên tục
+  và dễ tiếp cận. Người học có thể bắt đầu đơn giản,
+  luyện tập đều đặn và dần tự tin hơn với kỹ năng Office.
 
 </p>
 
@@ -262,7 +360,7 @@ confidence without feeling overwhelmed.
 </div>
 
 <div>
-Start with guided Office fundamentals.
+Bắt đầu với nền tảng Office cơ bản.
 </div>
 
 </div>
@@ -274,7 +372,7 @@ Start with guided Office fundamentals.
 </div>
 
 <div>
-Practice in realistic MOS environments.
+Luyện tập với môi trường sát bài thi thật MOS.
 </div>
 
 </div>
@@ -286,7 +384,7 @@ Practice in realistic MOS environments.
 </div>
 
 <div>
-Build confidence for study and work.
+Tự tin hơn trong học tập và công việc.
 </div>
 
 </div>
@@ -298,7 +396,7 @@ Build confidence for study and work.
 <div class="progression-visual">
 
 <div class="progression-visual-title">
-LEARNING CONTINUITY
+TIẾN TRÌNH HỌC TẬP
 </div>
 
 <div class="progression-bar">
@@ -309,10 +407,9 @@ LEARNING CONTINUITY
 
 <div class="progression-visual-text">
 
-MOS360 is designed to preserve momentum.
-Learners can continue lessons naturally,
-review progress clearly, and steadily improve
-practical Office skills over time.
+  MOS360 được thiết kế để giúp người học duy trì
+  động lực học tập, tiếp tục bài học một cách tự nhiên
+  và từng bước cải thiện kỹ năng Office theo thời gian.
 
 </div>
 
@@ -325,15 +422,14 @@ practical Office skills over time.
 <section class="final-cta">
 
 <h2>
-Build real Office confidence.
+  Xây dựng kỹ năng Office thực tế.
 </h2>
 
 <p>
 
-MOS360 combines practical Office learning,
-MOS exam preparation, and progression-based
-continuity to help learners feel more capable
-in school, university, and real work.
+  MOS360 kết hợp giữa học kỹ năng Office thực hành,
+  luyện thi MOS và trải nghiệm học liên tục nhằm giúp
+  người học tự tin hơn trong học tập, đại học và công việc thực tế.
 
 </p>
 
@@ -342,7 +438,7 @@ class="hero-primary-btn"
 id="finalStartBtn"
 >
 
-Start Your Progression →
+Bắt đầu hành trình học →
 
 </button>
 
@@ -380,5 +476,29 @@ Start Your Progression →
 
     navigate("/courses");
   };
+
+  // ========================================
+  // CONTINUE LEARNING
+  // ========================================
+
+  const continueBtn =
+
+    document.querySelector(
+      "#continueLearningBtn"
+    );
+
+  if (
+    continueBtn &&
+    lastCourse &&
+    lastLesson
+  ) {
+
+    continueBtn.onclick = () => {
+
+      navigate(
+        `/learn/${lastCourse}/${lastLesson}`
+      );
+    };
+  }
 }
 

@@ -1,6 +1,7 @@
 // ============================================
 // LEARN PAGE
 // ============================================
+import "./learn.css";
 
 import {
   apiGet
@@ -848,113 +849,218 @@ export async function renderLearnPage() {
 
       <!-- SIDEBAR -->
 
-      <div class="learn-sidebar">
+      <aside class="learn-sidebar">
 
-        <h2>
-          Lessons
-        </h2>
+        <div class="learn-sidebar-top">
 
-        ${lessonsHtml}
+          <div class="learn-sidebar-label">
 
-      </div>
-
-      <!-- CONTENT -->
-
-      <div class="learn-content">
-
-        <h1>
-          ${course.title}
-        </h1>
-
-        <h2>
-          ${lesson.title}
-        </h2>
-
-        <!-- VIDEO -->
-
-        <div class="video-player">
-
-          <div
-            class="video-overlay"
-            id="playVideoBtn"
-          >
-
-            ${lessonCompleted
-      ? "↻"
-      : "▶"
-    }
+            LEARNING CONTINUITY
 
           </div>
 
-          <div class="video-info">
+          <h2>
+
+            ${course.title}
+
+          </h2>
+
+          <p>
+
+            Tiếp tục bài học theo lộ trình
+            thực hành và duy trì tiến trình học tập.
+
+          </p>
+
+        </div>
+
+        <div class="lesson-sidebar-list">
+
+          ${lessonsHtml}
+
+        </div>
+
+      </aside>
+
+      <!-- CONTENT -->
+
+      <main class="learn-content">
+
+        <!-- HERO -->
+
+        <section class="lesson-hero">
+
+          <div class="lesson-badge">
+
+            ⚡ Practical Office Learning
+
+          </div>
+
+          <h1>
+
+            ${lesson.title}
+
+          </h1>
+
+          <p class="lesson-subtitle">
+
+            Học theo hướng thực hành,
+            từng bước xây dựng kỹ năng Office
+            và sự tự tin trong môi trường thực tế.
+
+          </p>
+
+          <!-- CONTINUITY -->
+
+          <div class="lesson-continuity">
+
+            <div class="continuity-item">
+
+              🔥 ${streak} ngày liên tục
+
+            </div>
+
+            <div class="continuity-item">
+
+              ✅ ${completedLessons.length}/${course.lessons.length}
+              bài học hoàn thành
+
+            </div>
+
+            <div class="continuity-item">
+
+              🎯 ${course.level || "Practical"}
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- VIDEO -->
+
+        <section class="video-section">
+
+          <div class="video-player">
+
+            <div
+              class="video-overlay"
+              id="playVideoBtn"
+            >
+
+              ${lessonCompleted
+      ? "↻"
+      : "▶"}
+
+            </div>
+
+            <div class="video-info">
+
+              <h3>
+                ${lesson.title}
+              </h3>
+
+              <p>
+
+                ${lesson.duration || "10:00"}
+
+              </p>
+
+            </div>
+
+            <div
+              class="video-status"
+              id="videoStatus"
+            >
+
+              ${lessonCompleted
+
+      ? "✅ Đã hoàn thành • Có thể xem lại"
+
+      : "Sẵn sàng bắt đầu bài học"}
+
+            </div>
+
+            <div class="video-progress">
+
+              <div
+                class="video-progress-fill"
+                style="
+                  width:
+                  ${lessonCompleted
+      ? "100%"
+      : "0%"}
+                "
+              ></div>
+
+            </div>
+
+          </div>
+
+          <!-- PRACTICAL NOTE -->
+
+          <div class="lesson-practical-box">
 
             <h3>
-              ${lesson.title}
+
+              Học để sử dụng thực tế
+
             </h3>
 
             <p>
 
-              ${lesson.duration
-    || "10:00"
-    }
+              MOS360 tập trung vào việc giúp người học
+              hiểu workflow Office thực tế, luyện tập
+              theo hướng ứng dụng và dần hình thành
+              sự tự tin trong học tập cũng như công việc.
 
             </p>
 
           </div>
 
-          <div
-            class="video-status"
-            id="videoStatus"
-          >
-
-            ${lessonCompleted
-
-      ? "✅ Completed • Click to Review"
-
-      : "Ready to play"
-    }
-
-          </div>
-
-          <div class="video-progress">
-
-            <div
-              class="video-progress-fill"
-              style="
-                width:
-                ${lessonCompleted
-      ? "100%"
-      : "0%"
-    }
-              "
-            ></div>
-
-          </div>
-
-        </div>
+        </section>
 
         <!-- CONTENT -->
 
-        <div class="lesson-content-box">
+        <section class="lesson-content-section">
 
-          ${lesson.content}
+          <div class="section-heading">
 
-        </div>
+            <h2>
+              Nội dung bài học
+            </h2>
+
+            <p>
+
+              Học nhẹ nhàng, liên tục và tập trung
+              vào khả năng ứng dụng thực tế.
+
+            </p>
+
+          </div>
+
+          <div class="lesson-content-box">
+
+            ${lesson.content}
+
+          </div>
+
+        </section>
 
         <!-- ACTIONS -->
 
-        <div class="lesson-actions">
+        <section class="lesson-actions">
 
           ${actionButton}
 
-        </div>
+        </section>
 
-      </div>
+      </main>
 
     </div>
 
   `;
-
+  
   // ========================================
   // RENDER
   // ========================================

@@ -1,3 +1,5 @@
+import "./courseDetail.css";  
+
 import {
   apiGet
 }
@@ -74,116 +76,223 @@ const isEnrolled =
 
   const content = `
 
-  <div class="page">
+  <div class="page course-detail-page">
 
-    <div class="course-detail">
+    <!-- ================================== -->
+    <!-- HERO -->
+    <!-- ================================== -->
 
-      <div class="course-image">
+    <section class="course-hero">
 
-        ${course.thumbnail}
+      <div class="course-hero-content">
+
+        <div class="course-badge">
+
+          ⚡ Lộ trình học thực hành
+
+        </div>
+
+        <h1>
+
+          ${course.title}
+
+        </h1>
+
+        <p class="course-description">
+
+          ${course.description}
+
+        </p>
+
+        <div class="course-meta">
+
+          <div class="course-meta-item">
+
+            👥 ${course.students || 0}+ học viên
+
+          </div>
+
+          <div class="course-meta-item">
+
+            ⏱ ${course.duration || "Đang cập nhật"}
+
+          </div>
+
+          <div class="course-meta-item">
+
+            🎯 ${course.level || "Practical"}
+
+          </div>
+
+        </div>
+
+        <!-- PRACTICAL -->
+
+        <div class="course-practical-box">
+
+          <h3>
+
+            Học theo hướng thực hành & sát thực tế
+
+          </h3>
+
+          <p>
+
+            Khóa học giúp người học luyện tập
+            theo workflow thực tế, làm quen với
+            môi trường MOS và từng bước xây dựng
+            sự tự tin khi sử dụng Office.
+
+          </p>
+
+        </div>
+
+        <!-- ACTIONS -->
+
+        <div class="course-actions">
+
+          <button
+            class="btn-primary"
+            id="startLearning"
+          >
+
+            ${isEnrolled
+
+      ? "BẮT ĐẦU HỌC"
+
+      : "THAM GIA LỘ TRÌNH"
+
+    }
+
+          </button>
+
+          <button
+            class="btn-secondary"
+            id="continueLearning"
+          >
+
+            TIẾP TỤC HỌC
+
+          </button>
+
+        </div>
 
       </div>
 
-      <h1>
+      <!-- VISUAL -->
 
-        ${course.title}
+      <div class="course-hero-visual">
 
-      </h1>
+        <div class="course-visual-card">
 
-      <div class="course-meta">
+          <div class="course-visual-label">
 
-        <p>
-          Teacher:
-          ${course.teacher}
-        </p>
+            MOS CONTINUITY
 
-        <p>
-          Students:
-          ${course.students}
-        </p>
+          </div>
 
-        <p>
-          Duration:
-          ${course.duration}
-        </p>
+          <div class="course-visual-thumbnail">
 
-        <p>
-          Level:
-          ${course.level}
-        </p>
+            ${course.thumbnail}
+
+          </div>
+
+          <div class="course-visual-points">
+
+            <div class="visual-point">
+              ✅ Luyện thi sát thực tế
+            </div>
+
+            <div class="visual-point">
+              ✅ Học qua video & thực hành
+            </div>
+
+            <div class="visual-point">
+              ✅ Quiz & tiếp tục bài học
+            </div>
+
+            <div class="visual-point">
+              ✅ Duy trì tiến trình học tập
+            </div>
+
+          </div>
+
+        </div>
 
       </div>
 
-      <div class="course-price">
+    </section>
 
-        ${course.price.toLocaleString()}đ
+    <!-- ================================== -->
+    <!-- LESSONS -->
+    <!-- ================================== -->
 
-      </div>
+    <section class="course-lessons">
 
-      <div class="course-description">
-
-        ${course.description}
-
-      </div>
-
-      <div class="course-lessons">
+      <div class="section-heading">
 
         <h2>
-          Lessons
+
+          Nội dung khóa học
+
         </h2>
 
-        <ul>
+        <p>
 
-          ${course.lessons.map(
-            lesson => `
+          Học theo từng bài nhỏ,
+          luyện tập liên tục và từng bước
+          xây dựng kỹ năng Office thực tế.
 
-              <li
-  class="lesson-item"
-  data-lesson-id="${lesson.id}"
->
-
-  ${lesson.title}
-
-              </li>
-
-            `
-          ).join("")}
-
-        </ul>
+        </p>
 
       </div>
 
-      <div class="course-actions">
+      <div class="lessons-list">
 
-  <button
-    class="btn-primary"
-    id="startLearning"
-  >
+        ${course.lessons.map(
+      (lesson, index) => `
 
-    ${
+            <div
+              class="lesson-item"
+              data-lesson-id="${lesson.id}"
+            >
 
-  isEnrolled
+              <div class="lesson-index">
 
-    ? "START LEARNING"
+                ${index + 1}
 
-    : "ENROLL NOW"
+              </div>
 
-}
+              <div class="lesson-content">
 
-  </button>
+                <h3>
 
-  <button
-    class="btn-secondary"
-    id="continueLearning"
-  >
+                  ${lesson.title}
 
-    CONTINUE LEARNING
+                </h3>
 
-  </button>
+                <p>
 
-</div>
+                  ${lesson.content || "Bài học thực hành Office"}
 
-    </div>
+                </p>
+
+              </div>
+
+              <div class="lesson-action">
+
+                Học bài →
+
+              </div>
+
+            </div>
+
+          `
+    ).join("")}
+
+      </div>
+
+    </section>
 
   </div>
 

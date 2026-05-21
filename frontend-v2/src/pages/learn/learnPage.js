@@ -1,12 +1,7 @@
 // ============================================
 // LEARN PAGE
+// Stable semantic learning runtime
 // ============================================
-import "./learn.css";
-
-import {
-  apiGet
-}
-  from "../../services/api.js";
 
 import {
   renderAppLayout
@@ -14,422 +9,70 @@ import {
   from "../../layouts/appLayout.js";
 
 import {
-  navigate
-}
-  from "../../core/router.js";
-
-import {
-  STORAGE_KEYS
-}
-  from "../../constants/storageKeys.js";
-
-import {
-  getCourseProgressKey,
-  getCourseCompletedKey,
   getLastLessonKey
 }
   from "../../utils/storageHelpers.js";
 
 import {
-  getXpReward
-}
-  from "../../engines/rewardEngine.js";
-
-import {
-  getStorage,
   setStorage
 }
   from "../../utils/localStorageHelpers.js";
 
 import {
-  saveCredential
+  bindVideoPlayer
 }
-  from "../../utils/credentialStorage.js";
+  from "../../engines/videoPlayerEngine.js";
 
 import {
-  generateCertificateId
+  updateLearningStreak
 }
-  from "../../utils/idGenerator.js";
+  from "../../engines/streakEngine.js";
 
 import {
-  logLearning,
-  logInfo,
-  logWarn
+  renderQuizSection,
+  bindQuiz
 }
-  from "../../utils/logger.js";
+  from "../../engines/quizEngine.js";
 
 import {
-  validateLesson
+
+  getLessonAction,
+
+  renderLessonAction,
+
+  bindLessonActions
+
 }
-  from "../../contracts/lesson.contract.js";
+  from "../../engines/learnActionEngine.js";
 
 import {
-  sendTrackingEvent
+
+  renderLessonSidebar,
+
+  bindLessonSidebar
+
 }
-  from "../../services/trackingApi.js";  
+  from "../../engines/lessonSidebarEngine.js";
 
 import {
-  addXP
+  loadLearnPageData
 }
-  from "../../services/gamificationApi.js";  
+  from "../../engines/learnDataEngine.js";
 
-// ============================================
-// BIND SIDEBAR LESSONS
-// ============================================
-
-function bindSidebarLessons(
-  courseId
-) {
-
-  document
-    .querySelectorAll(
-      ".lesson-sidebar-item"
-    )
-    .forEach((item) => {
-
-      item.onclick = () => {
-
-        navigate(
-
-          `/learn/${courseId
-          }/${item.dataset.lessonId
-          }`
-
-        );
-      };
-    });
+import {
+  renderLessonHero
 }
+  from "../../engines/lessonHeroEngine.js";
 
-// ============================================
-// BIND NEXT LESSON
-// ============================================
-
-function bindNextLesson({
-
-  courseId,
-  nextLesson
-
-}) {
-
-  if (!nextLesson) {
-    return;
-  }
-
-  const nextBtn =
-
-    document.querySelector(
-      "#nextLessonBtn"
-    );
-
-  if (!nextBtn) {
-    return;
-  }
-
-  nextBtn.onclick = () => {
-
-    navigate(
-
-      `/learn/${courseId
-      }/${nextLesson.id
-      }`
-
-    );
-  };
+import {
+  renderLessonBlocks
 }
+  from "../../engines/lessonBlockRendererEngine.js";
 
-// ============================================
-// COMPLETE COURSE FLOW
-// ============================================
-
-function bindCompleteCourse({
-
-  courseId,
-  course,
-  completedLessons
-
-}) {
-
-  const completeBtn =
-
-    document.querySelector(
-      "#completeCourseBtn"
-    );
-
-  if (!completeBtn) {
-    return;
-  }
-
-  completeBtn.onclick = () => {
-
-    // ======================================
-    // CHECK ALL LESSONS
-    // ======================================
-
-    if (
-
-      completedLessons.length
-      <
-      course.lessons.length
-
-    ) {
-
-      alert(
-        "Please complete all lessons first."
-      );
-
-      return;
-    }
-
-    // ======================================
-    // SAVE COMPLETED
-    // ======================================
-
-    setStorage(
-
-      getCourseCompletedKey(
-        courseId
-      ),
-
-      true
-
-    );
-
-    logLearning(
-      "course completed",
-      courseId
-    );
-
-    // ======================================
-    // CREDENTIAL
-    // ======================================
-
-    saveCredential({
-
-      certificateId:
-        generateCertificateId(),
-
-      studentName:
-        "MOS360 Student",
-
-      courseName:
-        course.title,
-
-      issueDate:
-        new Date()
-          .toLocaleDateString()
-
-    });
-
-    // ======================================
-    // XP
-    // ======================================
-
-    let xp =
-
-      getStorage(
-        STORAGE_KEYS.USER_XP,
-        0
-      );
-
-    xp +=
-      getXpReward(
-        course.xpReward
-      );
-
-    setStorage(
-      STORAGE_KEYS.USER_XP,
-      xp
-    );
-
-    // ======================================
-    // RELOAD
-    // ======================================
-
-    renderLearnPage();
-  };
+import {
+  filterLessonBlocks
 }
-
-// ============================================
-// VIDEO PLAYER
-// ============================================
-
-function bindVideoPlayer({
-
-  lesson,
-  course,
-  lessonId,
-  courseId,
-  progressKey,
-  completedLessons
-
-}) {
-
-  const playBtn =
-
-    document.querySelector(
-      "#playVideoBtn"
-    );
-
-  const videoStatus =
-
-    document.querySelector(
-      "#videoStatus"
-    );
-
-  const progressFill =
-
-    document.querySelector(
-      ".video-progress-fill"
-    );
-
-  if (
-    !playBtn
-    ||
-    !videoStatus
-    ||
-    !progressFill
-  ) {
-
-    return;
-  }
-
-  let playing = false;
-
-  playBtn.onclick = () => {
-
-    if (playing) {
-      return;
-    }
-
-    playing = true;
-
-    playBtn.innerHTML =
-      "⏸";
-
-    videoStatus.innerText =
-      "Playing lesson...";
-
-    let progress = 0;
-
-    progressFill.style.width =
-      "0%";
-
-    const interval =
-
-      setInterval(() => {
-
-        progress += 1;
-
-        progressFill.style.width =
-
-          `${progress}%`;
-
-        // ==================================
-        // FINISH
-        // ==================================
-
-        if (progress >= 100) {
-
-          clearInterval(
-            interval
-          );
-
-          playBtn.innerHTML =
-            "↻";
-
-          videoStatus.innerText =
-
-            "✅ Completed • Click to Review";
-
-          // ================================
-          // FIRST TIME ONLY
-          // ================================
-
-          const firstCompletion =
-
-            !completedLessons.includes(
-              lessonId
-            );
-
-          if (firstCompletion) {
-
-            completedLessons.push(
-              lessonId
-            );
-
-            logLearning(
-              "lesson completed",
-              {
-                courseId,
-                lessonId
-              }
-            );
-
-            sendTrackingEvent({
-
-              type:
-                "LESSON_COMPLETED",
-
-              courseId,
-
-              lessonId
-            });
-
-            setStorage(
-              progressKey,
-              completedLessons
-            );
-
-            addXP({
-
-              email:
-                "admin@mos360.vn",
-
-              amount:
-                getXpReward(
-                  lesson.xpReward
-                )
-            });
-
-            logInfo(
-              "XP",
-              "xp updated",
-              {
-                courseId,
-                lessonId,
-                xpReward:
-                  course.xpReward
-              }
-            );
-
-            // ==============================
-            // WATCHED LESSONS
-            // ==============================
-
-            let watchedLessons =
-
-              getStorage(
-                STORAGE_KEYS.WATCHED_LESSONS_TODAY,
-                0
-              );
-
-            watchedLessons += 1;
-
-            setStorage(
-
-              STORAGE_KEYS.WATCHED_LESSONS_TODAY,
-
-              watchedLessons
-
-            );
-          }
-
-          playing = false;
-        }
-
-      }, 60);
-  };
-}
+  from "../../engines/lessonBlockFilterEngine.js";
 
 // ============================================
 // RENDER LEARN PAGE
@@ -453,22 +96,24 @@ export async function renderLearnPage() {
     parts[3];
 
   // ========================================
-  // LOAD COURSE
+  // LOAD DATA
   // ========================================
 
-  const courseResult =
+  const data =
 
-    await apiGet(
+    await loadLearnPageData({
 
-      `/courses/${courseId}`,
+      courseId,
 
-      {
-        silent: true
-      }
+      lessonId
 
-    );
+    });
 
-  if (!courseResult.ok) {
+  // ========================================
+  // ERROR HANDLING
+  // ========================================
+
+  if (!data.ok) {
 
     document.querySelector(
       "#app"
@@ -476,90 +121,48 @@ export async function renderLearnPage() {
 
       renderAppLayout(`
 
-        <h1>
-          Course not found
-        </h1>
+        <div class="learn-error-page">
+
+          <h1>
+
+            Không thể tải bài học
+
+          </h1>
+
+          <p>
+
+            Vui lòng thử lại sau.
+
+          </p>
+
+        </div>
 
       `);
 
     return;
   }
 
-  const course =
-    courseResult.data;
-
   // ========================================
-  // LOAD LESSON
+  // EXTRACT DATA
   // ========================================
 
-  const lessonResult =
+  const {
 
-    await apiGet(
+    course,
 
-      `/learn/${courseId}/${lessonId}`,
+    lesson,
 
-      {
-        silent: true
-      }
+    completedLessons,
 
-    );
+    lessonCompleted,
 
-  if (!lessonResult.ok) {
+    nextLesson,
 
-    document.querySelector(
-      "#app"
-    ).innerHTML =
+    courseCompleted,
 
-      renderAppLayout(`
+    progressPercent
 
-        <h1>
-          Lesson not found
-        </h1>
-
-      `);
-
-    return;
-  }
-
-  const lesson =
-    lessonResult.data.lesson;
-
-  // ========================================
-  // VALIDATE LESSON
-  // ========================================
-
-  const validLesson =
-
-    validateLesson(
-      lesson
-    );
-
-  if (!validLesson) {
-
-    logWarn(
-
-      "LESSON",
-
-      "invalid lesson contract",
-
-      lesson
-
-    );
-
-    document.querySelector(
-      "#app"
-    ).innerHTML =
-
-      renderAppLayout(`
-
-      <h1>
-        Invalid lesson data
-      </h1>
-
-    `);
-
-    return;
-  }
+  } = data;
 
   // ========================================
   // SAVE LAST LESSON
@@ -579,71 +182,9 @@ export async function renderLearnPage() {
   // STREAK
   // ========================================
 
-  const today =
+  const streak =
 
-    new Date()
-      .toDateString();
-
-  const lastDate =
-
-    getStorage(
-      STORAGE_KEYS.LAST_ACTIVE_DATE,
-      null
-    );
-
-  let streak =
-
-    getStorage(
-      STORAGE_KEYS.USER_STREAK,
-      0
-    );
-
-  if (lastDate !== today) {
-
-    streak += 1;
-
-    setStorage(
-      STORAGE_KEYS.USER_STREAK,
-      streak
-    );
-
-    setStorage(
-      STORAGE_KEYS.LAST_ACTIVE_DATE,
-      today
-    );
-
-    logLearning(
-      "streak updated",
-      streak
-    );
-  }
-
-  // ========================================
-  // PROGRESS
-  // ========================================
-
-  const progressKey =
-
-    getCourseProgressKey(
-      courseId
-    );
-
-  let completedLessons =
-
-    getStorage(
-      progressKey,
-      []
-    );
-
-  // ========================================
-  // LESSON STATE
-  // ========================================
-
-  const lessonCompleted =
-
-    completedLessons.includes(
-      lessonId
-    );
+    updateLearningStreak();
 
   // ========================================
   // SIDEBAR
@@ -651,193 +192,71 @@ export async function renderLearnPage() {
 
   const lessonsHtml =
 
-    course.lessons.map(
-      (item) => {
+    renderLessonSidebar({
 
-        const active =
+      lessons:
+        course.lessons,
 
-          item.id === lessonId;
+      lessonId,
 
-        const completed =
+      completedLessons
 
-          completedLessons.includes(
-            item.id
-          );
-
-        return `
-
-          <div
-
-            class="
-              lesson-sidebar-item
-              ${active
-            ? "active"
-            : ""
-          }
-            "
-
-            data-lesson-id="${item.id}"
-
-          >
-
-            <span>
-
-              ${completed
-            ? "✅"
-            : "📘"
-          }
-
-            </span>
-
-            <span>
-
-              ${item.title}
-
-            </span>
-
-          </div>
-
-        `;
-      }
-
-    ).join("");
+    });
 
   // ========================================
-  // LESSON EXISTS IN COURSE GRAPH
+  // ACTION ENGINE
   // ========================================
 
-  const lessonExists =
+  const action =
 
-    course.lessons.some(
-      item =>
-        item.id === lessonId
-    );
+    getLessonAction({
 
-  if (!lessonExists) {
+      lessonCompleted,
 
-    logWarn(
+      nextLesson,
 
-      "LESSON",
+      courseCompleted
 
-      "lesson missing from course graph",
+    });
+
+  const actionButton =
+
+    renderLessonAction({
+
+      action
+
+    });
+
+  // ========================================
+  // BLOCK FLOW
+  // ========================================
+
+  const runtimeBlocks =
+
+    filterLessonBlocks(
+
+      lesson.blocks || [],
 
       {
-        courseId,
-        lessonId
+
+        progressPercent,
+
+        isEnrolled:
+          true
+
       }
 
     );
 
-    document.querySelector(
-      "#app"
-    ).innerHTML =
-
-      renderAppLayout(`
-
-      <h1>
-        Lesson graph mismatch
-      </h1>
-
-    `);
-
-    return;
-  }
-
   // ========================================
-  // NEXT LESSON
+  // BLOCK RENDERER
   // ========================================
 
-  const currentIndex =
+  const lessonBlocksHtml =
 
-    course.lessons.findIndex(
-      item =>
-        item.id === lessonId
+    renderLessonBlocks(
+      runtimeBlocks
     );
-
-  const nextLesson =
-
-    course.lessons[
-    currentIndex + 1
-    ];
-
-  // ========================================
-  // COURSE COMPLETED
-  // ========================================
-
-  const courseCompleted =
-
-    getStorage(
-
-      getCourseCompletedKey(
-        courseId
-      ),
-
-      false
-
-    );
-
-  // ========================================
-  // ACTION BUTTON
-  // ========================================
-
-  let actionButton = "";
-
-  if (nextLesson) {
-
-    actionButton = `
-
-      <button
-        id="nextLessonBtn"
-        class="next-btn"
-      >
-
-        Next Lesson →
-
-      </button>
-
-    `;
-  }
-
-  else {
-
-    if (courseCompleted) {
-
-      actionButton = `
-
-        <button
-          class="completed-btn"
-          disabled
-        >
-
-          🏆 Course Completed
-
-        </button>
-
-        <p class="review-note">
-
-          You can review lessons anytime.
-
-        </p>
-
-      `;
-    }
-
-    else {
-
-      actionButton = `
-
-        <button
-          id="completeCourseBtn"
-          class="complete-course-btn"
-        >
-
-          🎉 Complete Course
-
-        </button>
-
-      `;
-    }
-  }
 
   // ========================================
   // PAGE CONTENT
@@ -855,7 +274,7 @@ export async function renderLearnPage() {
 
           <div class="learn-sidebar-label">
 
-            LEARNING CONTINUITY
+            OFFICE LEARNING
 
           </div>
 
@@ -867,8 +286,9 @@ export async function renderLearnPage() {
 
           <p>
 
-            Tiếp tục bài học theo lộ trình
-            thực hành và duy trì tiến trình học tập.
+            Học theo workflow thực hành
+            và xây dựng kỹ năng Office
+            từng bước nhỏ.
 
           </p>
 
@@ -888,179 +308,130 @@ export async function renderLearnPage() {
 
         <!-- HERO -->
 
-        <section class="lesson-hero">
+        ${renderLessonHero({
 
-          <div class="lesson-badge">
+    course,
 
-            ⚡ Practical Office Learning
+    lesson,
 
-          </div>
+    streak,
 
-          <h1>
+    progressPercent,
 
-            ${lesson.title}
+    completedLessons
 
-          </h1>
+  })}
 
-          <p class="lesson-subtitle">
+        <!-- VIDEO LEARNING CORE -->
 
-            Học theo hướng thực hành,
-            từng bước xây dựng kỹ năng Office
-            và sự tự tin trong môi trường thực tế.
+        <section class="video-learning-core">
 
-          </p>
+          <!-- VIDEO -->
 
-          <!-- CONTINUITY -->
+          <div class="video-player-shell">
 
-          <div class="lesson-continuity">
-
-            <div class="continuity-item">
-
-              🔥 ${streak} ngày liên tục
-
-            </div>
-
-            <div class="continuity-item">
-
-              ✅ ${completedLessons.length}/${course.lessons.length}
-              bài học hoàn thành
-
-            </div>
-
-            <div class="continuity-item">
-
-              🎯 ${course.level || "Practical"}
-
-            </div>
+            <iframe
+              class="lesson-video-frame"
+              src="${lesson.videoUrl || ""}"
+              title="${lesson.title}"
+              frameborder="0"
+              allowfullscreen
+            ></iframe>
 
           </div>
 
-        </section>
+          <!-- SIDE -->
 
-        <!-- VIDEO -->
+          <div class="video-learning-side">
 
-        <section class="video-section">
+            <!-- WORKFLOW -->
 
-          <div class="video-player">
-
-            <div
-              class="video-overlay"
-              id="playVideoBtn"
-            >
-
-              ${lessonCompleted
-      ? "↻"
-      : "▶"}
-
-            </div>
-
-            <div class="video-info">
+            <div class="workflow-mini-card">
 
               <h3>
-                ${lesson.title}
+
+                Workflow thực hành
+
               </h3>
 
-              <p>
+              <ol>
 
-                ${lesson.duration || "10:00"}
+                ${(lesson.workflowSteps || [])
+      .map(step => `
 
-              </p>
+                    <li>
 
-            </div>
+                      ${step}
 
-            <div
-              class="video-status"
-              id="videoStatus"
-            >
+                    </li>
 
-              ${lessonCompleted
+                  `)
+      .join("")}
 
-      ? "✅ Đã hoàn thành • Có thể xem lại"
-
-      : "Sẵn sàng bắt đầu bài học"}
+              </ol>
 
             </div>
 
-            <div class="video-progress">
+            <!-- TIPS -->
 
-              <div
-                class="video-progress-fill"
-                style="
-                  width:
-                  ${lessonCompleted
-      ? "100%"
-      : "0%"}
-                "
-              ></div>
+            <div class="tips-mini-card">
+
+              <h3>
+
+                Tips nhanh
+
+              </h3>
+
+              <ul>
+
+                ${(lesson.tips || [])
+      .map(tip => `
+
+                    <li>
+
+                      ${tip}
+
+                    </li>
+
+                  `)
+      .join("")}
+
+              </ul>
 
             </div>
 
-          </div>
+            <!-- ACTION -->
 
-          <!-- PRACTICAL NOTE -->
+            <section class="lesson-actions">
 
-          <div class="lesson-practical-box">
+              ${actionButton}
 
-            <h3>
-
-              Học để sử dụng thực tế
-
-            </h3>
-
-            <p>
-
-              MOS360 tập trung vào việc giúp người học
-              hiểu workflow Office thực tế, luyện tập
-              theo hướng ứng dụng và dần hình thành
-              sự tự tin trong học tập cũng như công việc.
-
-            </p>
+            </section>
 
           </div>
 
         </section>
 
-        <!-- CONTENT -->
+        <!-- LESSON BLOCKS -->
 
-        <section class="lesson-content-section">
+        <section class="lesson-blocks-section">
 
-          <div class="section-heading">
-
-            <h2>
-              Nội dung bài học
-            </h2>
-
-            <p>
-
-              Học nhẹ nhàng, liên tục và tập trung
-              vào khả năng ứng dụng thực tế.
-
-            </p>
-
-          </div>
-
-          <div class="lesson-content-box">
-
-            ${lesson.content}
-
-          </div>
+          ${lessonBlocksHtml}
 
         </section>
 
-        <!-- ACTIONS -->
+        <!-- QUIZ -->
 
-        <section class="lesson-actions">
-
-          ${actionButton}
-
-        </section>
+        ${renderQuizSection(
+        lesson.quiz || []
+      )}
 
       </main>
 
     </div>
 
   `;
-  
+
   // ========================================
   // RENDER
   // ========================================
@@ -1074,30 +445,47 @@ export async function renderLearnPage() {
     );
 
   // ========================================
-  // INTERACTIONS
+  // SIDEBAR
   // ========================================
 
-  bindSidebarLessons(
+  bindLessonSidebar({
+
     courseId
-  );
-
-  bindNextLesson({
-
-    courseId,
-
-    nextLesson
 
   });
 
-  bindCompleteCourse({
+  // ========================================
+  // ACTIONS
+  // ========================================
+
+  bindLessonActions({
+
+    action,
 
     courseId,
+
+    nextLesson,
 
     course,
 
     completedLessons
 
   });
+
+  // ========================================
+  // QUIZ
+  // ========================================
+
+  bindQuiz({
+
+    quiz:
+      lesson.quiz || []
+
+  });
+
+  // ========================================
+  // VIDEO PLAYER
+  // ========================================
 
   bindVideoPlayer({
 
@@ -1109,9 +497,13 @@ export async function renderLearnPage() {
 
     courseId,
 
-    progressKey,
+    completedLessons,
 
-    completedLessons
+    onComplete: () => {
+
+      renderLearnPage();
+
+    }
 
   });
 }

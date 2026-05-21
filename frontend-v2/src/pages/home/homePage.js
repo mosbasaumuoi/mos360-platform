@@ -1,162 +1,271 @@
-// ============================================
-// HOME PAGE
-// ============================================
+import { navigate } from "../../core/router.js";
 
-import "./home.css";
+function attachHomeEvents() {
 
-import {
-  renderAppLayout
+  document
+    .querySelectorAll("[data-route]")
+
+    .forEach((element) => {
+
+      element.onclick = () => {
+
+        const route =
+
+          element.dataset.route;
+
+        if (!route) {
+          return;
+        }
+
+        navigate(route);
+      };
+    });
 }
-  from "../../layouts/appLayout.js";
-
-import {
-  navigate
-}
-  from "../../core/router.js";
-
-import {
-  appContext
-}
-  from "../../core/appContext.js";
-
-import {
-  getStorage
-}
-  from "../../utils/localStorageHelpers.js";
-
-import {
-  STORAGE_KEYS
-}
-  from "../../constants/storageKeys.js";  
 
 export async function renderHomePage() {
 
-  const user =
-    appContext.user;
+  document.querySelector("#app").innerHTML = `
 
-  const streak =
+  <div class="page home-page">
 
-    getStorage(
-      STORAGE_KEYS.USER_STREAK,
-      0
-    );
+    <!-- =====================================
+         HERO
+    ====================================== -->
 
-  const lastCourse =
+    <section class="home-hero">
 
-    getStorage(
-      STORAGE_KEYS.LAST_COURSE,
-      null
-    );
+      <div class="home-hero-content">
 
-  const lastLesson =
+        <div class="courses-badge">
+          ⚡ Học MOS & kỹ năng Office theo hướng thực hành
+        </div>
 
-    getStorage(
-      STORAGE_KEYS.LAST_LESSON,
-      null
-    );
+        <h1 class="home-hero-title">
+          Học kỹ năng Office
+          <span>dễ tiếp cận.</span>
+          Tiến bộ từng ngày.
+        </h1>
 
-  const hasContinuity =
+        <p class="home-hero-description">
 
-    user &&
-    lastCourse &&
-    lastLesson;
+          MOS360 giúp sinh viên và nhân viên văn phòng
+          luyện MOS và kỹ năng Office theo hướng thực hành,
+          dễ hiểu và bám sát nhu cầu học tập cũng như công việc thực tế.
 
-  const content = `
+        </p>
 
-<div class="home-page">
+        <div class="home-hero-actions">
 
-<!-- HERO -->
+          <button
+            class="btn-primary hero-btn"
+            data-route="/courses"
+          >
+            Bắt đầu học →
+          </button>
 
-<section class="hero-section">
+          <button
+            class="btn-secondary hero-btn"
+            data-route="/learn"
+          >
+            Xem lộ trình
+          </button>
 
-<div class="hero-content">
+        </div>
 
-<div class="hero-badge">
+      </div>
 
-⚡ Học MOS & kỹ năng Office theo hướng thực hành
+      <!-- =====================================
+           HERO SIDE PANEL
+      ====================================== -->
 
-</div>
+      <div class="home-hero-panel glass-panel">
 
-<h1 class="hero-title">
+        <div class="hero-panel-label">
+          KẾT QUẢ THỰC TẾ
+        </div>
 
-  Học kỹ năng Office
-  <span>
-    dễ tiếp cận.
-  </span>
+        <div class="hero-panel-number">
+          1000+
+        </div>
 
-  Tiến bộ
-  <span>
-    từng ngày.
-  </span>
+        <p class="hero-panel-description">
 
-</h1>
+          Học viên được luyện tập trong môi trường sát với bài thi MOS thực tế,
+          đồng thời xây dựng kỹ năng Office hữu ích cho học tập và công việc.
 
-<p class="hero-description">
+        </p>
 
-  MOS360 giúp sinh viên và nhân viên văn phòng
-  học Excel, Word và kỹ năng Office theo hướng
-  thực hành, dễ hiểu và sát với nhu cầu học tập
-  cũng như công việc thực tế.
+        <div class="hero-panel-list">
 
-</p>
+          <div class="hero-panel-item">
+            ✅ Luyện thi MOS sát thực tế
+          </div>
 
-<div class="hero-actions">
+          <div class="hero-panel-item">
+            ✅ Học kỹ năng Office ứng dụng
+          </div>
 
-<button
-class="hero-primary-btn"
-id="startLearningBtn"
->
+          <div class="hero-panel-item">
+            ✅ Lộ trình học dễ tiếp cận
+          </div>
 
-Bắt đầu học →
+        </div>
 
-</button>
+      </div>
 
-<button
-class="hero-secondary-btn"
-id="exploreCoursesBtn"
->
+    </section>
 
-Xem khóa học
+    <!-- =====================================
+         CONTINUITY SECTION
+    ====================================== -->
 
-</button>
+    <section class="home-continuity">
 
-</div>
+      <div class="section-heading">
 
-</div>
+        <h2>
+          Học tập nhẹ nhàng & liên tục
+        </h2>
 
-<div class="hero-visual">
+        <p>
 
-<div class="hero-card">
+          MOS360 được xây dựng để giúp người học duy trì tiến bộ từng ngày,
+          thay vì tạo cảm giác áp lực hoặc quá tải thông tin.
 
-<div class="hero-card-label">
-  KẾT QUẢ THỰC TẾ
-</div>
+        </p>
 
-<div class="hero-card-score">
-1000
-</div>
+      </div>
 
-<p class="hero-card-text">
+      <div class="home-continuity-grid">
 
-  Học viên được luyện tập trong môi trường
-  sát với bài thi MOS thực tế, đồng thời xây dựng
-  kỹ năng Office hữu ích cho học tập và công việc.
+        <div class="continuity-card glass-panel motion-lift">
 
-</p>
+          <div class="continuity-icon">
+            🎯
+          </div>
 
-            <div class="hero-card-list">
+          <h3>
+            Tiếp cận dễ hơn
+          </h3>
 
-              <div class="hero-card-item">
-  ✅ Luyện thi MOS sát thi thật
-</div>
+          <p>
 
-<div class="hero-card-item">
-  ✅ Học kỹ năng Office ứng dụng
-</div>
+            Chia nhỏ lộ trình học để người mới
+            có thể bắt đầu dễ dàng và duy trì động lực.
 
-<div class="hero-card-item">
-  ✅ Lộ trình học dễ tiếp cận
-</div>
+          </p>
+
+        </div>
+
+        <div class="continuity-card glass-panel motion-lift">
+
+          <div class="continuity-icon">
+            📈
+          </div>
+
+          <h3>
+            Tiến bộ rõ ràng
+          </h3>
+
+          <p>
+
+            Hệ thống giúp người học nhìn thấy
+            sự tiến bộ qua từng chặng học tập.
+
+          </p>
+
+        </div>
+
+        <div class="continuity-card glass-panel motion-lift">
+
+          <div class="continuity-icon">
+            🧠
+          </div>
+
+          <h3>
+            Thực hành thực tế
+          </h3>
+
+          <p>
+
+            Không chỉ luyện thi,
+            mà còn xây dựng kỹ năng Office dùng được trong công việc.
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =====================================
+         LEARNING PATH
+    ====================================== -->
+
+    <section class="home-learning-path">
+
+      <div class="section-heading">
+
+        <h2>
+          Lộ trình học tập rõ ràng
+        </h2>
+
+        <p>
+
+          Chọn hướng học phù hợp với mục tiêu của bạn
+          và tiến bộ theo từng bước nhỏ ổn định.
+
+        </p>
+
+      </div>
+
+      <div class="home-path-grid">
+
+        <div
+          class="course-card interactive-surface"
+          data-route="/courses"
+        >
+
+          <div class="course-image">
+
+            <div class="course-image-overlay"></div>
+
+            <div class="course-thumbnail-text">
+              MOS
+            </div>
+
+          </div>
+
+          <div class="course-card-content">
+
+            <div class="course-path-badge">
+              MOS CERTIFICATION
+            </div>
+
+            <h3>
+              Luyện thi MOS
+            </h3>
+
+            <p class="course-description">
+
+              Hệ thống học và luyện tập bám sát định dạng bài thi MOS thực tế.
+
+            </p>
+
+            <div class="course-meta">
+
+              <div class="course-meta-item">
+                Word
+              </div>
+
+              <div class="course-meta-item">
+                Excel
+              </div>
+
+              <div class="course-meta-item">
+                PowerPoint
+              </div>
 
             </div>
 
@@ -164,341 +273,103 @@ Xem khóa học
 
         </div>
 
-      </section>
+        <div
+          class="course-card interactive-surface"
+          data-route="/learn"
+        >
 
-${hasContinuity ? `
+          <div class="course-image">
 
-<section class="continuity-section">
+            <div class="course-image-overlay"></div>
 
-  <div class="continuity-card">
+            <div class="course-thumbnail-text">
+              OFFICE
+            </div>
 
-    <div class="continuity-top">
+          </div>
 
-      <div>
+          <div class="course-card-content">
 
-        <div class="continuity-label">
+            <div class="course-path-badge">
+              OFFICE SKILLS
+            </div>
 
-          TIẾP TỤC HÀNH TRÌNH
+            <h3>
+              Kỹ năng Office ứng dụng
+            </h3>
+
+            <p class="course-description">
+
+              Xây dựng kỹ năng Office phục vụ học tập,
+              công việc và môi trường văn phòng thực tế.
+
+            </p>
+
+            <div class="course-meta">
+
+              <div class="course-meta-item">
+                Thực hành
+              </div>
+
+              <div class="course-meta-item">
+                Ứng dụng
+              </div>
+
+              <div class="course-meta-item">
+                Thực tế
+              </div>
+
+            </div>
+
+          </div>
 
         </div>
 
-        <h3>
+      </div>
 
-          Chào mừng quay lại,
-          ${user.email}
+    </section>
 
-        </h3>
+    <!-- =====================================
+         FINAL CTA
+    ====================================== -->
+
+    <section class="home-final-cta glass-panel">
+
+      <div class="home-final-content">
+
+        <div class="home-final-label">
+          MOS360
+        </div>
+
+        <h2>
+          Học thật.
+          Tiến bộ thật.
+        </h2>
+
+        <p>
+
+          Một hệ thống học tập được thiết kế để giúp bạn
+          tiếp cận kỹ năng Office dễ dàng hơn và tiến bộ từng ngày.
+
+        </p>
 
       </div>
 
-      <div class="continuity-streak">
+      <div class="home-final-actions">
 
-        🔥 ${streak} ngày
+        <button
+          class="btn-primary hero-btn"
+          data-route="/courses"
+        >
+          Khám phá khóa học
+        </button>
 
       </div>
 
-    </div>
-
-    <p class="continuity-description">
-
-      Bạn đang duy trì tiến trình học tập rất tốt.
-      Hãy tiếp tục bài học gần nhất để giữ nhịp học tự nhiên.
-
-    </p>
-
-    <button
-      class="continuity-btn"
-      id="continueLearningBtn"
-    >
-
-      Tiếp tục học →
-
-    </button>
+    </section>
 
   </div>
+  `;
 
-</section>
-
-` : ""}
-
-<!-- TRUST -->
-
-<section class="trust-section">
-
-  <div class="trust-card trust-proof-card">
-
-    <div class="proof-top">
-
-      <div class="proof-badge">
-        VERIFIED RESULT
-      </div>
-
-      <div class="proof-score">
-        1000
-      </div>
-
-    </div>
-
-    <div class="proof-content">
-
-      <h3>
-          Luyện thi MOS sát thi thật
-      </h3>
-
-      <p>
-
-  Học viên được luyện tập với giao diện và cấu trúc
-  tương tự bài thi MOS thật, giúp làm quen tốt hơn,
-  tự tin hơn và đạt kết quả cao trong kỳ thi thực tế.
-
-</p>
-
-    </div>
-
-    <div class="proof-grid">
-
-      <div class="proof-item">
-
-        <span>
-          Spreadsheet Management
-        </span>
-
-        <strong>
-          100%
-        </strong>
-
-      </div>
-
-      <div class="proof-item">
-
-        <span>
-          Formulas & Functions
-        </span>
-
-        <strong>
-          100%
-        </strong>
-
-      </div>
-
-      <div class="proof-item">
-
-        <span>
-          Data Analysis
-        </span>
-
-        <strong>
-          100%
-        </strong>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  <div class="trust-card">
-
-    <h3>
-  Tự tin sử dụng Office
-    </h3>
-
-    <p>
-
-  MOS360 không chỉ hướng tới việc thi đậu.
-  Học viên còn dần tự tin hơn khi sử dụng
-  Excel, Word và các công cụ Office trong
-  học tập cũng như công việc thực tế.
-
-    </p>
-
-  </div>
-
-  <div class="trust-card">
-
-    <h3>
-  Học tập nhẹ nhàng & liên tục
-    </h3>
-
-    <p>
-
-  Nền tảng được thiết kế theo hướng dễ tiếp cận,
-  nhẹ nhàng và liên tục, giúp người học duy trì
-  việc học mà không cảm thấy áp lực hay quá tải.
-
-    </p>
-
-  </div>
-
-</section>
-
-<!-- PROGRESSION -->
-
-<section class="progression-section">
-
-<div class="progression-content">
-
-<h2>
-  Một cách học Office
-  dễ tiếp cận hơn.
-</h2>
-
-<p>
-
-  MOS360 tập trung vào trải nghiệm học liên tục
-  và dễ tiếp cận. Người học có thể bắt đầu đơn giản,
-  luyện tập đều đặn và dần tự tin hơn với kỹ năng Office.
-
-</p>
-
-<div class="progression-list">
-
-<div class="progression-item">
-
-<div class="progression-number">
-1
-</div>
-
-<div>
-Bắt đầu với nền tảng Office cơ bản.
-</div>
-
-</div>
-
-<div class="progression-item">
-
-<div class="progression-number">
-2
-</div>
-
-<div>
-Luyện tập với môi trường sát bài thi thật MOS.
-</div>
-
-</div>
-
-<div class="progression-item">
-
-<div class="progression-number">
-3
-</div>
-
-<div>
-Tự tin hơn trong học tập và công việc.
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="progression-visual">
-
-<div class="progression-visual-title">
-TIẾN TRÌNH HỌC TẬP
-</div>
-
-<div class="progression-bar">
-
-<div class="progression-bar-fill"></div>
-
-</div>
-
-<div class="progression-visual-text">
-
-  MOS360 được thiết kế để giúp người học duy trì
-  động lực học tập, tiếp tục bài học một cách tự nhiên
-  và từng bước cải thiện kỹ năng Office theo thời gian.
-
-</div>
-
-</div>
-
-</section>
-
-<!-- FINAL CTA -->
-
-<section class="final-cta">
-
-<h2>
-  Xây dựng kỹ năng Office thực tế.
-</h2>
-
-<p>
-
-  MOS360 kết hợp giữa học kỹ năng Office thực hành,
-  luyện thi MOS và trải nghiệm học liên tục nhằm giúp
-  người học tự tin hơn trong học tập, đại học và công việc thực tế.
-
-</p>
-
-<button
-class="hero-primary-btn"
-id="finalStartBtn"
->
-
-Bắt đầu hành trình học →
-
-</button>
-
-</section>
-
-</div>
-
-`;
-
-  document.querySelector("#app")
-    .innerHTML =
-    renderAppLayout(content);
-
-  // ========================================
-  // ACTIONS
-  // ========================================
-
-  document.querySelector(
-    "#startLearningBtn"
-  ).onclick = () => {
-
-    navigate("/courses");
-  };
-
-  document.querySelector(
-    "#exploreCoursesBtn"
-  ).onclick = () => {
-
-    navigate("/courses");
-  };
-
-  document.querySelector(
-    "#finalStartBtn"
-  ).onclick = () => {
-
-    navigate("/courses");
-  };
-
-  // ========================================
-  // CONTINUE LEARNING
-  // ========================================
-
-  const continueBtn =
-
-    document.querySelector(
-      "#continueLearningBtn"
-    );
-
-  if (
-    continueBtn &&
-    lastCourse &&
-    lastLesson
-  ) {
-
-    continueBtn.onclick = () => {
-
-      navigate(
-        `/learn/${lastCourse}/${lastLesson}`
-      );
-    };
-  }
+  attachHomeEvents();
 }
-

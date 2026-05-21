@@ -3,17 +3,52 @@
 // Shared application shell
 // ============================================
 
-import {
-  appContext
-}
-  from "../core/appContext.js";
+import { appContext } from "../core/appContext.js";
 
-export function renderAppLayout(
-  content
-) {
+import {
+  bindRouteLinks
+}
+  from "../core/uiActions.js";
+
+export function renderAppLayout(content) {
 
   const user =
     appContext.user;
+
+  const currentPath =
+    window.location.pathname;
+
+  const enrolledCourses =
+    JSON.parse(
+      localStorage.getItem(
+        "mos360_enrolled_courses"
+      ) || "[]"
+    );
+
+  const latestCourseId =
+    enrolledCourses[0];
+
+  const latestLessonId =
+    latestCourseId
+      ? localStorage.getItem(
+        "mos360_last_lesson_" +
+        latestCourseId
+      )
+      : null;
+
+  const continueLearningUrl =
+    latestLessonId
+      ? `/learn/${latestCourseId}/${latestLessonId}`
+      : `/courses/${latestCourseId}`;
+
+  const isCoursesPage =
+    currentPath === "/courses" ||
+    currentPath.startsWith(
+      "/courses/"
+    );
+
+  const isDashboardPage =
+    currentPath === "/dashboard";
 
   const isLoggedIn =
     !!user;
@@ -55,7 +90,8 @@ export function renderAppLayout(
       ? user.email
         .charAt(0)
         .toUpperCase()
-      : "M"}
+      : "M"
+    }
 
           </div>
 
@@ -63,13 +99,17 @@ export function renderAppLayout(
 
             <div class="sidebar-user-email">
 
-              ${user?.email || "Khách truy cập"}
+              ${user?.email ||
+    "Khách truy cập"
+    }
 
             </div>
 
             <div class="sidebar-user-role">
 
-              ${user?.role || "Bắt đầu hành trình học tập"}
+              ${user?.role ||
+    "Bắt đầu hành trình học tập"
+    }
 
             </div>
 
@@ -81,46 +121,157 @@ export function renderAppLayout(
 
         <nav class="menu">
 
-          <button data-link="/">
+          <!-- MAIN -->
 
-            Trang chủ
+          <div class="menu-group">
 
-          </button>
+            <div class="menu-label">
 
-          <button data-link="/courses">
+              KHÁM PHÁ
 
-            Khóa học
+            </div>
 
-          </button>
+            <button
+              data-link="/"
+              class="${currentPath === "/"
+      ? "active"
+      : ""
+    }"
+            >
 
-          <button data-link="/dashboard">
+              Trang chủ
 
-            Tiến trình
+            </button>
 
-          </button>
+            <button
+              data-link="/courses"
+              class="${isCoursesPage
+      ? "active"
+      : ""
+    }"
+            >
 
-          ${!isLoggedIn
+              Khóa học
+
+            </button>
+
+            <button
+              data-link="/dashboard"
+              class="${isDashboardPage
+      ? "active"
+      : ""
+    }"
+            >
+
+              Tiến trình học
+
+            </button>
+
+          </div>
+
+          <!-- LEARNING -->
+
+          <div class="menu-group">
+
+            <div class="menu-label">
+
+              HỌC TẬP
+
+            </div>
+
+            <button data-link="/courses">
+
+              Luyện MOS
+
+            </button>
+
+            <button>
+
+              Quiz thực hành
+
+            </button>
+
+            <button>
+
+              Tiện ích Office
+
+            </button>
+
+          </div>
+
+          <!-- ACCOUNT -->
+
+          <div class="menu-group">
+
+            <div class="menu-label">
+
+              TÀI KHOẢN
+
+            </div>
+
+            ${!isLoggedIn
       ? `
 
-              <button data-link="/login">
+                  <button data-link="/login">
 
-                Đăng nhập
+                    Đăng nhập
 
-              </button>
+                  </button>
 
-            `
-      : `
-            
-              <button id="logoutBtn">
-
-                Đăng xuất
-
-              </button>
-
-            `
+                `
+      : ""
     }
 
+            ${isLoggedIn
+      ? `
+
+                  <button id="logoutBtn">
+
+                    Đăng xuất
+
+                  </button>
+
+                `
+      : ""
+    }
+
+          </div>
+
         </nav>
+
+        <!-- CONTINUITY -->
+
+        ${latestCourseId
+      ? `
+
+              <div class="sidebar-continuity">
+
+                <div class="sidebar-continuity-label">
+
+                  ĐANG TIẾP TỤC
+
+                </div>
+
+                <div class="sidebar-continuity-title">
+
+                  Hành trình học tập của bạn
+                  vẫn đang tiếp diễn.
+
+                </div>
+
+                <button
+                  data-link="${continueLearningUrl}"
+                >
+
+                  Tiếp tục học →
+
+                </button>
+
+              </div>
+
+            `
+      : ""
+    }
 
         <!-- SIDEBAR FOOT -->
 
@@ -156,5 +307,14 @@ export function renderAppLayout(
 
     </div>
 
-  `;
+    `;
+}
+
+// ============================================
+// APP LAYOUT RUNTIME
+// ============================================
+
+export function initAppLayout() {
+
+  bindRouteLinks();
 }

@@ -3,6 +3,21 @@
 // ============================================
 
 import "./styles/global.css";
+import "./styles/foundation/interactions.css";
+import "./styles/layouts/appLayout.css";
+
+import "./styles/pages/dashboard.css";
+import "./styles/pages/learn.css";
+import "./styles/pages/home.css";
+import "./styles/pages/courses.css";
+import "./styles/pages/auth.css";
+import "./styles/pages/courseDetail.css";
+import "./styles/pages/verify.css";
+import "./styles/pages/import.css";
+
+import "./styles/components/states.css";
+import "./styles/components/cards.css";
+import "./styles/components/certificate.css";
 
 import {
   loadRoute

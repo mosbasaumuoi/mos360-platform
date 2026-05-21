@@ -1,45 +1,70 @@
-import "./courseDetail.css";  
-
-import {
-  apiGet
-}
-from "../../services/api.js";
+// ============================================
+// COURSE DETAIL PAGE
+// Detail-driven learning runtime
+// ============================================
 
 import {
   renderAppLayout
 }
-from "../../layouts/appLayout.js";
+  from "../../layouts/appLayout.js";
 
 import {
-  navigate
+
+  bindLessonItems,
+
+  startLearning,
+
+  continueLearning
+
 }
-from "../../core/router.js";
+  from "./courseActions.js";
 
 import {
   STORAGE_KEYS
 }
   from "../../constants/storageKeys.js";
 
+import {
+  loadCourseDetail
+}
+  from "../../engines/contentSourceEngine.js";
+
+// ============================================
+// RENDER COURSE DETAIL PAGE
+// ============================================
+
 export async function renderCourseDetailPage() {
 
+  // ==========================================
+  // ROUTE PARAM
+  // ==========================================
+
   const id =
+
     window.location.pathname
       .split("/")
       .pop();
 
+  // ==========================================
+  // LOAD COURSE DETAIL
+  // ==========================================
+
   const result =
-    await apiGet(
-      `/courses/${id}`,
-      {
-        silent: true
-      }
+
+    await loadCourseDetail(
+      id
     );
+
+  // ==========================================
+  // ERROR STATE
+  // ==========================================
 
   if (!result.ok) {
 
     document.querySelector(
       "#app"
     ).innerHTML =
+
       renderAppLayout(`
 
         <h1>
@@ -51,112 +76,179 @@ export async function renderCourseDetailPage() {
     return;
   }
 
+  // ==========================================
+  // COURSE
+  // ==========================================
+
   const course =
     result.data;
 
-// ========================================
-// ENROLLED
-// ========================================
+  // ==========================================
+  // ENROLLED
+  // ==========================================
 
-const enrolledCourses =
+  const enrolledCourses =
 
-  JSON.parse(
+    JSON.parse(
 
-    localStorage.getItem(
-      STORAGE_KEYS.ENROLLED_COURSES
-    ) || "[]"
+      localStorage.getItem(
+        STORAGE_KEYS.ENROLLED_COURSES
+      ) || "[]"
 
-  );
+    );
 
-const isEnrolled =
+  const isEnrolled =
 
-  enrolledCourses.includes(
-    course.id
-  );  
+    enrolledCourses.includes(
+      course.id
+    );
+
+  // ==========================================
+  // LESSON CARDS
+  // ==========================================
+
+  const lessonsHtml =
+
+    (course.lessons || [])
+      .map(
+
+        (
+          lesson,
+          index
+        ) => `
+
+          <div
+            class="lesson-item"
+            data-lesson-id="${lesson.id}"
+          >
+
+            <div class="lesson-index">
+
+              ${index + 1}
+
+            </div>
+
+            <div class="lesson-label">
+
+              Bài học ${index + 1}
+
+            </div>
+
+            <div class="lesson-content">
+
+              <h3>
+
+                ${lesson.title}
+
+              </h3>
+
+              <p>
+
+                ${lesson.description || "Bài học thực hành Office"}
+
+              </p>
+
+            </div>
+
+            <div class="lesson-action">
+
+              Tiếp tục học →
+
+            </div>
+
+          </div>
+
+        `
+      )
+      .join("");
+
+  // ==========================================
+  // CONTENT
+  // ==========================================
 
   const content = `
 
-  <div class="page course-detail-page">
+    <div class="page course-detail-page">
 
-    <!-- ================================== -->
-    <!-- HERO -->
-    <!-- ================================== -->
+      <!-- ================================= -->
+      <!-- HERO -->
+      <!-- ================================= -->
 
-    <section class="course-hero">
+      <section class="course-hero">
 
-      <div class="course-hero-content">
+        <div class="course-hero-content">
 
-        <div class="course-badge">
+          <div class="course-badge">
 
-          ⚡ Lộ trình học thực hành
-
-        </div>
-
-        <h1>
-
-          ${course.title}
-
-        </h1>
-
-        <p class="course-description">
-
-          ${course.description}
-
-        </p>
-
-        <div class="course-meta">
-
-          <div class="course-meta-item">
-
-            👥 ${course.students || 0}+ học viên
+            ⚡ Lộ trình học thực hành
 
           </div>
 
-          <div class="course-meta-item">
+          <h1>
 
-            ⏱ ${course.duration || "Đang cập nhật"}
+            ${course.title}
 
-          </div>
+          </h1>
 
-          <div class="course-meta-item">
+          <p class="course-description">
 
-            🎯 ${course.level || "Practical"}
-
-          </div>
-
-        </div>
-
-        <!-- PRACTICAL -->
-
-        <div class="course-practical-box">
-
-          <h3>
-
-            Học theo hướng thực hành & sát thực tế
-
-          </h3>
-
-          <p>
-
-            Khóa học giúp người học luyện tập
-            theo workflow thực tế, làm quen với
-            môi trường MOS và từng bước xây dựng
-            sự tự tin khi sử dụng Office.
+            ${course.description}
 
           </p>
 
-        </div>
+          <div class="course-meta">
 
-        <!-- ACTIONS -->
+            <div class="course-meta-item">
 
-        <div class="course-actions">
+              👥 ${course.students || 0}+ học viên
 
-          <button
-            class="btn-primary"
-            id="startLearning"
-          >
+            </div>
 
-            ${isEnrolled
+            <div class="course-meta-item">
+
+              ⏱ ${course.duration || "Đang cập nhật"}
+
+            </div>
+
+            <div class="course-meta-item">
+
+              🎯 ${course.level || "Practical"}
+
+            </div>
+
+          </div>
+
+          <!-- PRACTICAL -->
+
+          <div class="course-practical-box">
+
+            <h3>
+
+              Học theo hướng thực hành & sát thực tế
+
+            </h3>
+
+            <p>
+
+              Khóa học giúp người học luyện tập
+              theo workflow thực tế, làm quen với
+              môi trường MOS và từng bước xây dựng
+              sự tự tin khi sử dụng Office.
+
+            </p>
+
+          </div>
+
+          <!-- ACTIONS -->
+
+          <div class="course-actions">
+
+            <button
+              class="btn-primary"
+              id="startLearning"
+            >
+
+              ${isEnrolled
 
       ? "BẮT ĐẦU HỌC"
 
@@ -164,280 +256,154 @@ const isEnrolled =
 
     }
 
-          </button>
+            </button>
 
-          <button
-            class="btn-secondary"
-            id="continueLearning"
-          >
-
-            TIẾP TỤC HỌC
-
-          </button>
-
-        </div>
-
-      </div>
-
-      <!-- VISUAL -->
-
-      <div class="course-hero-visual">
-
-        <div class="course-visual-card">
-
-          <div class="course-visual-label">
-
-            MOS CONTINUITY
-
-          </div>
-
-          <div class="course-visual-thumbnail">
-
-            ${course.thumbnail}
-
-          </div>
-
-          <div class="course-visual-points">
-
-            <div class="visual-point">
-              ✅ Luyện thi sát thực tế
-            </div>
-
-            <div class="visual-point">
-              ✅ Học qua video & thực hành
-            </div>
-
-            <div class="visual-point">
-              ✅ Quiz & tiếp tục bài học
-            </div>
-
-            <div class="visual-point">
-              ✅ Duy trì tiến trình học tập
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <!-- ================================== -->
-    <!-- LESSONS -->
-    <!-- ================================== -->
-
-    <section class="course-lessons">
-
-      <div class="section-heading">
-
-        <h2>
-
-          Nội dung khóa học
-
-        </h2>
-
-        <p>
-
-          Học theo từng bài nhỏ,
-          luyện tập liên tục và từng bước
-          xây dựng kỹ năng Office thực tế.
-
-        </p>
-
-      </div>
-
-      <div class="lessons-list">
-
-        ${course.lessons.map(
-      (lesson, index) => `
-
-            <div
-              class="lesson-item"
-              data-lesson-id="${lesson.id}"
+            <button
+              class="btn-secondary"
+              id="continueLearning"
             >
 
-              <div class="lesson-index">
+              TIẾP TỤC HỌC
 
-                ${index + 1}
+            </button>
 
+          </div>
+
+        </div>
+
+        <!-- VISUAL -->
+
+        <div class="course-hero-visual">
+
+          <div class="course-visual-card">
+
+            <div class="course-visual-label">
+
+              MOS CONTINUITY
+
+            </div>
+
+            <div class="course-visual-thumbnail">
+
+              ${course.thumbnail || "📘"}
+
+            </div>
+
+            <div class="course-visual-points">
+
+              <div class="visual-point">
+                ✅ Luyện thi sát thực tế
               </div>
 
-              <div class="lesson-content">
-
-                <h3>
-
-                  ${lesson.title}
-
-                </h3>
-
-                <p>
-
-                  ${lesson.content || "Bài học thực hành Office"}
-
-                </p>
-
+              <div class="visual-point">
+                ✅ Học qua video & thực hành
               </div>
 
-              <div class="lesson-action">
+              <div class="visual-point">
+                ✅ Quiz & tiếp tục bài học
+              </div>
 
-                Học bài →
-
+              <div class="visual-point">
+                ✅ Duy trì tiến trình học tập
               </div>
 
             </div>
 
-          `
-    ).join("")}
+          </div>
 
-      </div>
+        </div>
 
-    </section>
+      </section>
 
-  </div>
+      <!-- ================================= -->
+      <!-- LESSONS -->
+      <!-- ================================= -->
 
-`;
+      <section class="course-lessons">
+
+        <div class="section-heading">
+
+          <h2>
+
+            Nội dung khóa học
+
+          </h2>
+
+          <p>
+
+            Học theo từng bài nhỏ,
+            luyện tập liên tục và từng bước
+            xây dựng kỹ năng Office thực tế.
+
+          </p>
+
+        </div>
+
+        <div class="lessons-list">
+
+          ${lessonsHtml}
+
+        </div>
+
+      </section>
+
+    </div>
+
+  `;
+
+  // ==========================================
+  // RENDER
+  // ==========================================
 
   document.querySelector(
     "#app"
   ).innerHTML =
+
     renderAppLayout(
       content
     );
 
-  document
-  .querySelectorAll(
-    ".lesson-item"
-  )
-  .forEach((item) => {
+  // ==========================================
+  // LESSON ACTIONS
+  // ==========================================
 
-    item.onclick = () => {
+  bindLessonItems({
 
-      navigate(
+    course
 
-        `/learn/${
-          course.id
-        }/${
-          item.dataset.lessonId
-        }`
+  });
 
-      );
-    };
-  });  
-
-// ========================================
-// START LEARNING
-// ========================================
-
-document.querySelector(
-  "#startLearning"
-).onclick = () => {
-
-  // ======================================
-  // ENROLL
-  // ======================================
-
-  if (!isEnrolled) {
-
-    enrolledCourses.push(
-      course.id
-    );
-
-    localStorage.setItem(
-
-      STORAGE_KEYS.ENROLLED_COURSES,
-
-      JSON.stringify(
-        enrolledCourses
-      )
-
-    );
-
-    alert(
-      "Enroll success!"
-    );
-
-    renderCourseDetailPage();
-
-    return;
-  }
-
-  // ======================================
-  // FIRST LESSON
-  // ======================================
-
-  const firstLesson =
-
-    course.lessons?.[0];
-
-  if (!firstLesson) {
-
-    alert(
-      "No lessons found."
-    );
-
-    return;
-  }
-
-  // ======================================
+  // ==========================================
   // START LEARNING
-  // ======================================
+  // ==========================================
 
-  navigate(
+  document.querySelector(
+    "#startLearning"
+  ).onclick = () => {
 
-    `/learn/${
-      course.id
-    }/${
-      firstLesson.id
-    }`
+    startLearning({
 
-  );
-};
+      course,
+      isEnrolled,
 
-  // ========================================
+      onEnroll:
+        renderCourseDetailPage
+
+    });
+  };
+
+  // ==========================================
   // CONTINUE LEARNING
-  // ========================================
+  // ==========================================
 
   document.querySelector(
     "#continueLearning"
   ).onclick = () => {
 
-    const lastLessonId =
+    continueLearning({
 
-      localStorage.getItem(
-        STORAGE_KEYS.LAST_LESSON_PREFIX
-        + course.id
-      );
+      course
 
-    // ======================================
-    // FALLBACK
-    // ======================================
-
-    const firstLesson =
-
-      course.lessons?.[0];
-
-    const targetLessonId =
-
-      lastLessonId ||
-
-      firstLesson?.id;
-
-    if (!targetLessonId) {
-
-      alert(
-        "No lessons found."
-      );
-
-      return;
-    }
-
-    navigate(
-
-      `/learn/${course.id
-      }/${targetLessonId
-      }`
-
-    );
+    });
   };
 }

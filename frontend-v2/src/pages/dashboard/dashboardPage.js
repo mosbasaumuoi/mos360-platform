@@ -54,15 +54,24 @@ import {
   from "../../constants/storageKeys.js";  
 
 import {
-  parseXpReward
+
+  bindContinueLearning,
+
+  bindClaimRewards,
+
+  bindCertificates
+
 }
-  from "../../engines/rewardEngine.js";  
+  from "./dashboardActions.js"; 
 
 import {
-  getCourseCompletedKey,
-  getLastLessonKey
+
+  getCourseProgress,
+
+  getCompletedCourses
+
 }
-  from "../../utils/storageHelpers.js";  
+  from "./dashboardProgressEngine.js"; 
 
 export async function renderDashboardPage() {
 
@@ -150,35 +159,10 @@ export async function renderDashboardPage() {
 
   const completedCourses =
 
-    courses.filter(
-      course => {
-
-        const progressKey =
-
-          STORAGE_KEYS.COURSE_PROGRESS_PREFIX
-          + course.id;
-
-        const completedLessons =
-
-          getStorage(
-            progressKey,
-            []
-          );
-
-        const totalLessons =
-
-          course.lessons?.length || 0;
-
-        return (
-
-          completedLessons.length >= totalLessons
-          &&
-          totalLessons > 0
-
-        );
-      }
+    getCompletedCourses(
+      courses
     );
-
+    
   // ========================================
   // CERTIFICATES
   // ========================================
@@ -294,6 +278,104 @@ export async function renderDashboardPage() {
   }
 
   // ========================================
+  // CONTINUE LEARNING COURSE
+  // ========================================
+
+  const latestCourseId =
+
+    enrolledCourses[0];
+
+  const continueCourse =
+
+    courses.find(
+      course =>
+        course.id === latestCourseId
+    );
+
+  let continueLearningSection = "";
+
+  if (continueCourse) {
+
+    const {
+
+      completedLessons,
+
+      totalLessons,
+
+      progress,
+
+      lastLessonId
+
+    } =
+
+      getCourseProgress(
+        continueCourse
+      ); 
+     
+
+    continueLearningSection = `
+
+      <div class="continue-learning-hero">
+
+        <div class="continue-learning-content">
+
+          <div class="continue-learning-label">
+
+            TIẾP TỤC HỌC
+
+          </div>
+
+          <h2>
+
+            ${continueCourse.title}
+
+          </h2>
+
+          <p>
+
+            Bạn đã hoàn thành
+            ${completedLessons.length}
+            /
+            ${totalLessons}
+            bài học.
+
+          </p>
+
+          <div class="continue-learning-progress">
+
+            <div
+              class="continue-learning-fill"
+              style="
+                width:${progress}%
+              "
+            ></div>
+
+          </div>
+
+          <button
+            class="continue-hero-btn"
+            data-course-id="${continueCourse.id}"
+            data-lesson-id="${lastLessonId}"
+          >
+
+            Tiếp tục học →
+
+          </button>
+
+        </div>
+
+        <div class="continue-learning-visual">
+
+          ${continueCourse.thumbnail}
+
+        </div>
+
+      </div>
+
+    `;
+  }
+
+  // ========================================
   // COURSE ITEMS
   // ========================================
 
@@ -301,54 +383,24 @@ export async function renderDashboardPage() {
 
     courses.map((course) => {
 
-      const progressKey =
+      const {
 
-        STORAGE_KEYS.COURSE_PROGRESS_PREFIX
-        + course.id;
+        completedLessons,
 
-      const completedLessons =
+        totalLessons,
 
-        getStorage(
-          progressKey,
-          []
+        progress,
+
+        isCompleted,
+
+        lastLessonId
+
+      } =
+
+        getCourseProgress(
+          course
         );
-
-      const totalLessons =
-
-        course.lessons.length;
-
-      const progress =
-
-        Math.floor(
-
-          (
-            completedLessons.length
-            /
-            totalLessons
-          ) * 100
-
-        );
-
-      const isCompleted =
-
-        completedLessons.length >= totalLessons
-        &&
-        totalLessons > 0;
-
-      const lastLesson =
-
-        localStorage.getItem(
-
-          getLastLessonKey(
-            course.id
-          )
-
-        )
-
-        ||
-
-        course.lessons?.[0]?.id;
-
+        
       return `
 
         <div
@@ -411,7 +463,7 @@ export async function renderDashboardPage() {
 
               data-course-id="${course.id}"
 
-              data-lesson-id="${lastLesson}"
+              data-lesson-id="${lastLessonId}"
 
             >
 
@@ -462,11 +514,64 @@ export async function renderDashboardPage() {
 
     <div class="page">
 
-      <h1>
+                  <div class="dashboard-hero">
 
-        MOS360 DASHBOARD
+        <div class="dashboard-hero-content">
 
-      </h1>
+          <div class="dashboard-label">
+
+            HÀNH TRÌNH HỌC TẬP
+
+          </div>
+
+          <h1>
+
+            Chào mừng bạn quay lại 👋
+
+          </h1>
+
+          <p>
+
+            Mỗi bài học hoàn thành hôm nay
+            sẽ giúp bạn tự tin hơn trong học tập,
+            công việc và kỳ thi MOS phía trước.
+
+          </p>
+
+          <div class="dashboard-hero-note">
+
+            Bạn đang duy trì rất tốt nhịp học tập của mình.
+
+          </div>
+
+        </div>
+
+        <div class="dashboard-hero-side">
+
+          <div class="dashboard-streak">
+
+            🔥 ${streak} ngày học liên tục
+
+          </div>
+
+          <div class="dashboard-level">
+
+            Level ${level}
+
+          </div>
+
+          <div class="dashboard-xp-card">
+
+            ${xp}
+            XP tích lũy
+
+          </div>
+
+        </div>
+
+      </div>
+
+            ${continueLearningSection}
 
       <!-- ANALYTICS -->
 
@@ -569,6 +674,12 @@ export async function renderDashboardPage() {
           </p>
 
         </div>
+
+      </div>
+
+      <div class="dashboard-section-heading">
+
+        Tiến trình học tập
 
       </div>
 
@@ -676,6 +787,12 @@ export async function renderDashboardPage() {
 
       </div>
 
+            <div class="dashboard-section-heading">
+
+        Khóa học của bạn
+
+      </div>
+      
       <!-- COURSES -->
 
       <div class="dashboard-list">
@@ -701,110 +818,22 @@ export async function renderDashboardPage() {
     );
 
   // ========================================
-  // CONTINUE BUTTON
+  // DASHBOARD ACTIONS
   // ========================================
 
-  document
-    .querySelectorAll(
-      ".continue-btn"
-    )
-    .forEach((button) => {
+  bindContinueLearning();
 
-      button.onclick = () => {
+  bindClaimRewards({
 
-        navigate(
+    claimedRewards,
 
-          `/learn/${button.dataset.courseId
-          }/${button.dataset.lessonId
-          }`
+    renderDashboardPage
 
-        );
-      };
-    });
+  });
 
-  // ========================================
-  // CLAIM REWARD
-  // ========================================
+  bindCertificates({
 
-  document
-    .querySelectorAll(
-      ".claim-btn"
-    )
-    .forEach((button) => {
+    certificates
 
-      button.onclick = () => {
-
-        const reward =
-
-          parseXpReward(
-            button.dataset.reward
-          );
-
-        let xp =
-
-          Number(
-
-            localStorage.getItem(
-              STORAGE_KEYS.USER_XP
-            ) || 0
-
-          );
-
-        xp += reward;
-
-        localStorage.setItem(
-          STORAGE_KEYS.USER_XP,
-          xp
-        );
-
-        claimedRewards.push(
-          button.dataset.missionId
-        );
-
-        setStorage(
-          STORAGE_KEYS.CLAIMED_REWARDS,
-          claimedRewards
-        );
-
-        renderDashboardPage();
-      };
-    });
-
-  // ========================================
-  // CERTIFICATE
-  // ========================================
-
-  document
-    .querySelectorAll(
-      ".certificate-btn"
-    )
-    .forEach((button) => {
-
-      button.onclick = () => {
-
-        const credential =
-
-          certificates.find(
-
-            item =>
-
-              item.courseName
-              ===
-              button.dataset.courseTitle
-
-          );
-
-        openCertificateModal({
-
-          studentName:
-            credential?.studentName
-            || "Student",
-
-          courseName:
-            credential?.courseName
-            || button.dataset.courseTitle
-
-        });
-      };
-    });
+  });
 }

@@ -53,6 +53,20 @@ import {
 }
   from "../pages/admin/adminPage.js";  
 
+import {
+
+  startPageTransition,
+
+  endPageTransition
+
+}
+  from "./loadingRuntime.js";  
+
+import {
+  renderImportPage
+}
+  from "../pages/admin/importPage.js";  
+
 // ============================================
 // ROUTES
 // ============================================
@@ -70,6 +84,9 @@ const routes = {
 
   "/courses":
     renderCoursesPage,
+
+  "/admin/import":
+    renderImportPage,
 
   "/admin":
     renderAdminPage  
@@ -309,7 +326,7 @@ export async function loadRoute() {
 // NAVIGATE
 // ============================================
 
-export function navigate(
+export async function navigate(
   path
 ) {
 
@@ -318,13 +335,35 @@ export function navigate(
     path
   );
 
+  // ======================================
+  // START TRANSITION
+  // ======================================
+
+  startPageTransition();
+
+  // ======================================
+  // CHANGE URL
+  // ======================================
+
   window.history.pushState(
     {},
     "",
     path
   );
 
-  loadRoute();
+  // ======================================
+  // SMALL DELAY
+  // ======================================
+
+  requestAnimationFrame(
+    async () => {
+
+      await loadRoute();
+
+      endPageTransition();
+
+    }
+  );
 }
 
 // ============================================

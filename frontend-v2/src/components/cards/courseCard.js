@@ -1,5 +1,3 @@
-import "./courseCard.css";
-
 // ============================================
 // COURSE CARD
 // ============================================
@@ -38,17 +36,21 @@ export function renderCourseCard(
 
       <!-- THUMBNAIL -->
 
-      <div class="course-image">
+      <div
+  class="course-image"
+  style="
+    background-image:
+    url('${
+    course.thumbnail
+    ||
+    "/assets/courses/default.jpg"
+    }')
+  "
+>
 
-        <div class="course-image-overlay"></div>
+  <div class="course-image-overlay"></div>
 
-        <div class="course-thumbnail-text">
-
-          ${course.thumbnail}
-
-        </div>
-
-      </div>
+    </div>
 
       <!-- CONTENT -->
 

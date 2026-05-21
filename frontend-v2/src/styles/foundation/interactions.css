@@ -1,0 +1,265 @@
+/* ==========================================
+   MOS360 INTERACTION FOUNDATION
+========================================== */
+
+/* ==========================================
+   GLOBAL INTERACTIVE ELEMENTS
+========================================== */
+
+button,
+a,
+.course-card,
+.lesson-sidebar-item,
+.dashboard-card,
+.stat-card,
+.mission-card {
+
+    transition:
+        transform 0.18s ease,
+        opacity 0.18s ease,
+        border-color 0.18s ease,
+        background 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+/* ==========================================
+   BUTTONS
+========================================== */
+
+button {
+
+    cursor: pointer;
+
+    position: relative;
+
+    overflow: hidden;
+
+    transform: translateY(0);
+}
+
+button:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 10px 30px rgba(255, 115, 0, 0.12);
+}
+
+button:active {
+
+    transform:
+        translateY(0);
+}
+
+button:disabled {
+
+    opacity: 0.5;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+/* ==========================================
+   CARDS
+========================================== */
+
+.course-card:hover,
+.dashboard-card:hover,
+.mission-card:hover,
+.stat-card:hover {
+
+    transform:
+        translateY(-4px);
+
+    border-color:
+        rgba(255, 115, 0, 0.4);
+
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.28);
+}
+
+/* ==========================================
+   SIDEBAR LESSONS
+========================================== */
+
+.lesson-sidebar-item:hover {
+
+    transform:
+        translateX(4px);
+
+    border-color:
+        rgba(255, 115, 0, 0.3);
+}
+
+/* ==========================================
+   ACTION BUTTONS
+========================================== */
+
+.lesson-action-btn,
+.hero-btn,
+.dashboard-btn,
+.course-btn {
+
+    min-height: 48px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.2px;
+}
+
+/* ==========================================
+   FOCUS STATES
+========================================== */
+
+button:focus-visible,
+a:focus-visible {
+
+    outline:
+        2px solid rgba(255, 115, 0, 0.6);
+
+    outline-offset: 2px;
+}
+
+/* ==========================================
+   LOADING FEEL
+========================================== */
+
+.loading {
+
+    opacity: 0.7;
+
+    pointer-events: none;
+}
+
+/* ==========================================
+   SMOOTH SECTION APPEAR
+========================================== */
+
+.page,
+.learn-content,
+.dashboard-page,
+.courses-page {
+
+    animation:
+        fadePageIn 0.28s ease;
+}
+
+@keyframes fadePageIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(6px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+       
+}
+
+/* ==========================================
+   FEEDBACK SYSTEM
+========================================== */
+
+.mos-feedback {
+
+    position: fixed;
+
+    right: 24px;
+
+    bottom: 24px;
+
+    z-index: 9999;
+
+    min-width: 240px;
+
+    max-width: 360px;
+
+    padding: 16px 18px;
+
+    border-radius: 18px;
+
+    backdrop-filter: blur(14px);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    background:
+        rgba(18, 18, 18, 0.92);
+
+    color: white;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.35);
+
+    opacity: 0;
+
+    transform:
+        translateY(16px) scale(0.98);
+
+    transition:
+        opacity 0.22s ease,
+        transform 0.22s ease;
+}
+
+.mos-feedback.show {
+
+    opacity: 1;
+
+    transform:
+        translateY(0) scale(1);
+}
+
+/* ==========================================
+   SUCCESS
+========================================== */
+
+.mos-feedback.success {
+
+    border-color:
+        rgba(76, 175, 80, 0.28);
+
+    box-shadow:
+        0 20px 50px rgba(76, 175, 80, 0.12);
+}
+
+/* ==========================================
+   WARNING
+========================================== */
+
+.mos-feedback.warning {
+
+    border-color:
+        rgba(255, 183, 77, 0.28);
+
+    box-shadow:
+        0 20px 50px rgba(255, 183, 77, 0.12);
+}
+
+/* ==========================================
+   ERROR
+========================================== */
+
+.mos-feedback.error {
+
+    border-color:
+        rgba(244, 67, 54, 0.28);
+
+    box-shadow:
+        0 20px 50px rgba(244, 67, 54, 0.12);
+}

@@ -1,18 +1,25 @@
 /* =========================================
-   MOS360 GLOBAL DESIGN SYSTEM
+   MOS360 GLOBAL FOUNDATION
 ========================================= */
 
 * {
+
   margin: 0;
+
   padding: 0;
+
   box-sizing: border-box;
 }
 
 /* =========================================
-   ROOT
+   ROOT TOKENS
 ========================================= */
 
 :root {
+
+  /* =====================================
+     COLORS
+  ===================================== */
 
   --bg-primary:
     #050505;
@@ -20,8 +27,26 @@
   --bg-secondary:
     #101010;
 
+  --bg-tertiary:
+    #161616;
+
+  --surface-primary:
+    rgba(255, 255, 255, 0.03);
+
+  --surface-secondary:
+    rgba(255, 255, 255, 0.05);
+
+  --surface-accent:
+    rgba(255, 107, 0, 0.08);
+
   --border-color:
     #262626;
+
+  --border-soft:
+    rgba(255, 255, 255, 0.05);
+
+  --border-accent:
+    rgba(255, 107, 0, 0.16);
 
   --text-primary:
     #ffffff;
@@ -29,28 +54,209 @@
   --text-secondary:
     #9ca3af;
 
+  --text-muted:
+    rgba(255, 255, 255, 0.58);
+
   --accent:
     #ff6b00;
 
+  --accent-soft:
+    #ffb066;
+
+  --success:
+    #32cd32;
+
+  /* =====================================
+     TYPOGRAPHY
+  ===================================== */
+
+  --font-family:
+    Arial,
+    sans-serif;
+
+  --text-xs:
+    12px;
+
+  --text-sm:
+    14px;
+
+  --text-md:
+    16px;
+
+  --text-lg:
+    18px;
+
+  --text-xl:
+    22px;
+
+  --text-2xl:
+    28px;
+
+  --text-3xl:
+    34px;
+
+  --text-4xl:
+    42px;
+
+  --text-5xl:
+    52px;
+
+  --text-hero:
+    clamp(42px, 6vw, 72px);
+
+  /* =====================================
+     SPACING
+  ===================================== */
+
+  --space-1:
+    4px;
+
+  --space-2:
+    8px;
+
+  --space-3:
+    12px;
+
+  --space-4:
+    16px;
+
+  --space-5:
+    20px;
+
+  --space-6:
+    24px;
+
+  --space-7:
+    28px;
+
+  --space-8:
+    32px;
+
+  --space-9:
+    40px;
+
+  --space-10:
+    48px;
+
+  --space-11:
+    56px;
+
+  --space-12:
+    64px;
+
+  --space-section:
+    90px;
+
+  /* =====================================
+     RADIUS
+  ===================================== */
+
+  --radius-sm:
+    12px;
+
+  --radius-md:
+    16px;
+
+  --radius-lg:
+    20px;
+
+  --radius-xl:
+    24px;
+
+  --radius-2xl:
+    32px;
+
+  --radius-pill:
+    999px;
+
+  /* =====================================
+     SHADOWS
+  ===================================== */
+
+  --shadow-soft:
+    0 10px 30px rgba(0, 0, 0, 0.16);
+
+  --shadow-medium:
+    0 20px 60px rgba(0, 0, 0, 0.22);
+
+  --shadow-heavy:
+    0 30px 80px rgba(0, 0, 0, 0.28);
+
+  --shadow-accent:
+    0 14px 34px rgba(255, 107, 0, 0.20);
+
+  /* =====================================
+     TRANSITIONS
+  ===================================== */
+
+  --transition-fast:
+    0.2s ease;
+
+  --transition-normal:
+    0.25s ease;
+
+  --transition-slow:
+    0.35s ease;
+
+  /* =====================================
+     LAYOUT
+  ===================================== */
+
   --sidebar-width:
     240px;
+
+  --container-width:
+    1440px;
 }
 
 /* =========================================
-   BODY
+   HTML / BODY
 ========================================= */
+
+html {
+
+  scroll-behavior: smooth;
+}
 
 body {
 
   font-family:
-    Arial,
-    sans-serif;
+    var(--font-family);
 
   background:
     var(--bg-primary);
 
   color:
     var(--text-primary);
+
+  overflow-x: hidden;
+
+  text-rendering:
+    optimizeLegibility;
+
+  -webkit-font-smoothing:
+    antialiased;
+}
+
+/* =========================================
+   TYPOGRAPHY
+========================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+  font-weight: 800;
+
+  letter-spacing: -0.02em;
+}
+
+p {
+
+  line-height: 1.8;
 }
 
 /* =========================================
@@ -59,230 +265,118 @@ body {
 
 a {
 
-  text-decoration:
-    none;
+  text-decoration: none;
 
-  color:
-    inherit;
+  color: inherit;
 }
 
 /* =========================================
-   APP LAYOUT
+   MEDIA
 ========================================= */
 
-.app-layout {
+img,
+video {
 
-  display:
-    flex;
+  max-width: 100%;
 
-  min-height:
-    100vh;
+  display: block;
 }
 
 /* =========================================
-   SIDEBAR
+   BUTTON RESET
 ========================================= */
 
-.sidebar {
+button {
 
-  width:
-    var(--sidebar-width);
-
-  background:
-    var(--bg-secondary);
-
-  border-right:
-    1px solid var(--border-color);
-
-  padding:
-    24px;
+  font: inherit;
 }
 
 /* =========================================
-   LOGO
-========================================= */
-
-.logo {
-
-  font-size:
-    28px;
-
-  color:
-    var(--accent);
-
-  margin-bottom:
-    40px;
-}
-
-/* =========================================
-   MENU
-========================================= */
-
-.menu {
-
-  display:
-    flex;
-
-  flex-direction:
-    column;
-
-  gap:
-    16px;
-}
-
-.menu a {
-
-  color:
-    var(--text-secondary);
-
-  transition:
-    0.2s;
-}
-
-.menu a:hover {
-
-  color:
-    var(--accent);
-}
-
-/* =========================================
-   MAIN CONTENT
-========================================= */
-
-.main-content {
-
-  flex:
-    1;
-
-  padding:
-    40px;
-}
-
-/* =========================================
-   PAGE
+   PAGE FOUNDATION
 ========================================= */
 
 .page h1 {
 
   font-size:
-    52px;
+    var(--text-5xl);
 
   color:
     var(--accent);
 
   margin-bottom:
-    24px;
+    var(--space-6);
 }
 
 /* =========================================
-   STATS
+   GLOBAL UTILITIES
 ========================================= */
 
-.stats {
+.glass-surface {
 
-  display:
-    flex;
-
-  gap:
-    24px;
-
-  margin-top:
-    40px;
-}
-
-/* =========================================
-   CARD
-========================================= */
-
-.card {
-
-  width:
-    260px;
-
-  padding:
-    32px;
+  background:
+    var(--surface-primary);
 
   border:
-    1px solid var(--border-color);
+    1px solid var(--border-soft);
 
-  border-radius:
-    20px;
+  backdrop-filter:
+    blur(10px);
+}
+
+.accent-surface {
 
   background:
-    #0f0f0f;
+    var(--surface-accent);
+
+  border:
+    1px solid var(--border-accent);
 }
 
-.card h3 {
+.section-spacing {
 
-  color:
-    var(--text-secondary);
-
-  margin-bottom:
-    24px;
-
-  font-size:
-    28px;
-}
-
-.card p {
-
-  font-size:
-    64px;
-
-  color:
-    var(--accent);
-
-  font-weight:
-    bold;
+  margin-top:
+    var(--space-section);
 }
 
 /* =========================================
-   TOAST
+   SCROLLBAR
 ========================================= */
 
-.toast {
+::-webkit-scrollbar {
 
-  position:
-    fixed;
+  width: 10px;
+}
 
-  top:
-    24px;
-
-  right:
-    24px;
+::-webkit-scrollbar-track {
 
   background:
-    var(--accent);
+    var(--bg-secondary);
+}
 
-  color:
-    white;
+::-webkit-scrollbar-thumb {
 
-  padding:
-    16px 24px;
+  background:
+    rgba(255, 255, 255, 0.12);
 
   border-radius:
-    12px;
+    var(--radius-pill);
+}
 
-  font-weight:
-    bold;
+::-webkit-scrollbar-thumb:hover {
 
-  z-index:
-    9999;
-
-  animation:
-    toastIn 0.3s ease;
+  background:
+    rgba(255, 255, 255, 0.18);
 }
 
 /* =========================================
-   TOAST ANIMATION
+   GLOBAL ANIMATIONS
 ========================================= */
 
 @keyframes toastIn {
 
   from {
 
-    opacity:
-      0;
+    opacity: 0;
 
     transform:
       translateY(-10px);
@@ -290,181 +384,757 @@ a {
 
   to {
 
-    opacity:
-      1;
+    opacity: 1;
 
     transform:
       translateY(0);
   }
 }
 
-/* =========================================
-   LOADING OVERLAY
-========================================= */
-
-.loading-overlay {
-
-  position:
-    fixed;
-
-  inset:
-    0;
-
-  background:
-    rgba(0, 0, 0, 0.6);
-
-  display:
-    flex;
-
-  align-items:
-    center;
-
-  justify-content:
-    center;
-
-  z-index:
-    99999;
-}
-
-/* =========================================
-   SPINNER
-========================================= */
-
-.loading-spinner {
-
-  width:
-    60px;
-
-  height:
-    60px;
-
-  border:
-    5px solid #333;
-
-  border-top:
-    5px solid var(--accent);
-
-  border-radius:
-    50%;
-
-  animation:
-    spin 1s linear infinite;
-}
-
-/* =========================================
-   SPIN
-========================================= */
-
 @keyframes spin {
 
   from {
+
     transform:
       rotate(0deg);
   }
 
   to {
+
     transform:
       rotate(360deg);
   }
 }
 
 /* =========================================
-   ERROR STATE
+   RESPONSIVE FOUNDATION
 ========================================= */
 
-.error-state {
+@media (max-width: 768px) {
 
-  padding:
-    40px;
+  :root {
 
-  border:
-    1px solid #5c1f1f;
+    --space-section:
+      70px;
 
-  border-radius:
-    20px;
+    --text-5xl:
+      42px;
 
-  background:
-    rgba(120, 0, 0, 0.15);
+    --text-4xl:
+      34px;
+  }
 
-  margin-top:
-    40px;
-}
-
-.error-state h2 {
-
-  color:
-    #ff4d4f;
-
-  margin-bottom:
-    12px;
-}
-
-.error-state p {
-
-  color:
-    #ffb3b3;
 }
 
 /* =========================================
-   EMPTY STATE
+   MOTION SYSTEM
 ========================================= */
 
-.empty-state {
+.motion-lift {
 
-  padding:
-    40px;
+  transition:
+    transform var(--transition-normal),
+    box-shadow var(--transition-normal),
+    border-color var(--transition-normal);
+}
 
-  border:
-    1px dashed #444;
+.motion-lift:hover {
+
+  transform:
+    translateY(-3px);
+}
+
+.motion-soft {
+
+  transition:
+    opacity var(--transition-normal),
+    transform var(--transition-normal);
+}
+
+.motion-soft:hover {
+
+  opacity: 0.96;
+}
+
+.motion-scale {
+
+  transition:
+    transform var(--transition-normal);
+}
+
+.motion-scale:hover {
+
+  transform:
+    scale(1.015);
+}
+
+/* =========================================
+   INTERACTIVE SURFACE
+========================================= */
+
+.interactive-surface {
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+.interactive-surface::after {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.02),
+      transparent);
+
+  opacity: 0;
+
+  transition:
+    opacity var(--transition-normal);
+
+  pointer-events: none;
+}
+
+.interactive-surface:hover::after {
+
+  opacity: 1;
+}
+
+/* =========================================
+   BUTTON LANGUAGE
+========================================= */
+
+.btn-primary {
+
+  border: none;
 
   border-radius:
-    20px;
+    var(--radius-md);
+
+  background:
+    linear-gradient(180deg,
+      #ffb000,
+      #ff9500);
+
+  color: black;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform var(--transition-normal),
+    box-shadow var(--transition-normal),
+    opacity var(--transition-normal);
+}
+
+.btn-primary:hover {
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    var(--shadow-accent);
+}
+
+.btn-secondary {
+
+  border:
+    1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius:
+    var(--radius-md);
+
+  background:
+    rgba(255, 255, 255, 0.05);
+
+  color:
+    white;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform var(--transition-normal),
+    background var(--transition-normal),
+    border-color var(--transition-normal);
+}
+
+.btn-secondary:hover {
+
+  transform:
+    translateY(-2px);
+
+  background:
+    rgba(255, 255, 255, 0.08);
+
+  border-color:
+    rgba(255, 255, 255, 0.12);
+}
+
+/* =========================================
+   GLASS ATMOSPHERE
+========================================= */
+
+.glass-panel {
+
+  background:
+    rgba(255, 255, 255, 0.03);
+
+  border:
+    1px solid rgba(255, 255, 255, 0.05);
+
+  backdrop-filter:
+    blur(12px);
+}
+
+/* =========================================
+   FOCUS SYSTEM
+========================================= */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+
+  outline:
+    2px solid rgba(255, 107, 0, 0.42);
+
+  outline-offset:
+    2px;
+}
+
+/* =========================================
+   SELECTION
+========================================= */
+
+::selection {
+
+  background:
+    rgba(255, 107, 0, 0.28);
+
+  color:
+    white;
+}
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  * {
+
+    animation-duration:
+      0.01ms !important;
+
+    animation-iteration-count:
+      1 !important;
+
+    transition-duration:
+      0.01ms !important;
+
+    scroll-behavior:
+      auto !important;
+  }
+
+  /* =========================================
+   SURFACE SYSTEM
+========================================= */
+
+.surface-card {
+
+  background:
+    rgba(255,255,255,0.03);
+
+  border:
+    1px solid rgba(255,255,255,0.05);
+
+  border-radius:
+    var(--radius-2xl);
+
+  backdrop-filter:
+    blur(14px);
+
+  transition:
+    transform var(--transition-normal),
+    border-color var(--transition-normal),
+    background var(--transition-normal),
+    box-shadow var(--transition-normal);
+}
+
+.surface-card:hover {
+
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(255,255,255,0.08);
+
+  background:
+    rgba(255,255,255,0.04);
+}
+
+/* =========================================
+   SECTION SPACING
+========================================= */
+
+.section-block {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap:
+    36px;
+}
+
+.section-heading {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap:
+    16px;
+}
+
+.section-heading h2 {
+
+  line-height: 1.08;
+
+  letter-spacing: -1px;
+}
+
+.section-heading p {
+
+  max-width: 760px;
+
+  color:
+    var(--text-secondary);
+
+  line-height: 1.9;
+}
+
+/* =========================================
+   UNIFIED PANEL
+========================================= */
+
+.unified-panel {
+
+  padding:
+    28px;
+
+  border-radius:
+    var(--radius-2xl);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.03),
+      rgba(255,255,255,0.02)
+    );
+
+  border:
+    1px solid rgba(255,255,255,0.05);
+
+  backdrop-filter:
+    blur(14px);
+}
+
+/* =========================================
+   SOFT DIVIDER
+========================================= */
+
+.soft-divider {
+
+  width: 100%;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,0.08),
+      transparent
+    );
+}
+
+/* =========================================
+   CONTENT RHYTHM
+========================================= */
+
+.content-stack-sm {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap:
+    14px;
+}
+
+.content-stack-md {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap:
+    24px;
+}
+
+.content-stack-lg {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap:
+    36px;
+}
+
+/* =========================================
+   TEXT BALANCE
+========================================= */
+
+.text-muted {
+
+  color:
+    var(--text-secondary);
+
+  line-height: 1.8;
+}
+
+.text-soft {
+
+  color:
+    rgba(255,255,255,0.72);
+}
+
+/* =========================================
+   PREMIUM SCROLLBAR
+========================================= */
+
+::-webkit-scrollbar {
+
+  width: 10px;
+
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+
+  background:
+    rgba(255,255,255,0.02);
+}
+
+::-webkit-scrollbar-thumb {
+
+  background:
+    rgba(255,255,255,0.12);
+
+  border-radius:
+    999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+
+  background:
+    rgba(255,255,255,0.18);
+}
+
+/* =========================================
+   TYPOGRAPHY SYSTEM
+========================================= */
+
+body {
+
+  text-rendering:
+    optimizeLegibility;
+
+  -webkit-font-smoothing:
+    antialiased;
+
+  -moz-osx-font-smoothing:
+    grayscale;
+}
+
+/* =========================================
+   HEADINGS
+========================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+  font-weight:
+    800;
+
+  line-height:
+    1.08;
+
+  letter-spacing:
+    -0.02em;
+
+  text-wrap:
+    balance;
+}
+
+h1 {
+
+  max-width:
+    14ch;
+}
+
+h2 {
+
+  max-width:
+    18ch;
+}
+
+h3 {
+
+  max-width:
+    24ch;
+}
+
+/* =========================================
+   PARAGRAPHS
+========================================= */
+
+p {
+
+  line-height:
+    1.85;
+
+  color:
+    var(--text-secondary);
+
+  max-width:
+    72ch;
+
+  text-wrap:
+    pretty;
+}
+
+/* =========================================
+   LEARNING CONTENT
+========================================= */
+
+.lesson-content,
+.article-content,
+.reading-content {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap:
+    28px;
+}
+
+.lesson-content p,
+.article-content p,
+.reading-content p {
+
+  font-size:
+    17px;
+
+  line-height:
+    1.95;
+}
+
+/* =========================================
+   LIST RHYTHM
+========================================= */
+
+ul,
+ol {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap:
+    10px;
+
+  padding-left:
+    22px;
+}
+
+li {
+
+  line-height:
+    1.8;
+
+  color:
+    var(--text-secondary);
+}
+
+/* =========================================
+   SMALL TEXT
+========================================= */
+
+small,
+.text-small {
+
+  font-size:
+    13px;
+
+  line-height:
+    1.6;
+
+  color:
+    var(--text-muted);
+}
+
+/* =========================================
+   STRONG TEXT
+========================================= */
+
+strong {
+
+  color:
+    var(--text-primary);
+
+  font-weight:
+    700;
+}
+
+/* =========================================
+   READABLE WIDTH
+========================================= */
+
+.readable-content {
+
+  max-width:
+    820px;
+}
+
+/* =========================================
+   MOBILE TYPOGRAPHY
+========================================= */
+
+@media (max-width: 768px) {
+
+  p {
+
+    line-height:
+      1.8;
+  }
+
+  .lesson-content p,
+  .article-content p,
+  .reading-content p {
+
+    font-size:
+      16px;
+
+    line-height:
+      1.9;
+  }
+
+  h1 {
+
+    line-height:
+      1.02;
+  }
+
+  h2 {
+
+    line-height:
+      1.1;
+  }
+}
+
+/* ==========================================
+   PAGE TRANSITIONS
+========================================== */
+
+body.page-transitioning #app {
+
+  opacity: 0.92;
+
+  transform:
+    translateY(4px);
+
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+#app {
+
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+/* =========================================
+   MOS360 LEARN PAGE FOUNDATION
+========================================= */
+
+.video-learning-core {
+
+  display: grid;
+
+  grid-template-columns:
+    1.4fr 0.7fr;
+
+  gap: 24px;
+
+  margin-top: 32px;
+
+  align-items: start;
+}
+
+.video-player-shell {
 
   background:
     #111;
 
-  margin-top:
-    40px;
-}
+  border:
+    1px solid rgba(255, 255, 255, 0.08);
 
-.empty-state h2 {
+  border-radius:
+    24px;
 
-  color:
-    #888;
-
-  margin-bottom:
-    12px;
-}
-
-.empty-state p {
-
-  color:
-    #aaa;
-}
-
-/* =========================================
-   AUTH
-========================================= */
-
-.auth-page {
-
-  display:
-    flex;
-
-  justify-content:
-    center;
-
-  align-items:
-    center;
+  overflow:
+    hidden;
 
   min-height:
-    100vh;
+    520px;
+
+  box-shadow:
+    0 0 40px rgba(0, 0, 0, 0.3);
 }
 
-.auth-form {
+.lesson-video-frame {
 
   width:
-    360px;
+    100%;
+
+  height:
+    520px;
+
+  border:
+    none;
+
+  display:
+    block;
+}
+
+.video-learning-side {
 
   display:
     flex;
@@ -473,207 +1143,143 @@ a {
     column;
 
   gap:
-    16px;
+    20px;
+}
 
-  padding:
-    32px;
+.workflow-mini-card,
+.tips-mini-card {
+
+  background:
+    rgba(255, 255, 255, 0.03);
 
   border:
-    1px solid #222;
+    1px solid rgba(255, 255, 255, 0.06);
 
   border-radius:
     20px;
 
-  background:
-    #111;
+  padding:
+    20px;
 }
 
-.auth-form h1 {
+.workflow-mini-card h3,
+.tips-mini-card h3 {
 
-  color:
-    #ff6b00;
+  font-size:
+    18px;
 
   margin-bottom:
-    12px;
-}
-
-.auth-form input {
-
-  padding:
     14px;
 
-  border:
-    1px solid #333;
-
-  border-radius:
-    12px;
-
-  background:
-    #000;
-
   color:
-    white;
-
-  font-size:
-    16px;
+    #fff;
 }
 
-.auth-form button {
+.workflow-mini-card ol,
+.tips-mini-card ul {
 
-  padding:
-    14px;
-
-  border:
-    none;
-
-  border-radius:
-    12px;
-
-  background:
-    #ff6b00;
-
-  color:
-    white;
-
-  font-weight:
-    bold;
-
-  cursor:
-    pointer;
-}
-
-.auth-form button:disabled {
-
-  opacity:
-    0.6;
-
-  cursor:
-    not-allowed;
-}
-
-/* =========================================
-   SIDEBAR USER
-========================================= */
-
-.sidebar-user {
+  padding-left:
+    18px;
 
   display:
     flex;
 
-  align-items:
-    center;
+  flex-direction:
+    column;
 
   gap:
-    12px;
-
-  margin:
-    24px 0;
-
-  padding:
-    12px;
-
-  border:
-    1px solid #222;
-
-  border-radius:
-    14px;
-
-  background:
-    #111;
+    10px;
 }
 
-.sidebar-avatar {
+.lesson-blocks-section {
 
-  width:
-    42px;
-
-  height:
-    42px;
-
-  border-radius:
-    50%;
-
-  background:
-    #ff6b00;
-
-  color:
-    white;
+  margin-top:
+    40px;
 
   display:
     flex;
 
-  align-items:
-    center;
-
-  justify-content:
-    center;
-
-  font-weight:
-    bold;
-}
-
-.sidebar-user-email {
-
-  color:
-    white;
-
-  font-size:
-    14px;
-}
-
-.sidebar-user-role {
-
-  color:
-    #999;
-
-  font-size:
-    12px;
-
-  text-transform:
-    uppercase;
-}
-
-/* =========================================
-   COURSES
-========================================= */
-
-.courses-grid {
-
-  display:
-    grid;
-
-  grid-template-columns:
-    repeat(auto-fill, minmax(260px, 1fr));
+  flex-direction:
+    column;
 
   gap:
     24px;
 }
 
-.course-card {
+.lesson-text-block,
+.lesson-practical-block,
+.checkpoint-block,
+.lesson-resource-block {
 
   background:
-    #111;
+    rgba(255, 255, 255, 0.03);
 
   border:
-    1px solid #222;
+    1px solid rgba(255, 255, 255, 0.06);
 
   border-radius:
-    18px;
+    20px;
 
   padding:
-    20px;
+    24px;
 }
 
-.course-image {
+.lesson-rich-text h2,
+.lesson-practical-block h2,
+.checkpoint-card h2 {
 
-  height:
-    140px;
+  font-size:
+    28px;
 
-  border-radius:
+  margin-bottom:
     14px;
 
-  background:
-    #ff6b00;
+  color:
+    #fff;
+}
+
+.lesson-rich-text p,
+.lesson-practical-block p,
+.checkpoint-card p {
+
+  line-height:
+    1.8;
+
+  color:
+    rgba(255, 255, 255, 0.75);
+}
+
+.resource-details summary {
+
+  cursor:
+    pointer;
+
+  font-weight:
+    700;
+
+  font-size:
+    18px;
+
+  color:
+    #fff;
+}
+
+.resource-collapse {
+
+  margin-top:
+    18px;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    12px;
+}
+
+.lesson-resource-item {
 
   display:
     flex;
@@ -681,917 +1287,48 @@ a {
   align-items:
     center;
 
-  justify-content:
-    center;
+  padding:
+    14px 16px;
 
-  font-size:
-    32px;
+  border-radius:
+    14px;
 
-  font-weight:
-    bold;
-
-  margin-bottom:
-    16px;
-}
-
-.course-price {
+  background:
+    rgba(255, 255, 255, 0.04);
 
   color:
-    #ff6b00;
+    #fff;
 
-  font-size:
-    22px;
+  text-decoration:
+    none;
 
-  font-weight:
-    bold;
-
-  margin-top:
-    12px;
+  transition:
+    0.2s;
 }
 
-.dashboard-list {
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(320px, 1fr)
-    );
-
-  gap: 24px;
-
-  margin-top: 40px;
-}
-
-.dashboard-course {
-
-  background: #111;
-
-  border: 1px solid #222;
-
-  border-radius: 20px;
-
-  padding: 24px;
-
-  transition: 0.3s;
-}
-
-.dashboard-course:hover {
-
-  transform:
-    translateY(-4px);
-
-  border-color: orange;
-}
-
-.dashboard-thumbnail {
-
-  height: 140px;
-
-  background: orange;
-
-  border-radius: 16px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  font-size: 42px;
-
-  font-weight: bold;
-
-  color: white;
-
-  margin-bottom: 20px;
-}
-
-.progress-bar {
-
-  height: 10px;
-
-  background: #222;
-
-  border-radius: 999px;
-
-  overflow-x: hidden;
-
-  margin: 16px 0;
-}
-
-.progress-fill {
-
-  height: 100%;
-
-  background: orange;
-}
-
-.continue-btn {
-
-  background: orange;
-
-  color: black;
-
-  border: none;
-
-  padding: 12px 18px;
-
-  border-radius: 10px;
-
-  font-weight: bold;
-
-  cursor: pointer;
-
-  margin-top: 12px;
-}
-
-.dashboard-actions {
-
-  display: flex;
-
-  gap: 12px;
-
-  margin-top: 20px;
-}
-
-.certificate-btn {
-
-  background: white;
-
-  color: black;
-
-  border: none;
-
-  padding: 12px 18px;
-
-  border-radius: 10px;
-
-  font-weight: bold;
-
-  cursor: pointer;
-}
-
-.certificate-modal {
-
-  width: min(1000px, 95vw);
-
-  background: #fff;
-
-  border-radius: 24px;
-
-  overflow: hidden;
-
-  margin: auto;
-
-  flex-shrink: 0;
-}
-
-.certificate-box {
-
-  width: 700px;
-
-  max-width: 90%;
-
-  background: white;
-
-  color: black;
-
-  padding: 60px;
-
-  border-radius: 24px;
-
-  text-align: center;
-}
-
-.certificate-box h1 {
-
-  font-size: 48px;
-
-  margin-bottom: 10px;
-}
-
-.certificate-box h2 {
-
-  margin: 20px 0;
-}
-
-.certificate-box h3 {
-
-  font-size: 32px;
-
-  color: orange;
-
-  margin: 20px 0;
-}
-
-.certificate-box button {
-
-  margin-top: 30px;
-
-  background: orange;
-
-  border: none;
-
-  padding: 14px 24px;
-
-  border-radius: 12px;
-
-  font-weight: bold;
-
-  cursor: pointer;
-}
-
-.certificate-overlay {
-
-  position: fixed;
-
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
+.lesson-resource-item:hover {
 
   background:
-    rgba(0,0,0,0.75);
-
-  z-index: 999999;
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: flex-start;
-
-  overflow-y: auto;
-
-  padding: 40px 20px;
-}
-
-.analytics-grid {
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(220px, 1fr)
-    );
-
-  gap: 20px;
-
-  margin: 30px 0;
-}
-
-.analytics-card {
-
-  background: #111;
-
-  border: 1px solid #222;
-
-  border-radius: 20px;
-
-  padding: 24px;
-}
-
-.analytics-card h3 {
-
-  color: #aaa;
-
-  margin-bottom: 12px;
-}
-
-.analytics-card h2 {
-
-  font-size: 42px;
-
-  color: orange;
+    rgba(255, 255, 255, 0.08);
 }
 
 /* =========================================
-   LEARN LAYOUT
+   MOBILE
 ========================================= */
 
-.learn-layout {
+@media (max-width: 980px) {
 
-  display: flex;
+  .video-learning-core {
 
-  gap: 24px;
-
-  padding: 24px;
-}
-
-/* =========================================
-   SIDEBAR
-========================================= */
-
-.learn-sidebar {
-
-  width: 300px;
-
-  background: #111;
-
-  border: 1px solid #222;
-
-  border-radius: 16px;
-
-  padding: 20px;
-
-  height: fit-content;
-}
-
-.learn-sidebar h2 {
-
-  color: orange;
-
-  margin-bottom: 20px;
-}
-
-/* =========================================
-   LESSON ITEM
-========================================= */
-
-.lesson-sidebar-item {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-
-  padding: 14px;
-
-  border-radius: 10px;
-
-  margin-bottom: 10px;
-
-  background: #181818;
-
-  cursor: pointer;
-
-  transition: 0.2s;
-}
-
-.lesson-sidebar-item:hover {
-
-  background: #222;
-}
-
-.lesson-sidebar-item.active {
-
-  background: orange;
-
-  color: black;
-
-  font-weight: bold;
-}
-
-/* =========================================
-   CONTENT
-========================================= */
-
-.learn-content {
-
-  flex: 1;
-}
-
-.learn-content h1 {
-
-  color: orange;
-
-  font-size: 52px;
-
-  margin-bottom: 10px;
-}
-
-/* =========================================
-   VIDEO
-========================================= */
-
-.video-player {
-
-  height: 360px;
-
-  background: #111;
-
-  border-radius: 16px;
-
-  border: 1px solid #222;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  font-size: 32px;
-
-  margin: 24px 0;
-}
-
-/* =========================================
-   CONTENT BOX
-========================================= */
-
-.lesson-content-box {
-
-  background: #111;
-
-  padding: 24px;
-
-  border-radius: 16px;
-
-  border: 1px solid #222;
-
-  line-height: 1.8;
-}
-
-/* =========================================
-   ACTIONS
-========================================= */
-
-.lesson-actions {
-
-  margin-top: 24px;
-}
-
-.lesson-actions button {
-
-  background: orange;
-
-  border: none;
-
-  padding: 14px 22px;
-
-  border-radius: 10px;
-
-  font-weight: bold;
-
-  cursor: pointer;
-}
-
-.completed-btn {
-
-  background: limegreen !important;
-
-  color: white;
-}
-
-/* =========================================
-   VIDEO PLAYER UI
-========================================= */
-
-.video-player {
-
-  position: relative;
-
-  height: 420px;
-
-  border-radius: 20px;
-
-  overflow: hidden;
-
-  background:
-    linear-gradient(
-      135deg,
-      #222,
-      #111
-    );
-
-  border: 1px solid #333;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  margin: 24px 0;
-}
-
-/* PLAY BUTTON */
-
-.video-overlay {
-
-  width: 100px;
-
-  height: 100px;
-
-  border-radius: 50%;
-
-  background: rgba(
-    255,
-    165,
-    0,
-    0.9
-  );
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  font-size: 48px;
-
-  cursor: pointer;
-
-  transition: 0.2s;
-}
-
-.video-overlay:hover {
-
-  transform: scale(1.08);
-}
-
-/* INFO */
-
-.video-info {
-
-  position: absolute;
-
-  left: 24px;
-
-  bottom: 60px;
-}
-
-.video-info h3 {
-
-  font-size: 28px;
-
-  margin-bottom: 6px;
-}
-
-/* PROGRESS */
-
-.video-progress {
-
-  position: absolute;
-
-  left: 24px;
-
-  right: 24px;
-
-  bottom: 24px;
-
-  height: 8px;
-
-  border-radius: 999px;
-
-  background: #333;
-
-  overflow: hidden;
-}
-
-.video-progress-fill {
-
-  width: 35%;
-
-  height: 100%;
-
-  background: orange;
-}
-
-/* =========================================
-   VIDEO STATUS
-========================================= */
-
-.video-status {
-
-  position: absolute;
-
-  top: 24px;
-
-  left: 24px;
-
-  background: rgba(
-    0,
-    0,
-    0,
-    0.6
-  );
-
-  padding: 10px 16px;
-
-  border-radius: 999px;
-
-  font-size: 14px;
-
-  border: 1px solid #333;
-}
-
-/* =========================================
-   BADGES
-========================================= */
-
-.badges-section {
-
-  margin-bottom: 28px;
-}
-
-.badges-section h2 {
-
-  margin-bottom: 16px;
-
-  color: orange;
-}
-
-.badges-list {
-
-  display: flex;
-
-  flex-wrap: wrap;
-
-  gap: 14px;
-}
-
-.badge-item {
-
-  background: #111;
-
-  border: 1px solid #222;
-
-  padding: 14px 18px;
-
-  border-radius: 999px;
-
-  font-weight: bold;
-
-  transition: 0.2s;
-}
-
-.badge-item:hover {
-
-  transform: translateY(-2px);
-
-  border-color: orange;
-}
-
-/* =========================================
-   DAILY MISSIONS
-========================================= */
-
-.missions-section {
-
-  margin-bottom: 28px;
-}
-
-.missions-section h2 {
-
-  color: orange;
-
-  margin-bottom: 16px;
-}
-
-.missions-list {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 12px;
-}
-
-.mission-item {
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 16px;
-
-  background: #111;
-
-  border: 1px solid #222;
-
-  padding: 16px 18px;
-
-  border-radius: 14px;
-}
-
-.mission-item.completed {
-
-  border-color: limegreen;
-
-  background: rgba(
-    50,
-    205,
-    50,
-    0.08
-  );
-}
-
-.mission-reward {
-
-  color: orange;
-
-  font-weight: bold;
-}
-
-/* =========================================
-   MISSION
-========================================= */
-
-.mission-left,
-.mission-right {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 14px;
-}
-
-/* CLAIM BUTTON */
-
-.claim-btn {
-
-  background: orange;
-
-  border: none;
-
-  color: black;
-
-  font-weight: bold;
-
-  padding: 10px 16px;
-
-  border-radius: 999px;
-
-  cursor: pointer;
-
-  transition: 0.2s;
-}
-
-.claim-btn:hover {
-
-  transform: scale(1.05);
-}
-
-/* CLAIMED */
-
-.claim-btn.claimed {
-
-  background: limegreen;
-
-  color: white;
-}
-
-/* =========================================
-   XP BAR
-========================================= */
-
-.xp-bar {
-
-  height: 10px;
-
-  background: #222;
-
-  border-radius: 999px;
-
-  overflow-x: hidden;
-
-  margin: 12px 0;
-}
-
-.xp-fill {
-
-  height: 100%;
-
-  background:
-    linear-gradient(
-      90deg,
-      orange,
-      gold
-    );
-
-  border-radius: 999px;
-
-  transition: 0.3s;
-}
-
-.certificate-btn {
-
-  background: #ffb000;
-
-  color: #000;
-
-  border: none;
-
-  font-weight: 700;
-
-  transition: 0.2s;
-
-}
-
-.certificate-btn:hover {
-
-  transform: translateY(-2px);
-
-  box-shadow:
-
-    0 0 15px
-    rgba(255,176,0,0.5);
-
-}
-
-/* ============================================ */
-/* MOBILE RESPONSIVE */
-/* ============================================ */
-
-@media (max-width: 768px) {
-
-  /* ======================================== */
-  /* APP LAYOUT */
-  /* ======================================== */
-
-  .app-layout {
-
-    flex-direction: column;
+    grid-template-columns:
+      1fr;
   }
 
-  /* ======================================== */
-  /* SIDEBAR */
-  /* ======================================== */
+  .lesson-video-frame {
 
-  .sidebar {
-
-    width: 100%;
-    min-height: auto;
-    padding: 16px;
+    height:
+      320px;
   }
+}
 
-  .menu {
-
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-  }
-
-  .menu button,
-  .menu a {
-
-    white-space: nowrap;
-  }
-
-  /* ======================================== */
-  /* MAIN CONTENT */
-  /* ======================================== */
-
-  .main-content {
-
-    padding: 16px;
-  }
-
-  /* ======================================== */
-  /* DASHBOARD */
-  /* ======================================== */
-
-  .dashboard-grid {
-
-    grid-template-columns: 1fr;
-  }
-
-  .course-grid,
-  .courses-grid {
-
-    grid-template-columns: 1fr;
-  }
-
-  .course-detail {
-
-    padding: 16px;
-  }
-
-  .course-actions {
-
-    flex-direction: column;
-  }
-
-  .course-actions button {
-
-    width: 100%;
-  }
-
-  /* ======================================== */
-  /* VERIFY */
-  /* ======================================== */
-
-  .verify-container {
-
-    padding: 20px;
-  }
-
-  .verify-actions {
-
-    flex-direction: column;
-  }
-
-  .verify-btn {
-
-    width: 100%;
-  }
 }

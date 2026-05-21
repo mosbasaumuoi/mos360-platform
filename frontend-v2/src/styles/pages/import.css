@@ -1,0 +1,189 @@
+/* =========================================
+   IMPORT PAGE
+========================================= */
+
+.import-page {
+
+    max-width:
+        720px;
+
+    margin:
+        0 auto;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        32px;
+}
+
+.import-header {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        18px;
+}
+
+.import-badge {
+
+    width:
+        fit-content;
+
+    padding:
+        10px 16px;
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(255, 122, 0, 0.08);
+
+    border:
+        1px solid rgba(255, 122, 0, 0.14);
+
+    color:
+        #ffb066;
+
+    font-size:
+        13px;
+
+    font-weight:
+        700;
+}
+
+.import-header h1 {
+
+    font-size:
+        64px;
+
+    line-height:
+        0.95;
+}
+
+.import-header p {
+
+    color:
+        rgba(255, 255, 255, 0.72);
+
+    line-height:
+        1.8;
+}
+
+.import-card {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        20px;
+
+    padding:
+        28px;
+
+    border-radius:
+        28px;
+
+    background:
+        rgba(255, 255, 255, 0.03);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.06);
+}
+
+.import-card label {
+
+    font-size:
+        14px;
+
+    font-weight:
+        700;
+}
+
+.import-card input {
+
+    height:
+        56px;
+
+    padding:
+        0 18px;
+
+    border-radius:
+        16px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    background:
+        rgba(255, 255, 255, 0.04);
+
+    color:
+        white;
+
+    font-size:
+        16px;
+}
+
+.import-actions {
+
+    display:
+        flex;
+
+    gap:
+        14px;
+
+    flex-wrap:
+        wrap;
+}
+
+.import-btn {
+
+    height:
+        52px;
+
+    padding:
+        0 22px;
+
+    border-radius:
+        16px;
+
+    background:
+        #ff9d00;
+
+    color:
+        black;
+
+    font-weight:
+        800;
+}
+
+.import-btn.secondary {
+
+    background:
+        rgba(255, 255, 255, 0.06);
+
+    color:
+        white;
+}
+
+#importStatus {
+
+    padding-top:
+        10px;
+
+    color:
+        rgba(255, 255, 255, 0.74);
+
+    line-height:
+        1.8;
+}

@@ -1,6 +1,6 @@
 // ============================================
 // LESSON BLOCK RENDERER ENGINE
-// Stable semantic learning renderer
+// Cinematic Semantic Runtime
 // ============================================
 
 import {
@@ -9,21 +9,26 @@ import {
     from "../contracts/lessonBlock.contract.js";
 
 // ============================================
-// VIDEO RESOURCE
+// BLOCK ICONS
 // ============================================
 
-function getVideoResource(
-
-    resources = []
-
+function getCalloutIcon(
+    variant
 ) {
 
-    return resources.find(
+    if (variant === "warning") {
+        return "⚠️";
+    }
 
-        resource =>
+    if (variant === "important") {
+        return "📌";
+    }
 
-            resource.type === "video"
-    );
+    if (variant === "mindset") {
+        return "🧠";
+    }
+
+    return "💡";
 }
 
 // ============================================
@@ -32,7 +37,8 @@ function getVideoResource(
 
 export function renderLessonBlock(
 
-    block
+    block,
+    index = 0
 
 ) {
 
@@ -48,6 +54,75 @@ export function renderLessonBlock(
     }
 
     // ========================================
+    // VIDEO
+    // ========================================
+
+    if (block.type === "video") {
+
+        return `
+
+<section
+    id="lesson-primary-video"
+    class="lesson-video-block cinematic-spacing"
+>
+
+    <div class="video-block-shell">
+
+        <div class="lesson-video-top">
+
+            <div class="lesson-video-label">
+
+                VIDEO LESSON
+
+            </div>
+
+            <div
+                id="videoStatus"
+                class="lesson-video-status"
+            >
+
+                Sẵn sàng học
+
+            </div>
+
+        </div>
+
+        <iframe
+            class="lesson-video-frame"
+            src="${block.videoUrl || ""}"
+            title="${block.title || ""}"
+            allowfullscreen
+        ></iframe>
+
+        <div class="lesson-video-controls">
+
+            <button
+                id="playVideoBtn"
+                class="lesson-video-play-btn"
+            >
+
+                ▶
+
+            </button>
+
+            <div class="video-progress">
+
+                <div
+                    class="video-progress-fill"
+                ></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        </section>
+
+    `;
+    }
+
+    // ========================================
     // TEXT
     // ========================================
 
@@ -55,7 +130,7 @@ export function renderLessonBlock(
 
         return `
 
-<section class="lesson-text-block">
+<section class="lesson-text-block cinematic-spacing">
 
     <div class="lesson-rich-text">
 
@@ -76,70 +151,63 @@ export function renderLessonBlock(
 
         return `
 
-<section class="workflow-mini-card">
+<section class="workflow-block cinematic-spacing">
 
-    <h3>
+    <div class="workflow-shell">
 
-        ${block.title || "Workflow"}
+        <div class="workflow-top">
 
-    </h3>
+            <div class="workflow-label">
 
-    <ol>
+                WORKFLOW
 
-        ${(block.steps || [])
+            </div>
 
-                .map(step => `
+            <div class="workflow-progress-line"></div>
 
-<li>
+        </div>
 
-    ${step}
+        <h2>
 
-</li>
+            ${block.title || "Workflow"}
 
-            `)
+        </h2>
 
-                .join("")}
+        <ol class="workflow-list">
 
-    </ol>
+            ${(block.steps || [])
 
-</section>
+                .map(
 
-        `;
-    }
+                    (
+                        step,
+                        stepIndex
+                    ) => `
 
-    // ========================================
-    // TIPS
-    // ========================================
+<li class="workflow-step">
 
-    if (block.type === "tips") {
+    <div class="workflow-step-number">
 
-        return `
+        ${stepIndex + 1}
 
-<section class="tips-mini-card">
+    </div>
 
-    <h3>
+    <div class="workflow-step-content">
 
-        ${block.title || "Tips"}
+        ${step}
 
-    </h3>
-
-    <ul>
-
-        ${(block.items || [])
-
-                .map(item => `
-
-<li>
-
-    ${item}
+    </div>
 
 </li>
 
-            `)
+                `
+                )
 
                 .join("")}
 
-    </ul>
+        </ol>
+
+    </div>
 
 </section>
 
@@ -147,26 +215,48 @@ export function renderLessonBlock(
     }
 
     // ========================================
-    // PRACTICAL
+    // CALLOUT
     // ========================================
 
-    if (block.type === "practical") {
+    if (block.type === "callout") {
 
         return `
 
-<section class="lesson-practical-block">
+<section class="lesson-callout-block cinematic-spacing">
 
-    <h2>
+    <div class="callout-card ${block.variant || "tip"}">
 
-        Ứng dụng thực tế
+        <div class="callout-top">
 
-    </h2>
+            <div class="callout-icon">
 
-    <p>
+                ${getCalloutIcon(
+            block.variant
+        )}
 
-        ${block.content || ""}
+            </div>
 
-    </p>
+            <div class="callout-label">
+
+                ${block.variant || "TIP"}
+
+            </div>
+
+        </div>
+
+        <h3>
+
+            ${block.title || ""}
+
+        </h3>
+
+        <p>
+
+            ${block.content || ""}
+
+        </p>
+
+    </div>
 
 </section>
 
@@ -174,20 +264,29 @@ export function renderLessonBlock(
     }
 
     // ========================================
-    // CHECKPOINT
+    // PRACTICE
     // ========================================
 
-    if (block.type === "checkpoint") {
+    if (block.type === "practice") {
 
         return `
 
-<section class="checkpoint-block">
+<section class="lesson-practice-block cinematic-spacing">
 
-    <div class="checkpoint-card">
+    <div class="practice-shell">
 
-        <div class="checkpoint-label">
+        <div class="practice-top">
 
-            LEARNING CHECKPOINT
+            <div class="practice-label">
+
+                THỰC HÀNH
+
+            </div>
+
+            <div class="practice-badge">
+
+                APPLY NOW
+            </div>
 
         </div>
 
@@ -197,11 +296,11 @@ export function renderLessonBlock(
 
         </h2>
 
-        <p>
+        <div class="practice-content">
 
-            ${block.message || ""}
+            ${block.content || ""}
 
-        </p>
+        </div>
 
     </div>
 
@@ -216,30 +315,9 @@ export function renderLessonBlock(
 
     if (block.type === "resource") {
 
-        const video =
-
-            getVideoResource(
-                block.resources
-            );
-
         return `
 
-<section class="lesson-resource-block">
-
-    ${video ? `
-
-<div class="video-player-shell">
-
-    <iframe
-        class="lesson-video-frame"
-        src="${video.url}"
-        title="${video.title}"
-        allowfullscreen
-    ></iframe>
-
-</div>
-
-    ` : ""}
+<section class="lesson-resource-block cinematic-spacing">
 
     <details class="resource-details">
 
@@ -252,13 +330,6 @@ export function renderLessonBlock(
         <div class="resource-collapse">
 
             ${(block.resources || [])
-
-                .filter(
-
-                    resource =>
-
-                        resource.type !== "video"
-                )
 
                 .map(resource => `
 
@@ -289,6 +360,86 @@ export function renderLessonBlock(
         `;
     }
 
+    // ========================================
+    // QUIZ
+    // ========================================
+
+    if (block.type === "quiz") {
+
+        return `
+
+<section class="lesson-quiz-block cinematic-spacing">
+
+    <div class="quiz-shell">
+
+        <div class="quiz-label">
+
+            QUICK CHECK
+        </div>
+
+        <h2>
+
+            Kiểm tra nhanh
+
+        </h2>
+
+    </div>
+
+</section>
+
+        `;
+    }
+
+    // ========================================
+    // CHECKPOINT
+    // ========================================
+
+    if (block.type === "checkpoint") {
+
+        return `
+
+<section class="checkpoint-block cinematic-spacing">
+
+    <div class="checkpoint-card">
+
+        <div class="checkpoint-glow"></div>
+
+        <div class="checkpoint-label">
+
+            LEARNING CHECKPOINT
+
+        </div>
+
+        <h2>
+
+            ${block.title || ""}
+
+        </h2>
+
+        <p>
+
+            ${block.message || ""}
+
+        </p>
+
+        <div class="checkpoint-progression">
+
+            <div class="checkpoint-line"></div>
+
+            <span>
+
+                Tiếp tục duy trì nhịp học tập
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+    `;
+    }
+
     return "";
 }
 
@@ -304,7 +455,16 @@ export function renderLessonBlocks(
 
     return blocks
         .map(
-            renderLessonBlock
+
+            (
+                block,
+                index
+            ) =>
+
+                renderLessonBlock(
+                    block,
+                    index
+                )
         )
         .join("");
 }

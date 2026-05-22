@@ -189,11 +189,34 @@ export function bindLessonActions({
 
             () => {
 
-                document
-                    .querySelector(
-                        "#playVideoBtn"
-                    )
-                    ?.click();
+                const primaryVideo =
+
+                    document.querySelector(
+                        "#lesson-primary-video"
+                    );
+
+                if (!primaryVideo) {
+                    return;
+                }
+
+                primaryVideo.scrollIntoView({
+
+                    behavior: "smooth",
+
+                    block: "center"
+                });
+
+                primaryVideo.classList.add(
+                    "lesson-focus-pulse"
+                );
+
+                setTimeout(() => {
+
+                    primaryVideo.classList.remove(
+                        "lesson-focus-pulse"
+                    );
+
+                }, 1800);
 
             }
 

@@ -1,0 +1,2260 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> MOS360 - Trắc nghiệm Generative AI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #e63946, #a4161a);
+            color: white;
+            padding: 25px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .brand-logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background-color: white;
+            color: #e63946;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .brand-text {
+            flex: 1;
+        }
+
+        .brand-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .brand-tagline {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .exam-info {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            flex: 1;
+            min-width: 200px;
+            margin: 5px 0;
+        }
+
+        .info-item span {
+            font-weight: bold;
+        }
+
+        .content {
+            display: flex;
+            min-height: 70vh;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: #f8f9fa;
+            border-right: 1px solid #e0e0e0;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .question-nav {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: #e63946;
+            margin: 15px 0 10px 0;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #e63946;
+            font-size: 1.1rem;
+        }
+
+        .question-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .q-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .q-btn:hover {
+            background-color: #ffeaea;
+            border-color: #e63946;
+        }
+
+        .q-btn.active {
+            background-color: #e63946;
+            color: white;
+            border-color: #e63946;
+        }
+
+        .q-btn.answered {
+            background-color: #2a9d8f;
+            color: white;
+            border-color: #2a9d8f;
+        }
+
+        .stats {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
+        }
+
+        .stats h3 {
+            color: #e63946;
+            margin-bottom: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .question-container {
+            margin-bottom: 30px;
+        }
+
+        .q-number {
+            display: inline-block;
+            background-color: #e63946;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .q-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            background-color: #f8f9fa;
+            border-color: #c0c0c0;
+        }
+
+        .option.selected {
+            background-color: #ffeaea;
+            border-color: #e63946;
+        }
+
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .option-label {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 15px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .selected .option-label {
+            background-color: #e63946;
+            color: white;
+        }
+
+        .correct .option-label {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .incorrect .option-label {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .answer-key {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2a9d8f;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .answer-key.show {
+            display: block;
+        }
+
+        .answer-key h4 {
+            color: #2a9d8f;
+            margin-bottom: 10px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .prev-btn {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .prev-btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .next-btn {
+            background-color: #e63946;
+            color: white;
+        }
+
+        .next-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .submit-btn {
+            background-color: #2a9d8f;
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background-color: #21867a;
+        }
+
+        .toggle-answer {
+            background-color: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .toggle-answer:hover {
+            background-color: #5a6268;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+
+        .footer-brand {
+            font-weight: bold;
+            color: #e63946;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 992px) {
+            .content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+                max-height: 300px;
+            }
+
+            .exam-info {
+                flex-direction: column;
+            }
+
+            .brand {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .brand-logo {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .brand-text {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .question-buttons {
+                justify-content: center;
+            }
+
+            .q-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+
+            .navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .brand-name {
+                font-size: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="brand">
+                    <div class="brand-logo">T</div>
+                    <div class="brand-text">
+                        <div class="brand-name">MOS360</div>
+                        <div class="brand-tagline">Học thật, tiến bộ thật</div>
+                    </div>
+                </div>
+
+                <h1>BỘ CÂU HỎI ÔN LUYỆN GENERATIVE AI</h1>
+                <div class="subtitle">Nâng cao kiến thức và kỹ năng ứng dụng AI</div>
+
+                <div class="exam-info">
+                    <div class="info-item">Số câu hỏi: <span>130</span></div>
+                    <div class="info-item">Thời gian: <span>Không giới hạn</span></div>
+                    <div class="info-item">Phạm vi: <span>Phương pháp luận & Generative AI</span></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="sidebar">
+                <div class="question-nav">
+                    <div class="section-title">Phần 1: Phương pháp luận & Generative AI (1-20)</div>
+                    <div class="question-buttons" id="section1-btns"></div>
+
+                    <div class="section-title">Phần 2: Kỹ thuật nhắc (Prompting) cơ bản (21-40)</div>
+                    <div class="question-buttons" id="section2-btns"></div>
+
+                    <div class="section-title">Phần 3: Đạo đức - Pháp lý - Tác động xã hội (41-80)</div>
+                    <div class="question-buttons" id="section3-btns"></div>
+
+                    <div class="section-title">Phần 4: Kiến thức nền tảng (81-90)</div>
+                    <div class="question-buttons" id="section4-btns"></div>
+
+                    <div class="section-title">Phần 5: Đầu vào - Đầu ra - Công cụ (91-100)</div>
+                    <div class="question-buttons" id="section5-btns"></div>
+
+                    <div class="section-title">Phần 6: Kỹ thuật nhắc (Prompting) (101-110)</div>
+                    <div class="question-buttons" id="section6-btns"></div>
+
+                    <div class="section-title">Phần 7: Đạo đức - Pháp lý - Tác động xã hội (111-130)</div>
+                    <div class="question-buttons" id="section7-btns"></div>
+                </div>
+
+                <div class="stats">
+                    <h3>Tiến độ làm bài</h3>
+                    <div class="stat-item">
+                        <span>Đã trả lời:</span>
+                        <span id="answered-count">0/130</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Câu hiện tại:</span>
+                        <span id="current-question">1</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Phần:</span>
+                        <span id="current-section">Phương pháp luận & Generative AI</span>
+                    </div>
+                    <div class="progress-bar-container" style="margin-top: 15px;">
+                        <div style="background-color: #e0e0e0; height: 10px; border-radius: 5px; overflow: hidden;">
+                            <div id="progress-bar" style="background-color: #2a9d8f; height: 100%; width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="question-container">
+                    <div class="q-number">Câu hỏi <span id="q-num">1</span>/130</div>
+                    <div class="q-text" id="question-text"></div>
+
+                    <div class="options" id="options-container"></div>
+
+                    <div class="answer-key" id="answer-key">
+                        <h4>Đáp án đúng: <span id="correct-answer"></span></h4>
+                        <p id="answer-explanation"></p>
+                    </div>
+
+                    <div class="navigation">
+                        <button class="prev-btn" id="prev-btn">Câu trước</button>
+                        <div>
+                            <button class="toggle-answer" id="toggle-answer">Hiện đáp án</button>
+                            <button class="submit-btn" id="submit-btn">Nộp bài</button>
+                        </div>
+                        <button class="next-btn" id="next-btn">Câu tiếp theo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-brand">MOS360 - Học thật, tiến bộ thật</div>
+            <p>Trang web ôn luyện Generative AI - Nâng cao kiến thức và kỹ năng ứng dụng AI</p>
+            <p>Chúc bạn ôn luyện hiệu quả và đạt kết quả cao!</p>
+        </footer>
+    </div>
+
+    <script>
+        // Dữ liệu câu hỏi đầy đủ 130 câu
+        const questions = [
+            // Phần 1: Phương pháp luận & Generative AI (1-20)
+            {
+                id: 1,
+                text: "Generative AI được định nghĩa là gì?",
+                options: [
+                    "AI dự đoán xu hướng tương lai",
+                    "AI tạo ra nội dung mới dựa trên dữ liệu đã học",
+                    "AI phân tích dữ liệu lớn",
+                    "AI mô phỏng hành vi người dùng"
+                ],
+                correct: 1,
+                explanation: "Generative AI là AI tạo ra nội dung mới dựa trên dữ liệu đã học, khác với AI dự đoán hay phân tích."
+            },
+            {
+                id: 2,
+                text: "Khác biệt chính giữa Generative AI và AI dự đoán là gì?",
+                options: [
+                    "AI dự đoán tạo ra nội dung mới",
+                    "AI dự đoán chỉ được dùng cho hình ảnh",
+                    "Generative AI tạo nội dung mới, AI dự đoán chỉ dự đoán giá trị",
+                    "Generative AI chậm hơn"
+                ],
+                correct: 2,
+                explanation: "Generative AI tạo ra nội dung mới (văn bản, hình ảnh, âm thanh), trong khi AI dự đoán chỉ dự đoán giá trị dựa trên dữ liệu đầu vào."
+            },
+            {
+                id: 3,
+                text: "Công cụ nào sau đây KHÔNG phải là mô hình văn bản?",
+                options: ["GPT", "Gemini", "Claude", "DALL·E"],
+                correct: 3,
+                explanation: "DALL·E là mô hình tạo hình ảnh từ văn bản, không phải mô hình văn bản như GPT, Gemini, Claude."
+            },
+            {
+                id: 4,
+                text: "Mô hình GAN gồm hai thành phần nào?",
+                options: [
+                    "Encoder -- Decoder",
+                    "Generator -- Discriminator",
+                    "Input -- Output",
+                    "Token -- Noise"
+                ],
+                correct: 1,
+                explanation: "GAN (Generative Adversarial Network) gồm hai thành phần: Generator (tạo dữ liệu giả) và Discriminator (phân biệt dữ liệu thật/giả)."
+            },
+            {
+                id: 5,
+                text: "LLMs cần gì để hoạt động hiệu quả?",
+                options: [
+                    "Dữ liệu nhỏ và ít tham số",
+                    "Lượng lớn dữ liệu được huấn luyện",
+                    "Dữ liệu chỉ từ 1 ngôn ngữ",
+                    "Không cần GPU mạnh"
+                ],
+                correct: 1,
+                explanation: "LLMs (Large Language Models) cần lượng lớn dữ liệu đa dạng được huấn luyện để hiểu ngôn ngữ và tạo ra nội dung chính xác."
+            },
+            {
+                id: 6,
+                text: "Mô hình hình ảnh như Firefly được huấn luyện từ đâu?",
+                options: [
+                    "Video độ phân giải cao",
+                    "Cặp văn bản -- hình ảnh được gắn thẻ",
+                    "Chỉ từ văn bản",
+                    "Chỉ từ dữ liệu web"
+                ],
+                correct: 1,
+                explanation: "Các mô hình hình ảnh như Firefly thường được huấn luyện từ cặp văn bản-hình ảnh được gắn thẻ để học mối liên hệ giữa mô tả và hình ảnh."
+            },
+            {
+                id: 7,
+                text: "Mô hình khuếch tán (Diffusion) tạo hình ảnh bằng cách?",
+                options: [
+                    "Dịch văn bản",
+                    "Loại bỏ nhiễu dần theo thuật toán",
+                    "Ghép bản vá hình ảnh",
+                    "Sao chép ảnh gốc"
+                ],
+                correct: 1,
+                explanation: "Mô hình khuếch tán (Diffusion) tạo hình ảnh bằng cách bắt đầu từ nhiễu và dần loại bỏ nhiễu để tạo hình ảnh rõ ràng."
+            },
+            {
+                id: 8,
+                text: "Tokenization dùng để làm gì?",
+                options: [
+                    "Tạo video",
+                    "Chia dữ liệu thành đơn vị nhỏ để mô hình xử lý",
+                    "Tăng tốc GPU",
+                    "Xóa nhiễu khỏi ảnh"
+                ],
+                correct: 1,
+                explanation: "Tokenization chia dữ liệu (văn bản, hình ảnh) thành các đơn vị nhỏ (tokens) để mô hình AI có thể xử lý dễ dàng hơn."
+            },
+            {
+                id: 9,
+                text: "Đầu vào nào có thể dùng cho Generative AI?",
+                options: [
+                    "Chỉ văn bản",
+                    "Chỉ hình ảnh",
+                    "Văn bản, âm thanh, video, hình ảnh",
+                    "Chỉ âm thanh"
+                ],
+                correct: 2,
+                explanation: "Generative AI hiện đại có thể xử lý đa phương thức (multimodal), nhận đầu vào là văn bản, hình ảnh, âm thanh, video."
+            },
+            {
+                id: 10,
+                text: "Ứng dụng khép kín như Custom GPT dùng để làm gì?",
+                options: [
+                    "Tự động huấn luyện mô hình mới",
+                    "Tùy chỉnh AI cho nhiệm vụ riêng",
+                    "Dịch ngôn ngữ",
+                    "Chặn truy cập dữ liệu"
+                ],
+                correct: 1,
+                explanation: "Custom GPT và các ứng dụng khép kín tương tự cho phép tùy chỉnh AI cho nhiệm vụ riêng của người dùng hoặc tổ chức."
+            },
+            {
+                id: 11,
+                text: "Công cụ nào KHÔNG thuộc nhóm Generative AI?",
+                options: ["Canva", "Adobe Express", "Stable Diffusion", "Microsoft Excel"],
+                correct: 3,
+                explanation: "Microsoft Excel là công cụ bảng tính, không phải công cụ Generative AI như Canva, Adobe Express, Stable Diffusion."
+            },
+            {
+                id: 12,
+                text: "Một hạn chế của Generative AI là gì?",
+                options: [
+                    "Không thể tạo văn bản",
+                    "Đầu ra không đáng tin cậy, có thể ảo giác",
+                    "Không thể dùng trên điện thoại",
+                    "Chỉ hỗ trợ tiếng Anh"
+                ],
+                correct: 1,
+                explanation: "Generative AI có thể tạo ra thông tin sai lệch (ảo giác/hallucination) do học từ dữ liệu không chính xác hoặc hiểu sai ngữ cảnh."
+            },
+            {
+                id: 13,
+                text: "LLMs được luyện trên dữ liệu lớn nên sẽ có...",
+                options: [
+                    "Không có quan điểm",
+                    "Ý kiến và quan điểm nội tại",
+                    "Dữ liệu trung lập 100%",
+                    "Đầu ra cố định"
+                ],
+                correct: 1,
+                explanation: "LLMs học từ lượng lớn dữ liệu trên internet, nên có thể thể hiện ý kiến và quan điểm có trong dữ liệu huấn luyện."
+            },
+            {
+                id: 14,
+                text: "Huấn luyện mô hình tốn kém vì...",
+                options: [
+                    "Không thể chạy trên máy tính",
+                    "Cần nhiều năng lượng & GPU mạnh",
+                    "Cần dữ liệu giấy tờ",
+                    "Cần nguồn điện thấp"
+                ],
+                correct: 1,
+                explanation: "Huấn luyện mô hình AI lớn đòi hỏi nhiều GPU mạnh và tiêu tốn nhiều năng lượng, làm tăng chi phí đáng kể."
+            },
+            {
+                id: 15,
+                text: "Diffusion, Transformer, GANs, VAEs là...",
+                options: [
+                    "Các loại đầu vào",
+                    "Các loại mô hình Generative AI",
+                    "Các định dạng file",
+                    "Công cụ thiết kế"
+                ],
+                correct: 1,
+                explanation: "Đây là các kiến trúc mô hình Generative AI khác nhau, mỗi loại có cách tiếp cận riêng để tạo nội dung mới."
+            },
+            {
+                id: 16,
+                text: "Convolutional Neural Network (CNN) thường dùng cho...",
+                options: ["Xử lý hình ảnh", "Dịch ngôn ngữ", "Viết code", "Tạo nhạc"],
+                correct: 0,
+                explanation: "CNN (Mạng nơ-ron tích chập) được thiết kế đặc biệt để xử lý dữ liệu có cấu trúc lưới như hình ảnh."
+            },
+            {
+                id: 17,
+                text: "Đâu là một thuật ngữ quan trọng trong Generative AI?",
+                options: ["Pixel count", "Token", "Voltage", "Browser cache"],
+                correct: 1,
+                explanation: "Token là đơn vị cơ bản trong xử lý ngôn ngữ của AI, đại diện cho một phần của từ hoặc ký tự."
+            },
+            {
+                id: 18,
+                text: "Loại đầu ra nào sau đây KHÔNG phải từ Generative AI?",
+                options: [
+                    "Văn bản tổng hợp",
+                    "Hình ảnh tổng hợp",
+                    "Video tổng hợp",
+                    "Email đã gửi của bạn"
+                ],
+                correct: 3,
+                explanation: "Email đã gửi của bạn là nội dung có sẵn, không phải được tạo ra bởi Generative AI."
+            },
+            {
+                id: 19,
+                text: "Các mô hình có thể được tùy chỉnh để...",
+                options: [
+                    "Giảm tốc độ xử lý",
+                    "Mang lại kết quả phù hợp từng người dùng",
+                    "Tạo lỗi",
+                    "Không cho phép sử dụng"
+                ],
+                correct: 1,
+                explanation: "Tùy chỉnh mô hình (fine-tuning) cho phép điều chỉnh để phù hợp với nhu cầu cụ thể của từng người dùng hoặc nhiệm vụ."
+            },
+            {
+                id: 20,
+                text: "Một trong các yếu tố cần cân nhắc khi chọn công cụ AI là gì?",
+                options: [
+                    "Màu giao diện",
+                    "Quyền riêng tư dữ liệu",
+                    "Kích thước màn hình",
+                    "Ngôn ngữ lập trình"
+                ],
+                correct: 1,
+                explanation: "Quyền riêng tư dữ liệu là yếu tố quan trọng khi chọn công cụ AI, đặc biệt khi xử lý thông tin nhạy cảm."
+            },
+            // Phần 2: Kỹ thuật nhắc (Prompting) cơ bản (21-40)
+            {
+                id: 21,
+                text: "Mục đích của lời nhắc (prompt) là gì?",
+                options: [
+                    "Bắt AI chạy chậm hơn",
+                    "Hướng dẫn AI tạo ra đầu ra mong muốn",
+                    "Xóa toàn bộ dữ liệu AI",
+                    "Ngăn AI hiểu bối cảnh"
+                ],
+                correct: 1,
+                explanation: "Prompt là hướng dẫn giúp AI hiểu và tạo ra đầu ra theo mong muốn của người dùng."
+            },
+            {
+                id: 22,
+                text: "Lời nhắc dùng để tóm tắt thuộc loại nào?",
+                options: [
+                    "Thu thập dữ liệu",
+                    "Gợi ra thông tin văn bản",
+                    "Xóa dữ liệu",
+                    "Sinh video"
+                ],
+                correct: 1,
+                explanation: "Prompt tóm tắt thuộc loại prompt gợi ra thông tin văn bản, yêu cầu AI tóm tắt nội dung."
+            },
+            {
+                id: 23,
+                text: "Điều nào sau đây giúp AI chuyển đổi nội dung?",
+                options: [
+                    "Format lại theo yêu cầu",
+                    "Làm chậm mô hình",
+                    "Chặn kết nối mạng",
+                    "Xóa văn bản gốc"
+                ],
+                correct: 0,
+                explanation: "Yêu cầu AI format lại nội dung theo yêu cầu giúp chuyển đổi nội dung từ dạng này sang dạng khác."
+            },
+            {
+                id: 24,
+                text: "Loại lời nhắc nào dùng để mô tả nội dung hình ảnh?",
+                options: [
+                    "Prompt video",
+                    "Prompt mô tả hình ảnh",
+                    "Prompt âm thanh",
+                    "Prompt số liệu"
+                ],
+                correct: 1,
+                explanation: "Prompt mô tả hình ảnh yêu cầu AI mô tả nội dung của một hình ảnh."
+            },
+            {
+                id: 25,
+                text: "Few-shot prompting nghĩa là...",
+                options: [
+                    "Không cho ví dụ",
+                    "Cho vài ví dụ mẫu",
+                    "Cho nhiều ví dụ",
+                    "Không dùng ví dụ"
+                ],
+                correct: 1,
+                explanation: "Few-shot prompting cung cấp một vài ví dụ mẫu để AI học theo và tạo ra đầu ra tương tự."
+            },
+            {
+                id: 26,
+                text: "Chuỗi suy nghĩ (Chain of thought) dùng để...",
+                options: [
+                    "Làm AI trả lời chậm",
+                    "Yêu cầu AI giải thích từng bước",
+                    "Tạo nhiễu",
+                    "Giảm độ chính xác"
+                ],
+                correct: 1,
+                explanation: "Chain of thought prompting yêu cầu AI giải thích từng bước suy luận để đạt được câu trả lời."
+            },
+            {
+                id: 27,
+                text: "Một lời nhắc tốt cần...",
+                options: [
+                    "Rút gọn tối đa",
+                    "Cụ thể và rõ ràng",
+                    "Viết càng dài càng tốt",
+                    "Không cần ngữ cảnh"
+                ],
+                correct: 1,
+                explanation: "Prompt tốt cần cụ thể, rõ ràng và cung cấp đủ ngữ cảnh để AI hiểu chính xác yêu cầu."
+            },
+            {
+                id: 28,
+                text: "\"AI không thể tự biết ngữ cảnh\" nghĩa là...",
+                options: [
+                    "AI luôn đoán đúng",
+                    "Người dùng phải cung cấp đầy đủ bối cảnh",
+                    "AI có trí nhớ vô hạn",
+                    "AI ghi nhớ mọi thứ"
+                ],
+                correct: 1,
+                explanation: "AI không tự động biết ngữ cảnh, người dùng cần cung cấp đầy đủ thông tin để AI hiểu nhiệm vụ."
+            },
+            {
+                id: 29,
+                text: "Khi đầu ra chưa tốt, người dùng cần...",
+                options: [
+                    "Huấn luyện lại mô hình",
+                    "Tinh chỉnh prompt",
+                    "Tắt máy tính",
+                    "Xóa dữ liệu AI"
+                ],
+                correct: 1,
+                explanation: "Khi đầu ra chưa đạt yêu cầu, cách hiệu quả nhất là tinh chỉnh prompt để rõ ràng và cụ thể hơn."
+            },
+            {
+                id: 30,
+                text: "Bảng thuật ngữ là ví dụ của...",
+                options: ["Input bổ sung", "Output", "Mô hình", "Lỗi"],
+                correct: 0,
+                explanation: "Bảng thuật ngữ là input bổ sung giúp AI hiểu rõ hơn về các thuật ngữ chuyên ngành trong yêu cầu."
+            },
+            {
+                id: 31,
+                text: "Zero-shot prompting nghĩa là...",
+                options: [
+                    "Không cần mô hình",
+                    "Không dùng ví dụ mẫu",
+                    "Dùng nhiều ví dụ",
+                    "Dùng video"
+                ],
+                correct: 1,
+                explanation: "Zero-shot prompting không cung cấp ví dụ mẫu nào, chỉ dựa vào mô tả nhiệm vụ để AI thực hiện."
+            },
+            {
+                id: 32,
+                text: "Prompt cá nhân hóa bao gồm...",
+                options: [
+                    "Chặn dữ liệu",
+                    "Cho AI một vai trò",
+                    "Tắt toàn bộ AI",
+                    "Gửi file hệ thống"
+                ],
+                correct: 1,
+                explanation: "Prompt cá nhân hóa thường gán cho AI một vai trò cụ thể để tạo ra nội dung phù hợp hơn."
+            },
+            {
+                id: 33,
+                text: "Hướng dẫn phong cách giúp AI...",
+                options: [
+                    "Làm hỏng định dạng",
+                    "Tạo nội dung theo tone mong muốn",
+                    "Tắt ghi nhớ",
+                    "Dùng dữ liệu ngẫu nhiên"
+                ],
+                correct: 1,
+                explanation: "Hướng dẫn phong cách giúp AI tạo nội dung theo tone, giọng điệu hoặc phong cách cụ thể."
+            },
+            {
+                id: 34,
+                text: "Khi tạo hình ảnh bằng AI, cần...",
+                options: [
+                    "Mô tả rõ phong cách và mục đích",
+                    "Chỉ viết 1 từ",
+                    "Không mô tả màu sắc",
+                    "Không ghi chi tiết"
+                ],
+                correct: 0,
+                explanation: "Mô tả rõ phong cách, mục đích, màu sắc và chi tiết giúp AI tạo hình ảnh chính xác hơn."
+            },
+            {
+                id: 35,
+                text: "Việc thêm dữ liệu mẫu giúp...",
+                options: [
+                    "Tăng lỗi",
+                    "Tăng độ chính xác đầu ra",
+                    "AI chạy chậm hơn",
+                    "Xóa bối cảnh"
+                ],
+                correct: 1,
+                explanation: "Thêm dữ liệu mẫu giúp AI hiểu rõ hơn yêu cầu và tạo ra đầu ra chính xác hơn."
+            },
+            {
+                id: 36,
+                text: "Prompt đảo ngược dùng để...",
+                options: [
+                    "Xóa ảnh",
+                    "Dùng đầu ra AI để tìm lại yêu cầu ban đầu",
+                    "Tắt AI",
+                    "Chặn truy xuất dữ liệu"
+                ],
+                correct: 1,
+                explanation: "Prompt đảo ngược (reverse prompting) sử dụng đầu ra của AI để suy ra prompt ban đầu có thể đã tạo ra nó."
+            },
+            {
+                id: 37,
+                text: "Để kiểm tra độ chính xác của đầu ra, ta dựa trên...",
+                options: [
+                    "Tâm trạng",
+                    "Sự kiện lịch sử, hiện tại, số liệu",
+                    "Màu sắc",
+                    "Thời tiết"
+                ],
+                correct: 1,
+                explanation: "Kiểm tra độ chính xác cần dựa trên các sự kiện thực tế, số liệu và thông tin đáng tin cậy."
+            },
+            {
+                id: 38,
+                text: "Một lời nhắc kém là...",
+                options: [
+                    "Không rõ yêu cầu",
+                    "Có bối cảnh",
+                    "Có ví dụ",
+                    "Có phong cách"
+                ],
+                correct: 0,
+                explanation: "Prompt kém thường không rõ ràng, mơ hồ, thiếu ngữ cảnh khiến AI không hiểu chính xác yêu cầu."
+            },
+            {
+                id: 39,
+                text: "Với nhiệm vụ \"dịch nội dung\", loại prompt phù hợp là...",
+                options: ["Image prompt", "Translation prompt", "Video prompt", "Audio prompt"],
+                correct: 1,
+                explanation: "Translation prompt là loại prompt phù hợp cho nhiệm vụ dịch thuật."
+            },
+            {
+                id: 40,
+                text: "Tinh chỉnh prompt liên quan đến...",
+                options: [
+                    "Xóa toàn bộ văn bản",
+                    "Làm nó rõ hơn và cụ thể hơn",
+                    "Tạo hình ảnh",
+                    "Kiểm tra GPU"
+                ],
+                correct: 1,
+                explanation: "Tinh chỉnh prompt là quá trình làm cho prompt rõ ràng, cụ thể và chính xác hơn để cải thiện đầu ra."
+            },
+            // Phần 3: Đạo đức - Pháp lý - Tác động xã hội (41-80)
+            {
+                id: 41,
+                text: "Thành kiến AI xuất phát từ...",
+                options: ["Dữ liệu huấn luyện", "Sai số GPU", "Tốc độ mạng", "Máy in"],
+                correct: 0,
+                explanation: "Thành kiến trong AI chủ yếu xuất phát từ dữ liệu huấn luyện có chứa thành kiến của con người."
+            },
+            {
+                id: 42,
+                text: "Thành kiến phổ biến gồm...",
+                options: [
+                    "Màu sắc, font chữ",
+                    "Giới tính, chủng tộc, tuổi tác",
+                    "Chiều cao, cân nặng",
+                    "Tính cách"
+                ],
+                correct: 1,
+                explanation: "Các thành kiến phổ biến trong AI thường liên quan đến giới tính, chủng tộc, tuổi tác, và các đặc điểm nhân khẩu học khác."
+            },
+            {
+                id: 43,
+                text: "Bật/tắt rào chắn AI là ví dụ của...",
+                options: ["Azure OpenAI", "Excel", "Paint", "WordPad"],
+                correct: 0,
+                explanation: "Azure OpenAI và các nền tảng AI tương tự cung cấp tính năng bật/tắt rào chắn an toàn."
+            },
+            {
+                id: 44,
+                text: "Thiên vị có thể được đưa vào thông qua...",
+                options: ["Prompt", "GPU", "Bộ bàn phím", "Camera"],
+                correct: 0,
+                explanation: "Thiên vị có thể được đưa vào AI thông qua prompt có chứa thành kiến hoặc yêu cầu không công bằng."
+            },
+            {
+                id: 45,
+                text: "Một rủi ro pháp lý khi dùng AI là...",
+                options: [
+                    "Sử dụng nội dung có bản quyền không được phép",
+                    "Không bật chế độ tối",
+                    "Viết quá dài",
+                    "Dùng tiếng Việt"
+                ],
+                correct: 0,
+                explanation: "Sử dụng nội dung có bản quyền để huấn luyện hoặc tạo ra nội dung mới có thể vi phạm pháp luật."
+            },
+            {
+                id: 46,
+                text: "Minh bạch trong AI nghĩa là...",
+                options: [
+                    "Ghi lại quy trình sử dụng AI",
+                    "Không chia sẻ gì",
+                    "Xóa lịch sử",
+                    "Dùng AI lén lút"
+                ],
+                correct: 0,
+                explanation: "Minh bạch trong AI bao gồm ghi lại quy trình sử dụng, các quyết định được hỗ trợ bởi AI và công khai thông tin."
+            },
+            {
+                id: 47,
+                text: "Nguy cơ rò rỉ dữ liệu xảy ra khi...",
+                options: [
+                    "Nhập thông tin cá nhân vào mô hình công khai",
+                    "Đóng cửa sổ trình duyệt",
+                    "Sử dụng chế độ tối",
+                    "Không dùng internet"
+                ],
+                correct: 0,
+                explanation: "Nhập thông tin cá nhân, nhạy cảm vào các mô hình AI công khai có nguy cơ bị rò rỉ hoặc bị sử dụng để huấn luyện mô hình."
+            },
+            {
+                id: 48,
+                text: "PII là...",
+                options: [
+                    "Dữ liệu nhận dạng cá nhân",
+                    "Ảnh độ phân giải cao",
+                    "Tập dữ liệu lớn",
+                    "Âm thanh nén"
+                ],
+                correct: 0,
+                explanation: "PII (Personally Identifiable Information) là thông tin có thể nhận dạng cá nhân cụ thể."
+            },
+            {
+                id: 49,
+                text: "Một rủi ro xã hội là...",
+                options: [
+                    "Deepfake",
+                    "Tăng kỹ năng số",
+                    "Tăng năng suất",
+                    "Học tập hiệu quả"
+                ],
+                correct: 0,
+                explanation: "Deepfake là một rủi ro xã hội nghiêm trọng khi AI tạo video giả mạo có thể gây hiểu lầm hoặc làm hại người khác."
+            },
+            {
+                id: 50,
+                text: "Tác động tích cực của AI là...",
+                options: [
+                    "Làm con người lười biếng",
+                    "Hỗ trợ giao tiếp đa ngôn ngữ",
+                    "Gây ảo giác",
+                    "Tăng thiên vị"
+                ],
+                correct: 1,
+                explanation: "AI hỗ trợ giao tiếp đa ngôn ngữ, phá vỡ rào cản ngôn ngữ và tăng cường kết nối toàn cầu."
+            },
+            {
+                id: 51,
+                text: "AI không thể thay thế hoàn toàn...",
+                options: [
+                    "Tương tác giữa người với người",
+                    "Màn hình máy tính",
+                    "Loa ngoài",
+                    "Ổ cứng"
+                ],
+                correct: 0,
+                explanation: "AI không thể thay thế hoàn toàn sự tương tác và kết nối cảm xúc giữa con người."
+            },
+            {
+                id: 52,
+                text: "Rủi ro tài chính có thể xảy ra khi...",
+                options: [
+                    "AI tạo thông tin sai",
+                    "AI trả lời đúng",
+                    "AI tóm tắt văn bản",
+                    "AI dịch tài liệu"
+                ],
+                correct: 0,
+                explanation: "AI tạo thông tin sai có thể dẫn đến quyết định tài chính sai lầm, gây thiệt hại kinh tế."
+            },
+            {
+                id: 53,
+                text: "Người dùng chịu trách nhiệm về...",
+                options: [
+                    "Nội dung AI tạo ra",
+                    "GPU của AI",
+                    "Dữ liệu huấn luyện",
+                    "Hệ thống máy chủ"
+                ],
+                correct: 0,
+                explanation: "Người dùng cuối cùng chịu trách nhiệm về nội dung do AI tạo ra, kể cả khi họ không trực tiếp viết nó."
+            },
+            {
+                id: 54,
+                text: "AI có thể dẫn đến lo ngại...",
+                options: [
+                    "Mất việc làm",
+                    "Tăng pin điện thoại",
+                    "Tăng chất lượng ảnh",
+                    "Dễ ngủ hơn"
+                ],
+                correct: 0,
+                explanation: "Tự động hóa bằng AI có thể thay thế một số công việc, dẫn đến lo ngại về mất việc làm."
+            },
+            {
+                id: 55,
+                text: "Một tác động tích cực khác là...",
+                options: ["Hỗ trợ sáng tạo", "Tắt wifi", "Ngăn học tập", "Chặn tài khoản"],
+                correct: 0,
+                explanation: "AI hỗ trợ sáng tạo bằng cách cung cấp ý tưởng, gợi ý và hỗ trợ quá trình sáng tạo."
+            },
+            {
+                id: 56,
+                text: "Trộm cắp danh tính có thể xảy ra nếu...",
+                options: [
+                    "PII bị lộ",
+                    "Dùng AI tại nhà",
+                    "Không cài phần mềm",
+                    "Gõ sai password"
+                ],
+                correct: 0,
+                explanation: "Khi PII (thông tin cá nhân) bị lộ, kẻ xấu có thể sử dụng để mạo danh hoặc trộm cắp danh tính."
+            },
+            {
+                id: 57,
+                text: "AI có thể được dùng cho mục đích nguy hiểm như...",
+                options: [
+                    "Tạo deepfake",
+                    "Tạo ghi chú học tập",
+                    "Dịch văn bản",
+                    "Viết email"
+                ],
+                correct: 0,
+                explanation: "AI có thể bị lạm dụng để tạo deepfake phục vụ các mục đích xấu như lừa đảo, bôi nhọ danh dự."
+            },
+            {
+                id: 58,
+                text: "Chính sách nội bộ của công ty nhằm...",
+                options: [
+                    "Ngăn nhân viên đưa dữ liệu vào AI công khai",
+                    "Tăng số nghỉ phép",
+                    "Tắt máy chủ",
+                    "Bắt buộc dùng AI"
+                ],
+                correct: 0,
+                explanation: "Chính sách AI nội bộ thường nhằm ngăn chặn rò rỉ dữ liệu nhạy cảm khi nhân viên sử dụng AI công khai."
+            },
+            {
+                id: 59,
+                text: "Nội dung có hại như...",
+                options: [
+                    "Bắt nạt, gian lận, thông tin thù hận",
+                    "Học tập",
+                    "Tạo meme",
+                    "Dịch thuật"
+                ],
+                correct: 0,
+                explanation: "AI có thể tạo ra nội dung có hại như bắt nạt, gian lận, thông tin thù hận nếu không được kiểm soát."
+            },
+            {
+                id: 60,
+                text: "Việc dùng AI ảnh hưởng đến động lực con người khi...",
+                options: [
+                    "Phụ thuộc quá nhiều",
+                    "Không dùng điện thoại",
+                    "Tăng vận tốc gõ văn bản",
+                    "Giảm lỗi chính tả"
+                ],
+                correct: 0,
+                explanation: "Phụ thuộc quá nhiều vào AI có thể làm giảm động lực tự học, tự suy nghĩ và sáng tạo của con người."
+            },
+            {
+                id: 61,
+                text: "Khi sử dụng AI tạo nội dung cho môi trường nghề nghiệp, bạn cần...",
+                options: [
+                    "Ghi lại các bước để minh bạch",
+                    "Không thông báo",
+                    "Xóa file",
+                    "Không kiểm chứng"
+                ],
+                correct: 0,
+                explanation: "Trong môi trường nghề nghiệp, cần ghi lại quy trình sử dụng AI để đảm bảo tính minh bạch và trách nhiệm."
+            },
+            {
+                id: 62,
+                text: "Tại sao không nên nhập dữ liệu nhạy cảm?",
+                options: [
+                    "Có thể được dùng để huấn luyện mô hình",
+                    "Làm chậm máy tính",
+                    "Tốn pin",
+                    "Giảm dung lượng ổ cứng"
+                ],
+                correct: 0,
+                explanation: "Dữ liệu nhạy cảm nhập vào AI công khai có thể được lưu trữ và sử dụng để huấn luyện mô hình, gây rủi ro bảo mật."
+            },
+            {
+                id: 63,
+                text: "Một ví dụ về tác động xã hội tiêu cực là...",
+                options: [
+                    "Giảm tương tác người--người",
+                    "Tăng tốc công việc",
+                    "Giao tiếp đa ngôn ngữ",
+                    "Học tập hiệu quả"
+                ],
+                correct: 0,
+                explanation: "Lạm dụng AI có thể làm giảm tương tác trực tiếp giữa con người, ảnh hưởng đến kỹ năng xã hội."
+            },
+            {
+                id: 64,
+                text: "AI có thể giúp phân tích...",
+                options: ["Mô hình và cơ hội", "Thời tiết", "Thể thao", "TV"],
+                correct: 0,
+                explanation: "AI có thể phân tích dữ liệu để xác định mô hình, xu hướng và cơ hội trong nhiều lĩnh vực."
+            },
+            {
+                id: 65,
+                text: "Nhiều người lo rằng AI sẽ...",
+                options: [
+                    "Lấy đi công việc",
+                    "Giúp làm việc nhanh hơn",
+                    "Học ngôn ngữ nhanh",
+                    "Tạo hình đẹp"
+                ],
+                correct: 0,
+                explanation: "Nhiều người lo ngại AI sẽ tự động hóa và thay thế một số công việc hiện tại."
+            },
+            {
+                id: 66,
+                text: "Một nội dung có thể gây rủi ro pháp lý là...",
+                options: [
+                    "Thông tin sai lệch do AI tạo",
+                    "Bản nháp email",
+                    "Danh sách mua sắm",
+                    "Ghi chú cá nhân"
+                ],
+                correct: 0,
+                explanation: "Thông tin sai lệch do AI tạo có thể gây hiểu lầm, thiệt hại và dẫn đến trách nhiệm pháp lý."
+            },
+            {
+                id: 67,
+                text: "Việc sử dụng dữ liệu bản quyền để huấn luyện có thể...",
+                options: [
+                    "Tạo tranh cãi pháp lý",
+                    "Làm AI chạy nhanh",
+                    "Giảm lỗi",
+                    "Không ảnh hưởng"
+                ],
+                correct: 0,
+                explanation: "Sử dụng dữ liệu có bản quyền để huấn luyện AI có thể vi phạm luật bản quyền và tạo tranh cãi pháp lý."
+            },
+            {
+                id: 68,
+                text: "Một lợi ích cá nhân của AI là...",
+                options: [
+                    "Tạo thực đơn, công thức, danh sách mua sắm",
+                    "Tăng chi phí sinh hoạt",
+                    "Tạo tiếng ồn",
+                    "Gây mất ngủ"
+                ],
+                correct: 0,
+                explanation: "AI có thể hỗ trợ cá nhân trong cuộc sống hàng ngày như tạo thực đơn, công thức nấu ăn, danh sách mua sắm."
+            },
+            {
+                id: 69,
+                text: "Generative AI giúp học tập hiệu quả bằng cách...",
+                options: [
+                    "Gợi ý tài liệu, tóm tắt, đặt câu hỏi",
+                    "Xóa dữ liệu",
+                    "Chặn nội dung",
+                    "Tạo lỗi"
+                ],
+                correct: 0,
+                explanation: "AI hỗ trợ học tập bằng cách gợi ý tài liệu, tóm tắt nội dung, đặt câu hỏi kiểm tra kiến thức."
+            },
+            {
+                id: 70,
+                text: "Tại sao cần giám sát con người khi dùng AI?",
+                options: [
+                    "Để tránh lan truyền thông tin sai",
+                    "Để máy chạy nhanh",
+                    "Để tăng màu sắc",
+                    "Để giảm năng lượng"
+                ],
+                correct: 0,
+                explanation: "Cần giám sát con người để phát hiện và ngăn chặn thông tin sai lệch, thành kiến hoặc nội dung có hại từ AI."
+            },
+            {
+                id: 71,
+                text: "Một công cụ AI có thể thiếu tiêu chuẩn chung về...",
+                options: ["Cách sử dụng", "Ảnh nền", "Font chữ", "Dung lượng ổ cứng"],
+                correct: 0,
+                explanation: "Các công cụ AI khác nhau có thể có cách sử dụng, giao diện và tính năng khác nhau, thiếu tiêu chuẩn chung."
+            },
+            {
+                id: 72,
+                text: "Thay đổi nhanh của AI dẫn đến...",
+                options: [
+                    "Công việc nhanh lỗi thời",
+                    "Tăng pin điện thoại",
+                    "Mất wifi",
+                    "Giảm màu sắc"
+                ],
+                correct: 0,
+                explanation: "Tốc độ phát triển nhanh của AI có thể làm một số kỹ năng và công việc nhanh chóng trở nên lỗi thời."
+            },
+            {
+                id: 73,
+                text: "Một ví dụ về thông tin sai do AI tạo ra là...",
+                options: [
+                    "Ảo giác (hallucination)",
+                    "Số liệu đúng",
+                    "Dữ liệu bảng",
+                    "Hình ảnh chất lượng cao"
+                ],
+                correct: 0,
+                explanation: "Ảo giác (hallucination) là hiện tượng AI tạo ra thông tin sai, không có thật một cách thuyết phục."
+            },
+            {
+                id: 74,
+                text: "Công ty yêu cầu không dùng AI công khai để...",
+                options: [
+                    "Tránh lộ dữ liệu nội bộ",
+                    "Tăng tốc internet",
+                    "Giảm chi phí điện",
+                    "Tạo nội dung"
+                ],
+                correct: 0,
+                explanation: "Công ty hạn chế sử dụng AI công khai để bảo vệ dữ liệu nội bộ, bí mật kinh doanh khỏi rò rỉ."
+            },
+            {
+                id: 75,
+                text: "Dùng AI để tác động dư luận là ví dụ của...",
+                options: ["Rủi ro xã hội", "Lợi ích", "Kiến thức", "Năng suất"],
+                correct: 0,
+                explanation: "Sử dụng AI để tạo và lan truyền thông tin sai lệch nhằm tác động dư luận là một rủi ro xã hội nghiêm trọng."
+            },
+            {
+                id: 76,
+                text: "Một hành động có thể dẫn đến tội phạm khi dùng AI là...",
+                options: [
+                    "Tạo nội dung thù ghét",
+                    "Tạo bản nháp email",
+                    "Tạo lịch học",
+                    "Làm poster"
+                ],
+                correct: 0,
+                explanation: "Tạo nội dung thù ghét, kích động bạo lực bằng AI có thể bị coi là tội phạm theo luật pháp nhiều nước."
+            },
+            {
+                id: 77,
+                text: "Tác động tích cực đến nghề nghiệp là...",
+                options: [
+                    "Làm việc hiệu quả hơn",
+                    "Giảm kỹ năng",
+                    "Tăng xung đột",
+                    "Tạo deepfake"
+                ],
+                correct: 0,
+                explanation: "AI giúp tăng năng suất, hiệu quả công việc, tự động hóa các tác vụ lặp đi lặp lại."
+            },
+            {
+                id: 78,
+                text: "AI giúp phân tích thông tin và...",
+                options: [
+                    "Trình bày cơ hội",
+                    "Tạo virus",
+                    "Đóng băng hệ thống",
+                    "Xóa dữ liệu"
+                ],
+                correct: 0,
+                explanation: "AI có thể phân tích lượng lớn thông tin và trình bày các cơ hội, xu hướng từ dữ liệu đó."
+            },
+            {
+                id: 79,
+                text: "Một yếu tố kinh tế xã hội là...",
+                options: [
+                    "AI không dành cho tất cả mọi người một cách bình đẳng",
+                    "AI khiến mọi người giàu hơn",
+                    "AI luôn miễn phí",
+                    "AI tự quản lý"
+                ],
+                correct: 0,
+                explanation: "Khả năng tiếp cận AI không đồng đều có thể làm tăng khoảng cách số và bất bình đẳng xã hội."
+            },
+            {
+                id: 80,
+                text: "Nội dung AI tạo nên được dùng cho mục đích xấu có thể...",
+                options: [
+                    "Gây hậu quả pháp lý",
+                    "Tăng sáng tạo",
+                    "Tăng năng suất",
+                    "Tạo cơ hội nghề nghiệp"
+                ],
+                correct: 0,
+                explanation: "Sử dụng nội dung AI tạo ra cho mục đích xấu có thể dẫn đến hậu quả pháp lý nghiêm trọng."
+            },
+            // Phần 4: Kiến thức nền tảng (81-90)
+            {
+                id: 81,
+                text: "Generative AI là gì?",
+                options: [
+                    "AI phân tích dữ liệu",
+                    "AI dự đoán số liệu",
+                    "AI tạo ra nội dung mới từ dữ liệu đã học",
+                    "AI kiểm tra tính chính xác dữ liệu"
+                ],
+                correct: 2,
+                explanation: "Generative AI là AI tạo ra nội dung mới (văn bản, hình ảnh, âm thanh) từ dữ liệu đã học."
+            },
+            {
+                id: 82,
+                text: "Công cụ nào sau đây là mô hình văn bản?",
+                options: ["DALL·E", "Firefly", "GPT", "Runway"],
+                correct: 2,
+                explanation: "GPT là mô hình ngôn ngữ lớn (LLM) chuyên về xử lý và tạo văn bản."
+            },
+            {
+                id: 83,
+                text: "Mô hình hình ảnh thường được huấn luyện từ:",
+                options: [
+                    "Các đoạn hội thoại",
+                    "Cặp văn bản--hình ảnh gắn nhãn",
+                    "Video ngẫu nhiên",
+                    "File âm thanh"
+                ],
+                correct: 1,
+                explanation: "Mô hình hình ảnh thường được huấn luyện từ các cặp văn bản-hình ảnh được gắn nhãn để học mối quan hệ giữa mô tả và hình ảnh."
+            },
+            {
+                id: 84,
+                text: "GAN gồm hai thành phần:",
+                options: [
+                    "Encoder -- Decoder",
+                    "Generator -- Discriminator",
+                    "Input -- Output",
+                    "Token -- Embedding"
+                ],
+                correct: 1,
+                explanation: "GAN (Generative Adversarial Network) bao gồm Generator (tạo dữ liệu) và Discriminator (phân biệt thật/giả)."
+            },
+            {
+                id: 85,
+                text: "LLMs có xu hướng thể hiện quan điểm vì:",
+                options: [
+                    "Bị giới hạn dữ liệu",
+                    "Dữ liệu huấn luyện rất lớn",
+                    "Không được huấn luyện",
+                    "Không đọc được văn bản"
+                ],
+                correct: 1,
+                explanation: "LLMs học từ lượng dữ liệu khổng lồ trên internet, nên có thể học và phản ánh các quan điểm có trong dữ liệu đó."
+            },
+            {
+                id: 86,
+                text: "Mô hình khuếch tán (Diffusion) tạo đầu ra bằng cách:",
+                options: [
+                    "Sao chép hình có sẵn",
+                    "Loại bỏ nhiễu dần dần",
+                    "Tăng độ sáng ảnh",
+                    "Ghép nhiều ảnh nhỏ"
+                ],
+                correct: 1,
+                explanation: "Mô hình Diffusion bắt đầu từ nhiễu ngẫu nhiên và dần loại bỏ nhiễu để tạo hình ảnh mong muốn."
+            },
+            {
+                id: 87,
+                text: "Tại sao huấn luyện mô hình lại tốn năng lượng?",
+                options: [
+                    "Cần chạy trên CPU",
+                    "Cần nhiều GPUs hiệu năng cao",
+                    "Phải bật mạng liên tục",
+                    "Do mô hình quá nhỏ"
+                ],
+                correct: 1,
+                explanation: "Huấn luyện mô hình AI lớn đòi hỏi hàng trăm hoặc hàng nghìn GPU mạnh hoạt động trong thời gian dài, tiêu tốn nhiều năng lượng."
+            },
+            {
+                id: 88,
+                text: "Thuật ngữ \"tokenization\" dùng để:",
+                options: [
+                    "Chuyển văn bản thành đơn vị nhỏ để mô hình xử lý",
+                    "Xóa nhiễu trong ảnh",
+                    "Tạo hiệu ứng án sáng",
+                    "Tăng tốc kết xuất"
+                ],
+                correct: 0,
+                explanation: "Tokenization chia văn bản thành các token (đơn vị nhỏ) như từ, cụm từ hoặc ký tự để AI có thể xử lý."
+            },
+            {
+                id: 89,
+                text: "Công cụ nào là mô hình đa phương thức (multimodal)?",
+                options: ["Canva", "Stable Diffusion", "Gemini", "Photoshop"],
+                correct: 2,
+                explanation: "Gemini là mô hình đa phương thức của Google, có thể xử lý và tạo ra văn bản, hình ảnh, âm thanh."
+            },
+            {
+                id: 90,
+                text: "Một hạn chế quan trọng của Generative AI:",
+                options: [
+                    "Không hỗ trợ tiếng Việt",
+                    "Có thể tạo thông tin sai (hallucination)",
+                    "Không thể tạo hình ảnh",
+                    "Không sử dụng trên web"
+                ],
+                correct: 1,
+                explanation: "Hallucination (ảo giác) là hạn chế quan trọng khi AI tạo ra thông tin sai nhưng trình bày như sự thật."
+            },
+            // Phần 5: Đầu vào - Đầu ra - Công cụ (91-100)
+            {
+                id: 91,
+                text: "Loại đầu vào nào được hỗ trợ bởi Generative AI?",
+                options: [
+                    "Chỉ văn bản",
+                    "Văn bản, hình ảnh, âm thanh, video",
+                    "Chỉ âm thanh",
+                    "Chỉ hình ảnh"
+                ],
+                correct: 1,
+                explanation: "Generative AI hiện đại hỗ trợ đa phương thức, có thể nhận đầu vào là văn bản, hình ảnh, âm thanh, video."
+            },
+            {
+                id: 92,
+                text: "Công cụ dùng để tùy chỉnh AI cho nhiệm vụ riêng:",
+                options: [
+                    "File Explorer",
+                    "Google Gems / Custom GPT",
+                    "Movies & TV",
+                    "WordPad"
+                ],
+                correct: 1,
+                explanation: "Google Gems và Custom GPT cho phép tùy chỉnh AI cho các nhiệm vụ và lĩnh vực cụ thể."
+            },
+            {
+                id: 93,
+                text: "Một tiêu chí quan trọng khi chọn công cụ AI:",
+                options: [
+                    "Màu nền trang web",
+                    "Quyền riêng tư dữ liệu",
+                    "Cỡ chữ trình duyệt",
+                    "Ảnh bìa"
+                ],
+                correct: 1,
+                explanation: "Quyền riêng tư dữ liệu là tiêu chí quan trọng khi chọn công cụ AI, đặc biệt với dữ liệu nhạy cảm."
+            },
+            {
+                id: 94,
+                text: "Công cụ nào chủ yếu dùng để tạo hình ảnh?",
+                options: ["ChatGPT", "Firefly", "Claude", "OneNote"],
+                correct: 1,
+                explanation: "Firefly của Adobe là công cụ chuyên tạo hình ảnh từ văn bản mô tả."
+            },
+            {
+                id: 95,
+                text: "Tại sao cùng một prompt nhưng công cụ khác nhau cho kết quả khác nhau?",
+                options: [
+                    "Do tốc độ mạng",
+                    "Do dữ liệu huấn luyện khác nhau",
+                    "Do độ sáng màn hình",
+                    "Do người dùng nhập sai"
+                ],
+                correct: 1,
+                explanation: "Mỗi công cụ AI được huấn luyện trên tập dữ liệu khác nhau và có kiến trúc khác nhau, dẫn đến kết quả khác nhau."
+            },
+            {
+                id: 96,
+                text: "Ứng dụng khép kín dùng để tự động hoàn thành nhiệm vụ:",
+                options: [
+                    "Windows Media Player",
+                    "Custom GPT",
+                    "Sticky Notes",
+                    "Cortana Classic"
+                ],
+                correct: 1,
+                explanation: "Custom GPT và các ứng dụng khép kín tương tự có thể được tùy chỉnh để tự động hóa các nhiệm vụ cụ thể."
+            },
+            {
+                id: 97,
+                text: "Đầu ra của Generative AI có thể bao gồm:",
+                options: [
+                    "Video tổng hợp",
+                    "Bản vá hệ thống",
+                    "File cài đặt",
+                    "Cập nhật bảo mật"
+                ],
+                correct: 0,
+                explanation: "Generative AI có thể tạo ra video tổng hợp từ văn bản mô tả hoặc các đầu vào khác."
+            },
+            {
+                id: 98,
+                text: "Công cụ nào sau đây không phải Generative AI?",
+                options: ["Canva", "Word", "Gemini", "ChatGPT"],
+                correct: 1,
+                explanation: "Microsoft Word là công cụ xử lý văn bản truyền thống, không phải công cụ Generative AI."
+            },
+            {
+                id: 99,
+                text: "Một đầu ra không nhất quán là ví dụ của:",
+                options: ["Tính ổn định", "Hạn chế của AI", "Tính bảo mật", "Tính khả chuyển"],
+                correct: 1,
+                explanation: "Đầu ra không nhất quán (cùng prompt nhưng kết quả khác nhau) là một hạn chế của các mô hình AI hiện nay."
+            },
+            {
+                id: 100,
+                text: "Quan trọng khi đánh giá đầu ra AI:",
+                options: [
+                    "Dựa hoàn toàn vào AI",
+                    "Kiểm tra tính hợp lý và nguồn",
+                    "Không cần xem lại",
+                    "Chỉ kiểm tra độ dài"
+                ],
+                correct: 1,
+                explanation: "Luôn cần kiểm tra tính hợp lý, xác minh thông tin với nguồn đáng tin cậy khi đánh giá đầu ra AI."
+            },
+            // Phần 6: Kỹ thuật nhắc (Prompting) (101-110)
+            {
+                id: 101,
+                text: "Một lời nhắc tốt cần:",
+                options: [
+                    "Viết mơ hồ",
+                    "Rõ ràng, cụ thể, có bối cảnh",
+                    "Càng dài càng tốt",
+                    "Không cần mục tiêu"
+                ],
+                correct: 1,
+                explanation: "Prompt tốt cần rõ ràng, cụ thể và cung cấp đủ bối cảnh để AI hiểu chính xác yêu cầu."
+            },
+            {
+                id: 102,
+                text: "Zero-shot prompting là:",
+                options: [
+                    "Không dùng ví dụ mẫu",
+                    "Dùng vài ví dụ",
+                    "Dùng nhiều ví dụ",
+                    "Không dùng prompt"
+                ],
+                correct: 0,
+                explanation: "Zero-shot prompting không cung cấp bất kỳ ví dụ mẫu nào, chỉ dựa vào mô tả nhiệm vụ."
+            },
+            {
+                id: 103,
+                text: "Few-shot prompting dùng để:",
+                options: [
+                    "Cho ví dụ để AI học theo",
+                    "Tắt AI",
+                    "Xóa dữ liệu",
+                    "Khóa tài khoản"
+                ],
+                correct: 0,
+                explanation: "Few-shot prompting cung cấp một vài ví dụ mẫu để AI học theo và áp dụng cho nhiệm vụ tương tự."
+            },
+            {
+                id: 104,
+                text: "\"Chain of thought\" giúp AI:",
+                options: [
+                    "Giả lập cảm xúc",
+                    "Giải thích từng bước suy luận",
+                    "Tạo văn bản nhanh hơn",
+                    "Giảm chất lượng"
+                ],
+                correct: 1,
+                explanation: "Chain of thought prompting yêu cầu AI giải thích từng bước suy luận, giúp cải thiện độ chính xác và minh bạch."
+            },
+            {
+                id: 105,
+                text: "Khi đầu ra chưa đạt yêu cầu, người dùng nên:",
+                options: [
+                    "Viết lại prompt rõ ràng hơn",
+                    "Tắt máy",
+                    "Thay đổi vùng giờ",
+                    "Đổi theme"
+                ],
+                correct: 0,
+                explanation: "Cách hiệu quả nhất là viết lại prompt cho rõ ràng, cụ thể hơn với nhiều chi tiết hơn."
+            },
+            {
+                id: 106,
+                text: "Prompt mô tả hình ảnh được dùng để:",
+                options: [
+                    "Dự đoán thời tiết",
+                    "Mô tả nội dung ảnh",
+                    "Tạo âm thanh",
+                    "Kiểm tra GPU"
+                ],
+                correct: 1,
+                explanation: "Prompt mô tả hình ảnh yêu cầu AI mô tả chi tiết nội dung của một hình ảnh."
+            },
+            {
+                id: 107,
+                text: "Hướng dẫn phong cách (style instruction) giúp AI:",
+                options: [
+                    "Chọn màu sắc",
+                    "Tạo nội dung theo tone mong muốn",
+                    "Tắt bảo vệ",
+                    "Tạo lỗi"
+                ],
+                correct: 1,
+                explanation: "Hướng dẫn phong cách giúp AI tạo nội dung theo tone, phong cách hoặc giọng điệu cụ thể."
+            },
+            {
+                id: 108,
+                text: "Thêm bối cảnh cho prompt giúp:",
+                options: [
+                    "AI trả lời chính xác hơn",
+                    "Làm AI chậm lại",
+                    "Mô hình bị lỗi",
+                    "Tăng kích thước tệp"
+                ],
+                correct: 0,
+                explanation: "Cung cấp đầy đủ bối cảnh giúp AI hiểu rõ nhiệm vụ và tạo ra câu trả lời chính xác hơn."
+            },
+            {
+                id: 109,
+                text: "Input bổ sung như bảng thuật ngữ dùng để:",
+                options: [
+                    "Gây nhiễu",
+                    "Tăng độ chính xác của đầu ra",
+                    "Tắt mô hình",
+                    "Xóa nội dung"
+                ],
+                correct: 1,
+                explanation: "Input bổ sung như bảng thuật ngữ giúp AI hiểu rõ các thuật ngữ chuyên ngành, cải thiện độ chính xác."
+            },
+            {
+                id: 110,
+                text: "Kiểm tra độ chính xác của câu trả lời bằng:",
+                options: [
+                    "Sự kiện thật, dữ liệu số, thông tin hiện tại",
+                    "Cảm xúc cá nhân",
+                    "Chọn ngẫu nhiên",
+                    "Dùng hình ảnh minh họa"
+                ],
+                correct: 0,
+                explanation: "Kiểm tra độ chính xác cần dựa trên sự kiện thực tế, dữ liệu số và thông tin cập nhật từ nguồn đáng tin cậy."
+            },
+            // Phần 7: Đạo đức - Pháp lý - Tác động xã hội (111-130)
+            {
+                id: 111,
+                text: "Thành kiến AI xuất phát từ:",
+                options: ["Màu màn hình", "Dữ liệu huấn luyện", "Wi-Fi", "Ký tự Unicode"],
+                correct: 1,
+                explanation: "Thành kiến trong AI chủ yếu bắt nguồn từ dữ liệu huấn luyện có chứa thành kiến của xã hội."
+            },
+            {
+                id: 112,
+                text: "Thành kiến phổ biến gồm:",
+                options: [
+                    "Màu sắc, độ phân giải",
+                    "Giới tính, chủng tộc, tuổi tác",
+                    "Âm lượng",
+                    "Độ sáng"
+                ],
+                correct: 1,
+                explanation: "Thành kiến phổ biến trong AI thường liên quan đến giới tính, chủng tộc, tuổi tác, tôn giáo, v.v."
+            },
+            {
+                id: 113,
+                text: "Một rủi ro pháp lý là:",
+                options: [
+                    "Chỉnh sửa hình ảnh",
+                    "Dùng nội dung có bản quyền không được phép",
+                    "Đổi nền màn hình",
+                    "Sao chép file"
+                ],
+                correct: 1,
+                explanation: "Sử dụng nội dung có bản quyền để huấn luyện AI hoặc tạo ra nội dung mới có thể vi phạm luật bản quyền."
+            },
+            {
+                id: 114,
+                text: "Minh bạch trong sử dụng AI nghĩa là:",
+                options: [
+                    "Giữ bí mật hoàn toàn",
+                    "Ghi lại quy trình sử dụng trong môi trường chuyên nghiệp",
+                    "Xóa lịch sử",
+                    "Giấu thông tin"
+                ],
+                correct: 1,
+                explanation: "Minh bạch bao gồm ghi chép và công khai cách sử dụng AI, đặc biệt trong môi trường chuyên nghiệp."
+            },
+            {
+                id: 115,
+                text: "Trộm cắp danh tính có thể xảy ra khi:",
+                options: [
+                    "Tạo hình ảnh",
+                    "Nhập PII vào AI công khai",
+                    "Tạo bảng tính",
+                    "Dùng tiếng Việt"
+                ],
+                correct: 1,
+                explanation: "Nhập thông tin cá nhân (PII) vào AI công khai có thể bị lấy cắp và sử dụng cho mục đích xấu."
+            },
+            {
+                id: 116,
+                text: "Một tác động tiêu cực của AI:",
+                options: [
+                    "Giảm tương tác con người",
+                    "Tăng hiệu quả học tập",
+                    "Tăng năng suất",
+                    "Tạo ý tưởng"
+                ],
+                correct: 0,
+                explanation: "Lạm dụng AI có thể làm giảm tương tác trực tiếp giữa con người, ảnh hưởng đến kỹ năng xã hội."
+            },
+            {
+                id: 117,
+                text: "Một tác động tích cực của Generative AI:",
+                options: [
+                    "Phụ thuộc quá mức",
+                    "Hỗ trợ giao tiếp giữa các ngôn ngữ",
+                    "Giảm động lực làm việc",
+                    "Tăng thiên vị"
+                ],
+                correct: 1,
+                explanation: "AI dịch thuật và giao tiếp đa ngôn ngữ giúp phá vỡ rào cản ngôn ngữ, kết nối mọi người."
+            },
+            {
+                id: 118,
+                text: "Deepfake là ví dụ của:",
+                options: [
+                    "Tác động tích cực",
+                    "Rủi ro xã hội",
+                    "Khả năng sáng tạo",
+                    "Tính minh bạch"
+                ],
+                correct: 1,
+                explanation: "Deepfake là ví dụ điển hình của rủi ro xã hội khi AI bị lạm dụng để tạo video giả mạo gây hại."
+            },
+            {
+                id: 119,
+                text: "Người dùng chịu trách nhiệm về:",
+                options: [
+                    "Tất cả nội dung AI tạo ra",
+                    "GPU của nhà sản xuất",
+                    "Dữ liệu huấn luyện",
+                    "Phần cứng máy chủ"
+                ],
+                correct: 0,
+                explanation: "Người sử dụng AI cuối cùng chịu trách nhiệm pháp lý và đạo đức về nội dung do AI tạo ra."
+            },
+            {
+                id: 120,
+                text: "Các công ty thiết lập chính sách AI nhằm:",
+                options: [
+                    "Tăng tốc CPU",
+                    "Ngăn nhân viên đưa dữ liệu nhạy cảm vào AI công khai",
+                    "Tăng độ sáng màn hình",
+                    "Tối ưu hóa bàn phím"
+                ],
+                correct: 1,
+                explanation: "Chính sách AI công ty nhằm bảo vệ dữ liệu nhạy cảm, bí mật kinh doanh và tuân thủ quy định."
+            },
+            {
+                id: 121,
+                text: "Việc sử dụng AI sai cách có thể dẫn đến:",
+                options: ["Lỗi chính tả", "Hậu quả pháp lý", "Mất hình nền", "Lỗi hiển thị"],
+                correct: 1,
+                explanation: "Sử dụng AI sai cách, đặc biệt tạo nội dung vi phạm pháp luật, có thể dẫn đến hậu quả pháp lý nghiêm trọng."
+            },
+            {
+                id: 122,
+                text: "Một ví dụ về rủi ro tài chính từ AI:",
+                options: [
+                    "AI tạo thông tin sai dẫn đến quyết định sai",
+                    "Gõ nhanh hơn",
+                    "Quản lý công việc hiệu quả",
+                    "Tạo hộp thoại"
+                ],
+                correct: 0,
+                explanation: "Thông tin sai từ AI có thể dẫn đến quyết định đầu tư, kinh doanh sai lầm, gây thiệt hại tài chính."
+            },
+            {
+                id: 123,
+                text: "Một lo ngại lớn của xã hội:",
+                options: [
+                    "AI chiếm mất công việc",
+                    "AI tăng chất lượng video",
+                    "AI giảm hóa đơn điện",
+                    "AI tăng RAM"
+                ],
+                correct: 0,
+                explanation: "Tự động hóa bằng AI có thể thay thế nhiều công việc, gây lo ngại về thất nghiệp và chuyển đổi nghề nghiệp."
+            },
+            {
+                id: 124,
+                text: "AI giúp cải thiện năng suất bằng cách:",
+                options: [
+                    "Tạo nội dung và tự động hóa tác vụ",
+                    "Làm máy tính nhanh hơn",
+                    "Tăng dung lượng ổ cứng",
+                    "Dọn dẹp tệp rác"
+                ],
+                correct: 0,
+                explanation: "AI tăng năng suất bằng cách tự động hóa các tác vụ lặp đi lặp lại và hỗ trợ tạo nội dung nhanh chóng."
+            },
+            {
+                id: 125,
+                text: "Một nguyên tắc khi dùng AI trong nghề nghiệp:",
+                options: [
+                    "Không cần kiểm tra lại",
+                    "Cần xác minh nguồn và tính chính xác",
+                    "Chỉ dùng trong giờ rảnh",
+                    "Không bao giờ tóm tắt dữ liệu"
+                ],
+                correct: 1,
+                explanation: "Luôn cần xác minh thông tin từ AI với nguồn đáng tin cậy và kiểm tra tính chính xác trước khi sử dụng."
+            },
+            {
+                id: 126,
+                text: "Sử dụng AI để tạo nội dung thù ghét là:",
+                options: ["An toàn", "Hợp pháp", "Có thể dẫn tới tội phạm", "Được khuyến khích"],
+                correct: 2,
+                explanation: "Tạo nội dung thù ghét bằng AI có thể bị coi là tội phạm theo luật pháp nhiều quốc gia về chống kích động thù hận."
+            },
+            {
+                id: 127,
+                text: "AI không thể thay thế hoàn toàn:",
+                options: [
+                    "Ổ cứng",
+                    "Tương tác giữa con người",
+                    "Màn hình",
+                    "Bàn phím"
+                ],
+                correct: 1,
+                explanation: "AI không thể thay thế sự đồng cảm, kết nối cảm xúc và tương tác xã hội phức tạp giữa con người."
+            },
+            {
+                id: 128,
+                text: "Nội dung AI tạo nên có thể bị lạm dụng để:",
+                options: [
+                    "Hỗ trợ học tập",
+                    "Gây thao túng dư luận",
+                    "Tối ưu hóa học tập",
+                    "Tăng tốc dịch thuật"
+                ],
+                correct: 1,
+                explanation: "Nội dung AI tạo ra có thể bị lạm dụng để lan truyền thông tin sai lệch, thao túng dư luận và ảnh hưởng bầu cử."
+            },
+            {
+                id: 129,
+                text: "Tác động tích cực đối với giáo dục:",
+                options: [
+                    "Cản trở kỹ năng tư duy",
+                    "Hỗ trợ học tập cá nhân hóa",
+                    "Tạo áp lực",
+                    "Giảm tiếp cận giáo dục"
+                ],
+                correct: 1,
+                explanation: "AI hỗ trợ giáo dục cá nhân hóa, cung cấp tài liệu phù hợp với trình độ và phong cách học tập của mỗi người."
+            },
+            {
+                id: 130,
+                text: "Một lưu ý khi dùng AI tạo nội dung công việc:",
+                options: [
+                    "Luôn để AI quyết định",
+                    "Phải kiểm chứng, ghi rõ vai trò AI",
+                    "Không cần kiểm soát",
+                    "Không cần minh bạch"
+                ],
+                correct: 1,
+                explanation: "Khi dùng AI trong công việc, cần kiểm chứng thông tin, ghi rõ sự tham gia của AI và duy trì tính minh bạch."
+            }
+        ];
+
+        // Khởi tạo ứng dụng
+        let currentQuestion = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let showAnswers = false;
+
+        // DOM elements
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const toggleAnswerBtn = document.getElementById('toggle-answer');
+        const answerKey = document.getElementById('answer-key');
+        const correctAnswerSpan = document.getElementById('correct-answer');
+        const answerExplanation = document.getElementById('answer-explanation');
+        const qNumSpan = document.getElementById('q-num');
+        const answeredCountSpan = document.getElementById('answered-count');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const currentSectionSpan = document.getElementById('current-section');
+        const progressBar = document.getElementById('progress-bar');
+
+        // Tạo nút điều hướng cho từng phần
+        function createNavigationButtons() {
+            const sections = [
+                { id: 'section1-btns', start: 1, end: 20, name: 'Phương pháp luận & Generative AI' },
+                { id: 'section2-btns', start: 21, end: 40, name: 'Kỹ thuật nhắc (Prompting) cơ bản' },
+                { id: 'section3-btns', start: 41, end: 80, name: 'Đạo đức - Pháp lý - Tác động xã hội' },
+                { id: 'section4-btns', start: 81, end: 90, name: 'Kiến thức nền tảng' },
+                { id: 'section5-btns', start: 91, end: 100, name: 'Đầu vào - Đầu ra - Công cụ' },
+                { id: 'section6-btns', start: 101, end: 110, name: 'Kỹ thuật nhắc (Prompting)' },
+                { id: 'section7-btns', start: 111, end: 130, name: 'Đạo đức - Pháp lý - Tác động xã hội' }
+            ];
+
+            sections.forEach(section => {
+                const container = document.getElementById(section.id);
+                for (let i = section.start; i <= section.end; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = 'q-btn';
+                    btn.textContent = i;
+                    btn.dataset.qIndex = i - 1;
+
+                    btn.addEventListener('click', () => {
+                        goToQuestion(i - 1);
+                    });
+
+                    container.appendChild(btn);
+                }
+            });
+        }
+
+        // Cập nhật giao diện câu hỏi
+        function updateQuestion() {
+            const question = questions[currentQuestion];
+
+            // Cập nhật số câu hỏi
+            qNumSpan.textContent = currentQuestion + 1;
+            currentQuestionSpan.textContent = currentQuestion + 1;
+
+            // Cập nhật phần hiện tại
+            updateCurrentSection();
+
+            // Cập nhật câu hỏi
+            questionText.textContent = question.text;
+
+            // Xóa các lựa chọn cũ
+            optionsContainer.innerHTML = '';
+
+            // Tạo các lựa chọn mới
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+
+                // Kiểm tra xem người dùng đã chọn chưa
+                if (userAnswers[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                }
+
+                // Kiểm tra nếu đang hiển thị đáp án
+                if (showAnswers) {
+                    if (index === question.correct) {
+                        optionElement.classList.add('correct');
+                    } else if (userAnswers[currentQuestion] === index && index !== question.correct) {
+                        optionElement.classList.add('incorrect');
+                    }
+                }
+
+                optionElement.innerHTML = `
+                    <div class="option-label">${String.fromCharCode(65 + index)}</div>
+                    <div class="option-text">${option}</div>
+                `;
+
+                optionElement.addEventListener('click', () => {
+                    if (!showAnswers) {
+                        selectOption(index);
+                    }
+                });
+
+                optionsContainer.appendChild(optionElement);
+            });
+
+            // Cập nhật đáp án
+            if (showAnswers) {
+                correctAnswerSpan.textContent = String.fromCharCode(65 + question.correct);
+                answerExplanation.textContent = question.explanation;
+                answerKey.classList.add('show');
+                toggleAnswerBtn.textContent = 'Ẩn đáp án';
+            } else {
+                answerKey.classList.remove('show');
+                toggleAnswerBtn.textContent = 'Hiện đáp án';
+            }
+
+            // Cập nhật nút điều hướng
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.disabled = currentQuestion === questions.length - 1;
+
+            // Cập nhật tiến độ
+            updateProgress();
+
+            // Cập nhật nút điều hướng câu hỏi
+            updateNavigationButtons();
+        }
+
+        // Chọn một đáp án
+        function selectOption(optionIndex) {
+            userAnswers[currentQuestion] = optionIndex;
+            updateQuestion();
+        }
+
+        // Chuyển đến câu hỏi cụ thể
+        function goToQuestion(index) {
+            currentQuestion = index;
+            updateQuestion();
+        }
+
+        // Câu hỏi trước
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                updateQuestion();
+            }
+        });
+
+        // Câu hỏi tiếp theo
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                updateQuestion();
+            }
+        });
+
+        // Hiện/ẩn đáp án
+        toggleAnswerBtn.addEventListener('click', () => {
+            showAnswers = !showAnswers;
+            updateQuestion();
+        });
+
+        // Nộp bài
+        submitBtn.addEventListener('click', () => {
+            const answeredCount = userAnswers.filter(answer => answer !== null).length;
+            const totalQuestions = questions.length;
+
+            if (answeredCount === totalQuestions) {
+                alert(`Bạn đã hoàn thành tất cả ${totalQuestions} câu hỏi!`);
+            } else {
+                alert(`Bạn đã trả lời ${answeredCount}/${totalQuestions} câu hỏi. Hãy tiếp tục hoàn thành bài làm!`);
+            }
+        });
+
+        // Cập nhật tiến độ
+        function updateProgress() {
+            const answeredCount = userAnswers.filter(answer => answer !== null).length;
+            const totalQuestions = questions.length;
+            const progress = (answeredCount / totalQuestions) * 100;
+
+            answeredCountSpan.textContent = `${answeredCount}/${totalQuestions}`;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Cập nhật nút điều hướng câu hỏi
+        function updateNavigationButtons() {
+            document.querySelectorAll('.q-btn').forEach((btn, index) => {
+                btn.classList.remove('active', 'answered');
+
+                if (index === currentQuestion) {
+                    btn.classList.add('active');
+                }
+
+                if (userAnswers[index] !== null) {
+                    btn.classList.add('answered');
+                }
+            });
+        }
+
+        // Cập nhật phần hiện tại
+        function updateCurrentSection() {
+            if (currentQuestion < 20) {
+                currentSectionSpan.textContent = 'Phương pháp luận & Generative AI';
+            } else if (currentQuestion < 40) {
+                currentSectionSpan.textContent = 'Kỹ thuật nhắc (Prompting) cơ bản';
+            } else if (currentQuestion < 80) {
+                currentSectionSpan.textContent = 'Đạo đức - Pháp lý - Tác động xã hội';
+            } else if (currentQuestion < 90) {
+                currentSectionSpan.textContent = 'Kiến thức nền tảng';
+            } else if (currentQuestion < 100) {
+                currentSectionSpan.textContent = 'Đầu vào - Đầu ra - Công cụ';
+            } else if (currentQuestion < 110) {
+                currentSectionSpan.textContent = 'Kỹ thuật nhắc (Prompting)';
+            } else {
+                currentSectionSpan.textContent = 'Đạo đức - Pháp lý - Tác động xã hội';
+            }
+        }
+
+        // Khởi động ứng dụng
+        function init() {
+            createNavigationButtons();
+            updateQuestion();
+
+            // Thêm sự kiện phím tắt
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    if (currentQuestion > 0) {
+                        currentQuestion--;
+                        updateQuestion();
+                    }
+                } else if (e.key === 'ArrowRight') {
+                    if (currentQuestion < questions.length - 1) {
+                        currentQuestion++;
+                        updateQuestion();
+                    }
+                } else if (e.key >= '1' && e.key <= '9') {
+                    const num = parseInt(e.key);
+                    if (num >= 1 && num <= 4) {
+                        selectOption(num - 1);
+                    }
+                } else if (e.key === 'a' || e.key === 'A') {
+                    selectOption(0);
+                } else if (e.key === 'b' || e.key === 'B') {
+                    selectOption(1);
+                } else if (e.key === 'c' || e.key === 'C') {
+                    selectOption(2);
+                } else if (e.key === 'd' || e.key === 'D') {
+                    selectOption(3);
+                }
+            });
+        }
+
+        // Khởi động ứng dụng khi trang được tải
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>

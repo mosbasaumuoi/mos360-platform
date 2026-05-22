@@ -1,6 +1,6 @@
 // ============================================
 // LESSON BLOCK FILTER ENGINE
-// Smart adaptive lesson block runtime
+// Adaptive semantic lesson runtime
 // ============================================
 
 // ============================================
@@ -24,6 +24,12 @@ const PRIORITY_WEIGHTS = {
     optional:
         5
 };
+
+// ============================================
+// BLOCK LIMITS
+// ============================================
+
+const MAX_REINFORCEMENT_BLOCKS = 2;
 
 // ============================================
 // CHECK CONDITIONS
@@ -131,6 +137,102 @@ function sortBlocks(
 }
 
 // ============================================
+// REDUCE VISUAL FATIGUE
+// ============================================
+
+function reduceVisualFatigue(
+
+    blocks = []
+
+) {
+
+    let reinforcementCount = 0;
+
+    return blocks.filter(
+
+        block => {
+
+            // ====================================
+            // LIMIT REINFORCEMENT
+            // ====================================
+
+            if (
+
+                block.priority ===
+                "reinforcement"
+
+            ) {
+
+                reinforcementCount++;
+
+                if (
+
+                    reinforcementCount >
+                    MAX_REINFORCEMENT_BLOCKS
+
+                ) {
+
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    );
+}
+
+// ============================================
+// ADAPTIVE FLOW
+// ============================================
+
+function applyAdaptiveFlow(
+
+    blocks = []
+
+) {
+
+    const primary = [];
+    const secondary = [];
+    const reinforcement = [];
+
+    blocks.forEach(block => {
+
+        if (
+
+            block.priority ===
+            "primary"
+
+        ) {
+
+            primary.push(block);
+            return;
+        }
+
+        if (
+
+            block.priority ===
+            "reinforcement"
+
+        ) {
+
+            reinforcement.push(block);
+            return;
+        }
+
+        secondary.push(block);
+    });
+
+    return [
+
+        ...primary,
+
+        ...secondary,
+
+        ...reinforcement
+    ];
+}
+
+// ============================================
 // FILTER BLOCKS
 // ============================================
 
@@ -162,7 +264,27 @@ export function filterLessonBlocks(
     // SORT
     // ========================================
 
-    return sortBlocks(
-        filteredBlocks
+    const sortedBlocks =
+
+        sortBlocks(
+            filteredBlocks
+        );
+
+    // ========================================
+    // FATIGUE REDUCTION
+    // ========================================
+
+    const fatigueReduced =
+
+        reduceVisualFatigue(
+            sortedBlocks
+        );
+
+    // ========================================
+    // ADAPTIVE FLOW
+    // ========================================
+
+    return applyAdaptiveFlow(
+        fatigueReduced
     );
 }

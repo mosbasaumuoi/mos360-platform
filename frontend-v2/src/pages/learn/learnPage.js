@@ -74,6 +74,19 @@ import {
 }
   from "../../engines/lessonBlockFilterEngine.js";
 
+import {
+  normalizeLesson
+}
+  from "../../engines/lessonNormalizer.js";  
+
+import {
+
+  composeLesson
+
+}
+  from "../../runtime/compositionEngine.js";
+
+
 // ============================================
 // RENDER LEARN PAGE
 // ============================================
@@ -164,6 +177,12 @@ export async function renderLearnPage() {
 
   } = data;
 
+  const normalizedLesson =
+
+    normalizeLesson(
+      lesson
+    );
+
   // ========================================
   // SAVE LAST LESSON
   // ========================================
@@ -226,16 +245,16 @@ export async function renderLearnPage() {
       action
 
     });
-
+  
   // ========================================
-  // BLOCK FLOW
+  // FILTERED BLOCKS
   // ========================================
 
-  const runtimeBlocks =
+  const filteredBlocks =
 
     filterLessonBlocks(
 
-      lesson.blocks || [],
+      normalizedLesson.blocks || [],
 
       {
 
@@ -243,9 +262,18 @@ export async function renderLearnPage() {
 
         isEnrolled:
           true
-
       }
 
+    );
+
+  // ========================================
+  // COMPOSED FLOW
+  // ========================================
+
+  const runtimeBlocks =
+
+    composeLesson(
+      filteredBlocks
     );
 
   // ========================================
@@ -321,97 +349,7 @@ export async function renderLearnPage() {
     completedLessons
 
   })}
-
-        <!-- VIDEO LEARNING CORE -->
-
-        <section class="video-learning-core">
-
-          <!-- VIDEO -->
-
-          <div class="video-player-shell">
-
-            <iframe
-              class="lesson-video-frame"
-              src="${lesson.videoUrl || ""}"
-              title="${lesson.title}"
-              frameborder="0"
-              allowfullscreen
-            ></iframe>
-
-          </div>
-
-          <!-- SIDE -->
-
-          <div class="video-learning-side">
-
-            <!-- WORKFLOW -->
-
-            <div class="workflow-mini-card">
-
-              <h3>
-
-                Workflow thực hành
-
-              </h3>
-
-              <ol>
-
-                ${(lesson.workflowSteps || [])
-      .map(step => `
-
-                    <li>
-
-                      ${step}
-
-                    </li>
-
-                  `)
-      .join("")}
-
-              </ol>
-
-            </div>
-
-            <!-- TIPS -->
-
-            <div class="tips-mini-card">
-
-              <h3>
-
-                Tips nhanh
-
-              </h3>
-
-              <ul>
-
-                ${(lesson.tips || [])
-      .map(tip => `
-
-                    <li>
-
-                      ${tip}
-
-                    </li>
-
-                  `)
-      .join("")}
-
-              </ul>
-
-            </div>
-
-            <!-- ACTION -->
-
-            <section class="lesson-actions">
-
-              ${actionButton}
-
-            </section>
-
-          </div>
-
-        </section>
-
+        
         <!-- LESSON BLOCKS -->
 
         <section class="lesson-blocks-section">
@@ -423,7 +361,7 @@ export async function renderLearnPage() {
         <!-- QUIZ -->
 
         ${renderQuizSection(
-        lesson.quiz || []
+          normalizedLesson.quiz || []
       )}
 
       </main>
@@ -479,7 +417,7 @@ export async function renderLearnPage() {
   bindQuiz({
 
     quiz:
-      lesson.quiz || []
+      normalizedLesson.quiz || []
 
   });
 

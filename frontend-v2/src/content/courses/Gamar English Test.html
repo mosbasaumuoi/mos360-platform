@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC MS HƯƠNG- Hệ Thống Luyện Đề Tiếng Anh Thông Minh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #3182ce;
+            --primary-hover: #2b6cb0;
+            --success-color: #38a169;
+            --danger-color: #e53e3e;
+            --warning-color: #dd6b20;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 15px 20px;
+            /* Thu nhỏ padding ngoài */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 850px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 20px 25px;
+            /* Tối ưu padding bên trong để tiết kiệm chiều cao */
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+            /* Thu nhỏ khoảng cách tiêu đề */
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* Vùng tải file tối ưu */
+        .upload-section {
+            border: 2px dashed #cbd5e0;
+            padding: 15px 20px;
+            /* Thu nhỏ khoảng cách vùng nạp file */
+            border-radius: 12px;
+            text-align: center;
+            background: #f8fafc;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+        }
+
+        .upload-section:hover {
+            border-color: var(--primary-color);
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-block;
+            font-weight: 600;
+            transition: background 0.2s;
+            box-shadow: 0 2px 4px rgba(49, 130, 206, 0.2);
+        }
+
+        .upload-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        #fileStatus {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Dashboard thống kê thời gian thực */
+        .live-stats {
+            display: flex;
+            justify-content: space-between;
+            background: #edf2f7;
+            padding: 10px 15px;
+            /* Thu nhỏ padding */
+            border-radius: 8px;
+            margin-bottom: 12px;
+            /* Giảm margin bớt rộng */
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-success {
+            color: var(--success-color);
+        }
+
+        .stat-danger {
+            color: var(--danger-color);
+        }
+
+        /* Thanh tiến độ trực quan */
+        .progress-container {
+            width: 100%;
+            background-color: #e2e8f0;
+            border-radius: 8px;
+            height: 6px;
+            /* Thu nhỏ độ dày thanh tiến độ */
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Vùng hiển thị câu hỏi */
+        .quiz-section {
+            display: none;
+        }
+
+        .question-box {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            /* Giảm margin từ 25px xuống 15px */
+            line-height: 1.5;
+            background: #f7fafc;
+            padding: 15px;
+            /* Thu gọn khoảng cách đệm câu hỏi */
+            border-left: 5px solid var(--primary-color);
+            border-radius: 0 8px 8px 0;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .underlined {
+            text-decoration: underline;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Giao diện tùy chọn đáp án tối ưu chiều cao */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            /* Giảm khoảng cách giữa các ô đáp án từ 14px xuống 8px */
+            margin-bottom: 15px;
+            /* Thu nhỏ khoảng cách dưới */
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            /* Giảm đáng kể từ 16px xuống còn 10px để màn hình cực gọn */
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 15px;
+            background-color: #fff;
+        }
+
+        .option-item:hover {
+            background-color: #f7fafc;
+            border-color: #cbd5e0;
+            transform: translateY(-1px);
+        }
+
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background-color: #ebf8ff;
+        }
+
+        .option-item.correct-reveal {
+            border-color: var(--success-color);
+            background-color: #f0fff4;
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .option-item.wrong-reveal {
+            border-color: var(--danger-color);
+            background-color: #fff5f5;
+            color: var(--danger-color);
+        }
+
+        .option-prefix {
+            font-weight: 700;
+            margin-right: 12px;
+            background: #edf2f7;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            min-width: 28px;
+            text-align: center;
+        }
+
+        .correct-reveal .option-prefix {
+            background: #c6f6d5;
+        }
+
+        .wrong-reveal .option-prefix {
+            background: #fed7d7;
+        }
+
+        /* Nút điều hướng */
+        .action-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            /* Thu gọn kích thước nút bấm */
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-check {
+            display: none;
+            /* Ẩn hoàn toàn vì không cần nút kiểm tra nữa */
+        }
+
+        .btn-next {
+            background-color: var(--success-color);
+            color: white;
+            display: none;
+            box-shadow: 0 4px 6px rgba(56, 161, 105, 0.2);
+        }
+
+        .btn-next:hover {
+            background-color: #2f855a;
+        }
+
+        /* Vùng giải thích chi tiết ngữ pháp */
+        .explain-box {
+            display: none;
+            margin-top: 15px;
+            /* Giảm khoảng cách trên */
+            padding: 15px;
+            /* Thu hẹp padding hộp giải thích */
+            background-color: #f7fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            border-top: 4px solid var(--success-color);
+            line-height: 1.6;
+            font-size: 14px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .explain-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--success-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* MÀN HÌNH BÁO CÁO KẾT QUẢ CUỐI BÀI */
+        .report-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .score-circle {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #63b3ed, #3182ce);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 15px auto;
+            box-shadow: 0 6px 12px rgba(49, 130, 206, 0.3);
+        }
+
+        .score-big {
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .score-label {
+            font-size: 11px;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .report-card {
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .report-card i {
+            font-size: 18px;
+            margin-bottom: 6px;
+            color: var(--primary-color);
+        }
+
+        .report-card .num {
+            font-size: 18px;
+            font-weight: 700;
+            display: block;
+        }
+
+        .report-card .lbl {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .evaluation-text {
+            background: #ebf8ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-weight: 500;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        /* Danh sách câu sai để ôn tập */
+        .review-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--danger-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .review-item {
+            border: 1px solid #fed7d7;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+        }
+
+        .review-q {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .review-ans-flow {
+            font-size: 13px;
+            margin-bottom: 8px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .ans-wrong {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+
+        .ans-correct {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .review-exp {
+            font-size: 13px;
+            background: #f7fafc;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid var(--success-color);
+            margin-top: 8px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1><i class="fa-solid fa-graduation-cap"></i> Hệ Thống Luyện Đề Tiếng Anh Thông Minh</h1>
+
+        <div class="upload-section">
+            <label for="fileInput" class="upload-btn"><i class="fa-solid fa-file-import"></i> Nạp Một Hoặc Nhiều File
+                (JSON/TXT)</label>
+            <input type="file" id="fileInput" accept=".txt,.json" multiple onchange="handleMultipleFiles(this)">
+            <div id="fileStatus">Chưa nạp dữ liệu câu hỏi. Hãy chọn file để bắt đầu học cùng con nhé!</div>
+        </div>
+
+        <div class="quiz-section" id="quizSection">
+            <div class="live-stats">
+                <div class="stat-item" id="liveProgress"><i class="fa-solid fa-file-lines"></i> Tiến độ: 0/0</div>
+                <div class="stat-item stat-success" id="liveCorrect"><i class="fa-solid fa-circle-check"></i> Đúng: 0
+                </div>
+                <div class="stat-item stat-danger" id="liveWrong"><i class="fa-solid fa-circle-xmark"></i> Sai: 0</div>
+                <div class="stat-item" id="liveTimer"><i class="fa-solid fa-clock"></i> 00:00</div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar-fill" id="progressBarFill"></div>
+            </div>
+
+            <div class="question-box" id="questionBox"></div>
+            <div class="options-container" id="optionsContainer"></div>
+
+            <div class="action-container">
+                <button class="btn btn-check" id="checkBtn" disabled></button>
+                <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()">
+                    Câu tiếp theo <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="explain-box" id="explainBox">
+                <div class="explain-title"><i class="fa-solid fa-lightbulb"></i> Giải Thích Ngữ Pháp Chi Tiết:</div>
+                <div id="explainContent"></div>
+            </div>
+        </div>
+
+        <div class="report-section" id="reportSection">
+            <div class="report-header">
+                <h2><i class="fa-solid fa-chart-pie"></i> Báo Cáo Sức Học Tổng Quan</h2>
+                <p style="color: var(--text-muted); margin: 5px 0 0 0;">Hệ thống tự động phân tích kết quả bài luyện thi
+                </p>
+            </div>
+
+            <div class="score-circle">
+                <span class="score-big" id="repScore">0%</span>
+                <span class="score-label">Chính xác</span>
+            </div>
+
+            <div class="report-grid">
+                <div class="report-card">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span class="num" id="repTotal">0</span>
+                    <span class="lbl">Tổng số câu</span>
+                </div>
+                <div class="report-card" style="color: var(--success-color)">
+                    <i class="fa-solid fa-square-check"></i>
+                    <span class="num" id="repCorrect">0</span>
+                    <span class="lbl">Số câu đúng</span>
+                </div>
+                <div class="report-card">
+                    <i class="fa-solid fa-stopwatch"></i>
+                    <span class="num" id="repTime">00:00</span>
+                    <span class="lbl">Thời gian giải đề</span>
+                </div>
+            </div>
+
+            <div class="evaluation-text" id="evaluationText"></div>
+
+            <div id="reviewContainer" style="display: none;">
+                <div class="review-title"><i class="fa-solid fa-triangle-exclamation"></i> Các câu con làm chưa đúng
+                    (Cần lưu ý ôn tập):</div>
+                <div id="reviewList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Khởi tạo các biến quản lý trạng thái
+        let masterQuestionsList = [];
+        let currentQuestionIndex = 0;
+        let selectedOptionKey = null;
+        let isChecked = false;
+
+        // Biến lưu trữ kết quả thống kê
+        let countCorrect = 0;
+        let countWrong = 0;
+        let wrongQuestionsHistory = []; // Lưu lại danh sách câu làm sai để phân tích
+
+        // Biến quản lý thời gian
+        let startTime = null;
+        let timerInterval = null;
+
+        // HÀM XỬ LÝ ĐỌC VÀ GỘP NHIỀU FILE
+        async function handleMultipleFiles(input) {
+            const files = input.files;
+            const statusDiv = document.getElementById('fileStatus');
+
+            if (files.length === 0) {
+                statusDiv.innerHTML = "<span style='color: #e53e3e; font-weight: 600;'>✕ Chưa chọn file nào.</span>";
+                return;
+            }
+
+            statusDiv.innerHTML = `⏳ Đang đồng bộ và tối ưu hóa cấu trúc ${files.length} file dữ liệu...`;
+            masterQuestionsList = [];
+            wrongQuestionsHistory = [];
+            countCorrect = 0;
+            countWrong = 0;
+
+            const readPromises = Array.from(files).map(file => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        try {
+                            const jsonData = JSON.parse(e.target.result);
+                            if (Array.isArray(jsonData)) {
+                                resolve(jsonData);
+                            } else {
+                                console.warn(`File "${file.name}" lỗi cấu trúc mảng.`);
+                                resolve([]);
+                            }
+                        } catch (error) {
+                            console.error(`Lỗi JSON tại file "${file.name}":`, error);
+                            resolve([]);
+                        }
+                    };
+                    reader.onerror = () => resolve([]);
+                    reader.readAsText(file, "UTF-8");
+                });
+            });
+
+            try {
+                const allFileContents = await Promise.all(readPromises);
+                allFileContents.forEach(questionsArray => {
+                    masterQuestionsList = masterQuestionsList.concat(questionsArray);
+                });
+
+                if (masterQuestionsList.length > 0) {
+                    statusDiv.innerHTML = `<span style="color: #38a169; font-weight: bold;"><i class="fa-solid fa-circle-check"></i> Đã đồng bộ thành công ${files.length} bộ đề! Tổng cộng ${masterQuestionsList.length} câu hỏi sẵn sàng.</span>`;
+
+                    // Khởi động trạng thái học tập
+                    currentQuestionIndex = 0;
+                    document.getElementById('reportSection').style.display = 'none';
+                    document.getElementById('quizSection').style.display = 'block';
+
+                    // Bắt đầu tính giờ giải đề
+                    startTimer();
+                    loadQuestion();
+                } else {
+                    statusDiv.innerHTML = "<span style='color: #e53e3e; font-weight: bold;'>✕ Không tìm thấy dữ liệu câu hỏi hợp lệ trong các file đã nạp.</span>";
+                    document.getElementById('quizSection').style.display = 'none';
+                }
+            } catch (err) {
+                statusDiv.innerHTML = "<span style='color: #e53e3e; font-weight: bold;'>✕ Có lỗi hệ thống khi xử lý gộp tài liệu.</span>";
+                console.error(err);
+            }
+        }
+
+        // BỘ ĐẾM THỜI GIAN LUYỆN TẬP
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            startTime = new Date();
+            timerInterval = setInterval(() => {
+                const now = new Date();
+                const diff = Math.floor((now - startTime) / 1000);
+                const mins = String(Math.floor(diff / 60)).padStart(2, '0');
+                const secs = String(diff % 60).padStart(2, '0');
+                document.getElementById('liveTimer').innerHTML = `<i class="fa-solid fa-clock"></i> ${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            return document.getElementById('liveTimer').innerText;
+        }
+
+        // HÀM TẢI CÂU HỎI LÊN GIAO DIỆN
+        function loadQuestion() {
+            if (masterQuestionsList.length === 0) return;
+
+            // Reset điều khiển câu hỏi mới
+            selectedOptionKey = null;
+            isChecked = false;
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('explainBox').style.display = 'none';
+
+            const currentQuestion = masterQuestionsList[currentQuestionIndex];
+
+            // Cập nhật Live Thống kê & Thanh tiến độ đồ họa
+            document.getElementById('liveProgress').innerHTML = `<i class="fa-solid fa-file-lines"></i> Tiến độ: ${currentQuestionIndex + 1}/${masterQuestionsList.length}`;
+            document.getElementById('liveCorrect').innerHTML = `<i class="fa-solid fa-circle-check"></i> Đúng: ${countCorrect}`;
+            document.getElementById('liveWrong').innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Sai: ${countWrong}`;
+
+            const progressPercent = ((currentQuestionIndex) / masterQuestionsList.length) * 100;
+            document.getElementById('progressBarFill').style.width = `${progressPercent}%`;
+
+            // Render nội dung câu hỏi
+            document.getElementById('questionBox').innerHTML = currentQuestion.question;
+
+            // Tạo danh sách các nút lựa chọn đáp án
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            Object.keys(currentQuestion.options).forEach(key => {
+                if (currentQuestion.options[key].trim() === "" && key === "...") return;
+
+                const optionItem = document.createElement('div');
+                optionItem.className = 'option-item';
+                optionItem.setAttribute('data-key', key);
+                // CLICK THẲNG VÀO ĐÁP ÁN: Gọi hàm gộp xử lý kiểm tra và hiện kết quả ngay lập tức
+                optionItem.onclick = function () { selectAndCheckOption(key); };
+
+                optionItem.innerHTML = `
+                <span class="option-prefix">${key}</span>
+                <span class="option-text">${currentQuestion.options[key]}</span>
+            `;
+                optionsContainer.appendChild(optionItem);
+            });
+        }
+
+        // CLICK CHỌN LÀM HIỆN KẾT QUẢ VÀ GIẢI THÍCH NGAY LẬP TỨC (BỎ BƯỚC CLICK KIỂM TRA)
+        function selectAndCheckOption(key) {
+            if (isChecked) return; // Nếu đã click chọn một đáp án rồi thì khóa luôn, không cho bấm chọn lại câu khác
+
+            isChecked = true;
+            selectedOptionKey = key;
+
+            const currentQuestion = masterQuestionsList[currentQuestionIndex];
+            const correctKey = currentQuestion.correct.trim();
+            const isUserCorrect = (selectedOptionKey === correctKey);
+
+            // Thống kê điểm số
+            if (isUserCorrect) {
+                countCorrect++;
+            } else {
+                countWrong++;
+                // Lưu dữ liệu phân tích câu sai để hiển thị ở bảng tổng kết cuối bài ôn tập
+                wrongQuestionsHistory.push({
+                    question: currentQuestion.question,
+                    userChoice: selectedOptionKey,
+                    userChoiceText: currentQuestion.options[selectedOptionKey],
+                    correctChoice: correctKey,
+                    correctChoiceText: currentQuestion.options[correctKey],
+                    explain: currentQuestion.explain
+                });
+            }
+
+            // Cập nhật giao diện đổi màu hiển thị đúng/sai trực tiếp trên các ô
+            const allOptions = document.querySelectorAll('.option-item');
+            allOptions.forEach(item => {
+                const itemKey = item.getAttribute('data-key').trim();
+
+                if (itemKey === key) {
+                    item.classList.add('selected'); // Đánh dấu ô con vừa chọn
+                }
+
+                if (itemKey === correctKey) {
+                    item.classList.add('correct-reveal'); // Tô xanh đáp án đúng của hệ thống
+                }
+                if (itemKey === selectedOptionKey && !isUserCorrect) {
+                    item.classList.add('wrong-reveal'); // Tô đỏ ô con đã chọn bị sai
+                }
+            });
+
+            // Đổ dữ liệu giải thích chi tiết ra màn hình ngay lập tức
+            document.getElementById('explainContent').innerHTML = currentQuestion.explain;
+            document.getElementById('explainBox').style.display = 'block';
+
+            // Hiện ngay nút "Câu tiếp theo" để con chuyển sang câu khác
+            document.getElementById('nextBtn').style.display = 'inline-block';
+
+            // Cập nhật ngay số lượng đúng sai lên bảng Live Stats thời gian thực
+            document.getElementById('liveCorrect').innerHTML = `<i class="fa-solid fa-circle-check"></i> Đúng: ${countCorrect}`;
+            document.getElementById('liveWrong').innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Sai: ${countWrong}`;
+        }
+
+        // ĐIỀU HƯỚNG HOẶC KẾT THÚC BÀI ĐỂ PHÂN TÍCH BÁO CÁO
+        function nextQuestion() {
+            if (currentQuestionIndex < masterQuestionsList.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                // Đã làm hết ngân hàng câu hỏi -> Kích hoạt màn hình Báo cáo kết quả phân tích sâu cuối bài
+                showFinalReport();
+            }
+        }
+
+        // HÀM XỬ LÝ PHÂN TÍCH & RENDER BÁO CÁO KẾT QUẢ CUỐI BÀI
+        function showFinalReport() {
+            const finalTimeStr = stopTimer().replace(/.*\s/, '');
+            document.getElementById('quizSection').style.display = 'none';
+            document.getElementById('reportSection').style.display = 'block';
+            document.getElementById('progressBarFill').style.width = `100%`;
+
+            const totalQuestions = masterQuestionsList.length;
+            const accuracyRate = Math.round((countCorrect / totalQuestions) * 100);
+
+            document.getElementById('repScore').innerText = `${accuracyRate}%`;
+            document.getElementById('repTotal').innerText = totalQuestions;
+            document.getElementById('repCorrect').innerText = countCorrect;
+            document.getElementById('repTime').innerText = finalTimeStr;
+
+            let evaluationHTML = "";
+            if (accuracyRate === 100) {
+                evaluationHTML = `🎉 <b>Kết quả xuất sắc tuyệt đối!</b> Con đã nắm rất chắc các chuyên đề ngữ pháp và từ vựng trong bộ đề này. Hãy tiếp tục phát huy ở các bộ đề nâng cao hơn nhé!`;
+            } else if (accuracyRate >= 80) {
+                evaluationHTML = `✨ <b>Kết quả rất tốt!</b> Con đạt tỷ lệ chính xác cao. Chỉ cần rà soát lại một vài lỗi nhỏ dưới đây để tối ưu hóa điểm số tốt nhất cho kỳ thi sắp tới.`;
+            } else if (accuracyRate >= 50) {
+                evaluationHTML = `✍️ <b>Kết quả Khá.</b> Con có nền tảng cơ bản ổn định. Tuy nhiên, một số cấu trúc ngữ pháp còn nhầm lẫn. Bố mẹ hãy cùng con xem kỹ phần giải thích chi tiết các câu chưa đúng phía dưới nhé.`;
+            } else {
+                evaluationHTML = `📚 <b>Con cần cố gắng hơn!</b> Đề thi có nhiều cấu trúc tương đối mới hoặc dễ bẫy. Con hãy dành thời gian ghi chép lại các câu làm sai bên dưới vào sổ tay để ghi nhớ sâu hơn.`;
+            }
+            document.getElementById('evaluationText').innerHTML = evaluationHTML;
+
+            const reviewContainer = document.getElementById('reviewContainer');
+            const reviewList = document.getElementById('reviewList');
+            reviewList.innerHTML = "";
+
+            if (wrongQuestionsHistory.length > 0) {
+                reviewContainer.style.display = 'block';
+                wrongQuestionsHistory.forEach((item, index) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'review-item';
+                    itemDiv.innerHTML = `
+                    <div class="review-q">Câu ${index + 1}: ${item.question}</div>
+                    <div class="review-ans-flow">
+                        <span class="ans-wrong"><i class="fa-solid fa-circle-xmark"></i> Đáp án con chọn: ${item.userChoice}. ${item.userChoiceText}</span>
+                        <span class="ans-correct"><i class="fa-solid fa-circle-check"></i> Đáp án đúng chuẩn: ${item.correctChoice}. ${item.correctChoiceText}</span>
+                    </div>
+                    <div class="review-exp">
+                        <b>💡 Phân tích lỗi & cấu trúc kiến thức:</b><br>
+                        ${item.explain}
+                    </div>
+                `;
+                    reviewList.appendChild(itemDiv);
+                });
+            } else {
+                reviewContainer.style.display = 'none';
+            }
+        }
+    </script>
+
+</body>
+
+</html>

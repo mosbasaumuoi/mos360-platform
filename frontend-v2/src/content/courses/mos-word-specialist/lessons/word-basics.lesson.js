@@ -54,9 +54,24 @@ export const WORD_BASICS_LESSON = {
     // ========================================
     // BLOCK-FIRST MODEL
     // ========================================
-
+    
     blocks: [
 
+        {
+
+            type:
+                "video",
+
+            priority:
+                "critical",
+
+            title:
+                "Word Basics",
+
+            videoUrl:
+                "https://www.youtube.com/embed/ymZAoqYs6x4?si=MYPePycO1rcP3_tb"
+        },
+        
         {
 
             type:
@@ -103,19 +118,16 @@ export const WORD_BASICS_LESSON = {
         },
 
         {
+            type: "callout",
 
-            type:
-                "tips",
+            variant: "tip",
 
-            priority:
-                "secondary",
+            priority: "secondary",
 
-            items: [
+            title: "Mẹo thực hành",
 
-                "Ctrl + S để lưu nhanh",
-
-                "Dùng Heading để quản lý tài liệu"
-            ]
+            content:
+                "Sử dụng Ctrl + S thường xuyên để tránh mất dữ liệu."
         }
 
     ],

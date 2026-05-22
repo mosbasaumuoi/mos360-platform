@@ -1,5 +1,5 @@
 Folder PATH listing for volume MR CUONG KTT
-Volume serial number is 000000E0 6A3C:9B6D
+Volume serial number is 0000006F 6A3C:9B6D
 D:.
 ¦   .gitignore
 ¦   cay_thu_muc.txt
@@ -15,7 +15,7 @@ D:.
 ¦   ¦       +---kv
 ¦   ¦       ¦   +---dc0ad0df05914e888863c95abe080a3f
 ¦   ¦       ¦   ¦   +---blobs
-¦   ¦       ¦   ¦           23429072a64be5860a1eb1b59897a6172fa810bbd66df0131a0376c2e10e14220000019e493c28f1
+¦   ¦       ¦   ¦           a46d723926f2703af189393b214ada1adefd5a2dc1222318583b4d6761bf4bf80000019e4e5c3086
 ¦   ¦       ¦   ¦           
 ¦   ¦       ¦   +---eee76ad74d4845458898a143a514ed84
 ¦   ¦       ¦   ¦   +---blobs
@@ -81,12 +81,14 @@ D:.
 ¦   ¦       ¦   ¦           6717d295412471c47b143972bfe25ad076f64138b52212ea5713fbd9da43da0a0000019e3dde8869
 ¦   ¦       ¦   ¦           675920a24856d84b31c01dadf63f88b0734f6d80eafc21fd42ca14dbd99f4b230000019e2c1ebb42
 ¦   ¦       ¦   ¦           67c6be471f8289711c0be35d678c206670ce4fc4fb4ba784c33baaa9d0e878f80000019e3a15fc82
+¦   ¦       ¦   ¦           67ee7308ff8bf6a0ba1c0d46e252574be5abc47626a1f649e46d6004bfb1f6140000019e4de172a8
 ¦   ¦       ¦   ¦           6ded73b3b62deb145f7bfcb291bfd99e5f2c85be327b6f4d773cfde76ff1d34b0000019e3dd4c278
 ¦   ¦       ¦   ¦           6dfa09799cafd4e3bfa4e9c5b93b53394d78d00c6023339696f9ad7958ead2670000019e2be98ff6
 ¦   ¦       ¦   ¦           73fbcb28874710f5d51f7c74d8308b16929d5c164b40cf23ad7d09bc90e710f40000019e2a167933
 ¦   ¦       ¦   ¦           7607fd47fa79c3861247ff11fc29025d614d81d8c57d11b940dd0a670d9f5e6c0000019e29faec2f
 ¦   ¦       ¦   ¦           767a572109874bcfd8c0db1a3816f458dc9fab897875b93c950805f961f5f2c80000019e2a124a58
 ¦   ¦       ¦   ¦           7805dcdc6d1875415a8a05fe23d775b0de792df27480f6c5494b5b4a6a26c1fe0000019e3dddec9d
+¦   ¦       ¦   ¦           78a7ffbeeff24f2600de4ecb3e3ee4e9456d410d3fdc4e6b7f3a1f8faa3ee20e0000019e4b006c30
 ¦   ¦       ¦   ¦           7d3136655301891f2eaf5d2f1850b76180fd96b77c06a8671cde7201e76313860000019e29fa5e9b
 ¦   ¦       ¦   ¦           7dc78f5f54af8e6c1f6b1dce321b1d3412931cd8425bdd8ab82cd816c880b9850000019e2adbe52f
 ¦   ¦       ¦   ¦           7ef524fd3a3616022b3658a06f29f49d5262488bdbf72bca066ac709d632cd290000019e3156fd95
@@ -101,6 +103,7 @@ D:.
 ¦   ¦       ¦   ¦           926d36f9f35bd8c1453caaf96ebfa6d05fe42bf93229e533931bd7a2bb2c23c20000019e2a16294e
 ¦   ¦       ¦   ¦           92aac46144e04c55456400aac190b00a0dc906601d588c474bc6781ae08d6ff00000019e2c176988
 ¦   ¦       ¦   ¦           95e2bc7790c12faa613337fd6199847ada92f146e11540e414c75c467af93a7e0000019e3df421bf
+¦   ¦       ¦   ¦           96795b9bbae1a76d344ec9cde09e600b169c4f802b61e1fa120b175611824bc10000019e4b1b2325
 ¦   ¦       ¦   ¦           97323ade675c35c4283665d55511c48ffc2d70f100c104fa8d556a6058d0bbcb0000019e398be452
 ¦   ¦       ¦   ¦           990712f485dddb2a734f875cdf3d492353d7aaae63dc705a6d3d4514a410fdf70000019e3ddeb3b5
 ¦   ¦       ¦   ¦           9941833bb1ec9bd4d11aedf8b1a0bfbba54d303aedce76ff8e8e893b83dae3410000019e2740383f
@@ -108,6 +111,7 @@ D:.
 ¦   ¦       ¦   ¦           9ac39c0ccdbf2ebb8b624e429efceb24d14c6eb3f87c4bae5943df4453c144ac0000019e296ed642
 ¦   ¦       ¦   ¦           a384d4de40f527fdb5dbd38c1a341f3e696fe4ee4aad4f132d7b40d7aabe0d4b0000019e3ddd5b4b
 ¦   ¦       ¦   ¦           a95e71806a53c0096fa0ee9c9b813ebcbb25b690d504f40d5a845889e290afff0000019e2a164bcc
+¦   ¦       ¦   ¦           ae045d80f3163a39867646c46cb6f87913696e43a56cd3e1c437150236689c5f0000019e4e5c28cd
 ¦   ¦       ¦   ¦           ae6b77dad2a3d9eac604fb580a02c2c50029e67aaa3b056bece26e7945eabff30000019e44d7f344
 ¦   ¦       ¦   ¦           af9e45614314c700e960c9870e24eb74f7f4d563ad7591838f9e966847e0b4df0000019e3dde63e2
 ¦   ¦       ¦   ¦           b41474b64e97c300bd4c84538e3774bb7d21c80edc28e609fe49fe14ef0d8e040000019e42ebd19e
@@ -137,6 +141,7 @@ D:.
 ¦   ¦       ¦   ¦           ee9098085fd335091ac264bcdfaad472597af134d493be0bc41f89e7c48d58eb0000019e2c169a06
 ¦   ¦       ¦   ¦           f05c588caed9db4992ff9e17817cb3c4ab2850cf200d036822958027407ef34d0000019e2a1268c0
 ¦   ¦       ¦   ¦           f402637cc9108c2935aa65349abee146e280017210ecaf24be9772aa60374e050000019e2a08c76a
+¦   ¦       ¦   ¦           f5c36135b631573c0295645683e9d1bd145baa6ebca15687455d0f817591a4ec0000019e4e5c3071
 ¦   ¦       ¦   ¦           fa065315c63365665f50935190689a7507eeb7fd9c726a647e21b155ae9efee70000019e3dd76d69
 ¦   ¦       ¦   ¦           
 ¦   ¦       ¦   +---miniflare-KVNamespaceObject
@@ -191,6 +196,17 @@ D:.
 ¦   ¦   package-lock.json
 ¦   ¦   package.json
 ¦   ¦   
+¦   +---docs
+¦   ¦   ¦   MOS360 PROJECT SOUL.md
+¦   ¦   ¦   WORKING_PRINCIPLES.md
+¦   ¦   ¦   
+¦   ¦   +---architecture
+¦   ¦           CONTENT_CONTRACTS.md
+¦   ¦           LESSON_BLOCK_STANDARD.md
+¦   ¦           MOS360_CANONICAL_STANDARD_FREEZE_G.md
+¦   ¦           PHASE_ROADMAP.md
+¦   ¦           RUNTIME_FLOW.md
+¦   ¦           
 ¦   +---node_modules
 ¦   ¦   ¦   .package-lock.json
 ¦   ¦   ¦   
@@ -1196,6 +1212,9 @@ D:.
 ¦       ¦   ¦   courseSourceRegistry.js
 ¦       ¦   ¦   
 ¦       ¦   +---courses
+¦       ¦   ¦   ¦   Gamar English Test.html
+¦       ¦   ¦   ¦   Generative AI.html
+¦       ¦   ¦   ¦   
 ¦       ¦   ¦   +---mos-excel-expert
 ¦       ¦   ¦   ¦   ¦   course.manifest.js
 ¦       ¦   ¦   ¦   ¦   
@@ -1312,8 +1331,36 @@ D:.
 ¦       ¦           loginPage.js
 ¦       ¦           
 ¦       +---runtime
+¦       ¦       aiCopilotEngine.js
+¦       ¦       aiSafetyEngine.js
+¦       ¦       aiWorkflowEngine.js
+¦       ¦       authoringTemplates.js
+¦       ¦       autonomousIntelligenceEngine.js
+¦       ¦       cmsRuntimeEngine.js
+¦       ¦       compositionEngine.js
+¦       ¦       contentGovernance.js
+¦       ¦       contentRegistry.js
 ¦       ¦       contentRuntimeEngine.js
+¦       ¦       contributionGovernanceEngine.js
+¦       ¦       deploymentArchitectureEngine.js
+¦       ¦       ecosystemIntegrationEngine.js
+¦       ¦       ecosystemIntelligenceEngine.js
+¦       ¦       eventIntelligenceEngine.js
+¦       ¦       learnerIntelligenceEngine.js
+¦       ¦       learningAnalyticsEngine.js
 ¦       ¦       learningRuntimeEngine.js
+¦       ¦       livePreviewEngine.js
+¦       ¦       productionObservabilityEngine.js
+¦       ¦       publishingPipelineEngine.js
+¦       ¦       releaseRuntimeEngine.js
+¦       ¦       runtimeBoundaryEngine.js
+¦       ¦       runtimeDiagnosticsEngine.js
+¦       ¦       runtimeIntegrityEngine.js
+¦       ¦       semanticAuthoringEngine.js
+¦       ¦       semanticComposerEngine.js
+¦       ¦       skillGraphEngine.js
+¦       ¦       skillProgressionEngine.js
+¦       ¦       visualComposerStudioEngine.js
 ¦       ¦       
 ¦       +---services
 ¦       ¦       adminApi.js

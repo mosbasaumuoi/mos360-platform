@@ -73,6 +73,39 @@ import {
 }
   from "./dashboardProgressEngine.js"; 
 
+import {
+
+  getActiveCourse,
+
+  getLearningMomentum
+
+}
+  from "../../engines/progressionEngine.js";  
+
+import {
+
+  getLastLesson
+
+}
+  from "../../engines/progressionEngine.js";
+
+import {
+
+  getLearnerIdentity
+
+}
+  from "../../engines/progressionEngine.js";  
+
+import {
+
+  getLearningRelationship,
+
+  getRelationshipMessage
+
+}
+  from "../../engines/progressionEngine.js";  
+
+
 export async function renderDashboardPage() {
 
   // ========================================
@@ -154,6 +187,57 @@ export async function renderDashboardPage() {
     );
 
   // ========================================
+  // ACTIVE COURSE
+  // ========================================
+
+  const activeCourseRuntime =
+
+    getActiveCourse();
+
+  const activeCourse =
+
+    courses.find(
+
+      course =>
+
+        course.id ===
+
+        activeCourseRuntime?.courseId
+    )
+
+    ||
+
+    courses[0];
+
+  // ========================================
+  // ACTIVE PROGRESS
+  // ========================================
+
+  const activeProgress =
+
+    activeCourse
+
+      ? getCourseProgress({
+
+        courseId:
+          activeCourse.id,
+
+        totalLessons:
+          activeCourse.lessons
+            ?.length || 0
+      })
+
+      : {
+
+        progressPercent: 0,
+
+        completedCount: 0,
+
+        totalLessons: 0
+      };
+
+  
+  // ========================================
   // COMPLETED COURSES
   // ========================================
 
@@ -198,6 +282,106 @@ export async function renderDashboardPage() {
 
   const streak =
     getUserStreak();
+
+  // ========================================
+  // MOMENTUM
+  // ========================================
+
+  const momentum =
+
+    getLearningMomentum({
+
+      streak,
+
+      progressPercent:
+        activeProgress.progressPercent
+    });  
+
+  // ========================================
+  // LEARNER IDENTITY
+  // ========================================
+
+  const learnerIdentity =
+
+    getLearnerIdentity({
+
+      streak,
+
+      progressPercent:
+        activeProgress.progressPercent,
+
+      completedLessons:
+        activeProgress.completedCount
+    }); 
+
+  // ========================================
+  // RELATIONSHIP MEMORY
+  // ========================================
+
+  const relationshipMemory =
+
+    getLearningRelationship();
+
+  const relationshipState =
+
+    getRelationshipMessage(
+      relationshipMemory
+    );  
+  
+  // ========================================
+  // LAST LESSON
+  // ========================================
+
+  const lastLessonRuntime =
+
+    getLastLesson();
+
+  // ========================================
+  // NEXT LESSON
+  // ========================================
+
+  let recommendedLesson = null;
+
+  if (
+
+    activeCourse &&
+    lastLessonRuntime
+
+  ) {
+
+    const currentIndex =
+
+      activeCourse.lessons.findIndex(
+
+        lesson =>
+
+          lesson.id ===
+          lastLessonRuntime.lessonId
+      );
+
+    recommendedLesson =
+
+      activeCourse.lessons[
+      currentIndex + 1
+      ];
+  }
+
+  // ========================================
+  // FALLBACK
+  // ========================================
+
+  if (
+
+    !recommendedLesson
+    &&
+    activeCourse?.lessons?.length
+
+  ) {
+
+    recommendedLesson =
+
+      activeCourse.lessons[0];
+  }  
 
   logDashboard(
     "dashboard rendered",
@@ -512,7 +696,136 @@ export async function renderDashboardPage() {
 
   const content = `
 
-    <div class="page">
+  <!-- LEARNING CONTINUITY -->
+
+<section class="dashboard-learning-focus">
+
+  <div class="active-course-shell">
+
+    <div class="active-course-label">
+
+  ${learnerIdentity.title}
+
+    </div>
+
+    <div class="active-course-label">
+
+      CONTINUE LEARNING
+
+    </div>
+
+    <h2>
+
+      ${activeCourse?.title || "Bắt đầu hành trình học tập"}
+
+    </h2>
+
+    <p>
+
+        ${learnerIdentity.message}
+
+    </p>
+
+    <!-- RELATIONSHIP CONTINUITY -->
+
+  <div class="learning-momentum-card">
+
+  <div class="active-course-label">
+
+    LEARNING CONTINUITY
+
+  </div>
+
+  <p>
+
+    ${relationshipState.message}
+
+  </p>
+
+    </div>
+
+    <div class="learning-progress-shell">
+
+      <div class="learning-progress-top">
+
+        <span>
+
+          ${activeProgress.completedCount}
+          /
+          ${activeProgress.totalLessons}
+          lessons
+
+        </span>
+
+        <strong>
+
+          ${activeProgress.progressPercent}%
+
+        </strong>
+
+      </div>
+
+      <div class="learning-progress-track">
+
+        <div
+          class="learning-progress-fill"
+          style="
+            width:
+            ${activeProgress.progressPercent}%
+          "
+        ></div>
+
+      </div>
+
+    </div>
+
+    <!-- NEXT RECOMMENDATION -->
+
+${recommendedLesson ? `
+
+<div class="learning-momentum-card">
+
+  <div class="active-course-label">
+
+    NEXT FOCUS
+  </div>
+
+  <h3>
+
+    ${recommendedLesson.title}
+
+  </h3>
+
+  <p>
+
+    Tiếp tục momentum học tập với
+    bài học tiếp theo được đề xuất.
+
+  </p>
+
+</div>
+
+` : ""}
+
+
+    ${activeCourse ? `
+
+<a
+  href="/learn/${activeCourse.id}/${activeCourse.lessons?.[0]?.id || ""}"
+  class="continue-learning-btn"
+>
+
+  ▶ Tiếp tục học
+
+</a>
+
+    ` : ""}
+
+  </div>
+
+</section>  
+    
+  <div class="page">
 
                   <div class="dashboard-hero">
 

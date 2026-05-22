@@ -1,10 +1,6 @@
 // ============================================
-// SPREADSHEET LESSON SCHEMA
-// Visual spreadsheet content pipeline schema
-// ============================================
-
-// ============================================
-// COLUMN MAP
+// PHASE H SPREADSHEET SCHEMA
+// Block-native runtime schema
 // ============================================
 
 export const SPREADSHEET_LESSON_SCHEMA = {
@@ -13,55 +9,23 @@ export const SPREADSHEET_LESSON_SCHEMA = {
         "id",
 
     courseId:
-        "course_id",
+        "courseId",
 
     title:
         "title",
 
-    description:
-        "description",
+    blockType:
+        "blockType",
 
-    duration:
-        "duration",
+    content:
+        "content",
 
-    difficulty:
-        "difficulty",
+    metadata:
+        "metadata",
 
-    workflowSteps:
-        "workflow_steps",
+    priority:
+        "priority",
 
-    tips:
-        "tips",
-
-    practicalContent:
-        "practical_content",
-
-    quizQuestion:
-        "quiz_question",
-
-    quizOptions:
-        "quiz_options",
-
-    quizCorrectAnswer:
-        "quiz_correct_answer",
-
-    resources:
-        "resources"   
-         
+    order:
+        "order"
 };
-
-// ============================================
-// ARRAY SEPARATOR
-// ============================================
-
-export const SPREADSHEET_ARRAY_SEPARATOR =
-
-    "|";
-
-// ============================================
-// QUIZ OPTION SEPARATOR
-// ============================================
-
-export const QUIZ_OPTION_SEPARATOR =
-
-    ";";

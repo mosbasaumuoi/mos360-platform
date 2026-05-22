@@ -1,212 +1,339 @@
 // ============================================
 // SPREADSHEET LESSON TRANSFORMER
-// Spreadsheet -> semantic lesson pipeline
+// Spreadsheet -> semantic block runtime
 // ============================================
 
 import {
 
-    SPREADSHEET_LESSON_SCHEMA,
-
-    SPREADSHEET_ARRAY_SEPARATOR,
-
-    QUIZ_OPTION_SEPARATOR
+    SPREADSHEET_LESSON_SCHEMA
 
 }
-    from "./spreadsheetLessonSchema.js";
+
+from "./spreadsheetLessonSchema.js";
 
 // ============================================
-// ARRAY FIELD
+// YOUTUBE NORMALIZER
 // ============================================
 
-function parseArrayField(
+function normalizeYoutubeUrl(
 
-    value
+    url = ""
 
 ) {
 
-    if (!value) {
-        return [];
+    if (!url) {
+        return "";
     }
 
-    return String(value)
+    // ========================================
+    // ALREADY EMBED
+    // ========================================
 
-        .split(
-            SPREADSHEET_ARRAY_SEPARATOR
+    if (
+
+        url.includes(
+            "/embed/"
         )
 
-        .map(
-            item => item.trim()
-        )
+    ) {
 
-        .filter(Boolean);
+        return url;
+    }
+
+    // ========================================
+    // WATCH URL
+    // ========================================
+
+    const watchMatch =
+
+        url.match(
+
+            /v=([^&]+)/
+
+        );
+
+    if (watchMatch) {
+
+        return `https://www.youtube.com/embed/${watchMatch[1]}`;
+    }
+
+    // ========================================
+    // SHORT URL
+    // ========================================
+
+    const shortMatch =
+
+        url.match(
+
+            /youtu\.be\/([^?]+)/
+
+        );
+
+    if (shortMatch) {
+
+        return `https://www.youtube.com/embed/${shortMatch[1]}`;
+    }
+
+    return url;
 }
 
 // ============================================
-// QUIZ
+// CREATE BLOCK
 // ============================================
 
-function createQuiz(
+function createBlock(
 
     row
 
 ) {
 
-    if (
+    const type =
 
-        !row[
-        SPREADSHEET_LESSON_SCHEMA.quizQuestion
-        ]
+        row.blockType;
 
-    ) {
+    const content =
 
-        return [];
+        row.content || "";
+
+    // ========================================
+    // VIDEO
+    // ========================================
+
+    if (type === "video") {
+
+        return {
+
+            type:
+                "video",
+
+            priority:
+                row.priority || "critical",
+
+            title:
+                row.title || "Lesson Video",
+
+            videoUrl:
+                normalizeYoutubeUrl(
+                    content
+                )
+        };
     }
 
-    return [
+    // ========================================
+    // WORKFLOW
+    // ========================================
 
-        {
+    if (type === "workflow") {
 
-            question:
+        return {
 
-                row[
-                SPREADSHEET_LESSON_SCHEMA.quizQuestion
-                ],
+            type:
+                "workflow",
 
-            options:
+            priority:
+                row.priority || "primary",
 
-                String(
+            steps:
 
-                    row[
-                    SPREADSHEET_LESSON_SCHEMA.quizOptions
-                    ] || ""
+                String(content)
 
-                )
+                    .split(";")
 
-                    .split(
-                        QUIZ_OPTION_SEPARATOR
+                    .map(
+                        step => step.trim()
                     )
+
+                    .filter(Boolean)
+        };
+    }
+
+    // ========================================
+    // CALLOUT
+    // ========================================
+
+    if (type === "callout") {
+
+        return {
+
+            type:
+                "callout",
+
+            variant:
+                "tip",
+
+            priority:
+                row.priority || "secondary",
+
+            title:
+                "Mẹo thực hành",
+
+            content
+        };
+    }
+
+    // ========================================
+    // PRACTICE
+    // ========================================
+
+    if (type === "practice") {
+
+        return {
+
+            type:
+                "practice",
+
+            priority:
+                row.priority || "primary",
+
+            title:
+                "Bài tập thực hành",
+
+            tasks:
+
+                String(content)
+
+                    .split(";")
 
                     .map(
                         item => item.trim()
                     )
 
-                    .filter(Boolean),
-
-            correctAnswer:
-
-                Number(
-
-                    row[
-                    SPREADSHEET_LESSON_SCHEMA.quizCorrectAnswer
-                    ] || 0
-
-                )
-        }
-    ];
-}
-
-// ============================================
-// PARSE RESOURCES
-// ============================================
-
-function parseResources(
-
-    value
-
-) {
-
-    if (!value) {
-
-        return [];
+                    .filter(Boolean)
+        };
     }
 
-    try {
+    // ========================================
+    // CHECKPOINT
+    // ========================================
 
-        return JSON.parse(value);
+    if (type === "checkpoint") {
 
-    } catch {
+        return {
 
-        return [];
+            type:
+                "checkpoint",
+
+            priority:
+                row.priority || "secondary",
+
+            title:
+                "Learning Checkpoint",
+
+            content
+        };
     }
-}
 
-// ============================================
-// TRANSFORM SPREADSHEET ROW
-// ============================================
-
-export function transformSpreadsheetLesson(
-
-    row
-
-) {
+    // ========================================
+    // DEFAULT TEXT
+    // ========================================
 
     return {
 
-        id:
-            row[
-            SPREADSHEET_LESSON_SCHEMA.id
-            ],
+        type:
+            "text",
 
-        courseId:
-            row[
-            SPREADSHEET_LESSON_SCHEMA.courseId
-            ],
+        priority:
+            row.priority || "primary",
 
-        title:
-            row[
-            SPREADSHEET_LESSON_SCHEMA.title
-            ],
-
-        description:
-            row[
-            SPREADSHEET_LESSON_SCHEMA.description
-            ],
-
-        duration:
-            row[
-            SPREADSHEET_LESSON_SCHEMA.duration
-            ],
-
-        difficulty:
-            row[
-            SPREADSHEET_LESSON_SCHEMA.difficulty
-            ],
-
-        workflowSteps:
-
-            parseArrayField(
-
-                row[
-                SPREADSHEET_LESSON_SCHEMA.workflowSteps
-                ]
-            ),
-
-        tips:
-
-            parseArrayField(
-
-                row[
-                SPREADSHEET_LESSON_SCHEMA.tips
-                ]
-            ),
-
-        practicalContent:
-
-            row[
-            SPREADSHEET_LESSON_SCHEMA.practicalContent
-            ],
-
-        resources:
-
-            parseResources(
-
-                row[
-                SPREADSHEET_LESSON_SCHEMA.resources
-                ]
-            ),    
-
-        quiz:
-            createQuiz(row)
-            
+        content
     };
+}
+
+// ============================================
+// GROUP LESSONS
+// ============================================
+
+function groupLessons(
+
+    rows = []
+
+) {
+
+    const grouped = {};
+
+    rows.forEach(row => {
+
+        const lessonId =
+
+            row.id;
+
+        if (!grouped[lessonId]) {
+
+            grouped[lessonId] = [];
+        }
+
+        grouped[lessonId].push(row);
+    });
+
+    return grouped;
+}
+
+// ============================================
+// TRANSFORM SPREADSHEET LESSONS
+// ============================================
+
+export function transformSpreadsheetLessons(
+
+    rows = []
+
+) {
+
+    const grouped =
+
+        groupLessons(rows);
+
+    return Object.values(grouped)
+
+        .map(lessonRows => {
+
+            const first =
+
+                lessonRows[0];
+
+            return {
+
+                id:
+                    first.id,
+
+                courseId:
+                    first.courseId,
+
+                title:
+                    first.title,
+
+                description:
+                    "Bài học thực hành Office",
+
+                duration:
+                    "15 phút",
+
+                difficulty:
+                    "beginner",
+
+                version:
+                    "phase-h-semantic-runtime",
+
+                order:
+                    1,
+
+                blocks:
+
+                    lessonRows
+
+                        .sort(
+
+                            (a, b) =>
+
+                                Number(a.order || 0)
+                                -
+                                Number(b.order || 0)
+                        )
+
+                        .map(
+                            createBlock
+                        ),
+
+                quiz: []
+            };
+        });
 }

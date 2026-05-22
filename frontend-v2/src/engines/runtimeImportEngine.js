@@ -2,6 +2,14 @@
 // RUNTIME IMPORT ENGINE
 // Normalize imported runtime content
 // ============================================
+import {
+
+    transformSpreadsheetLessons
+
+}
+
+from "../content/pipeline/spreadsheetLessonTransformer.js";
+
 
 const IMPORT_COURSES_KEY =
     "mos360_imported_courses";
@@ -91,13 +99,23 @@ function normalizeCourse(rawCourse = {}) {
 
         lessons:
 
-            Array.isArray(
-                course.lessons
-            )
+    getImportedLessons()
 
-                ? course.lessons
+        .filter(
 
-                : [],
+            lesson =>
+
+                lesson.courseId === id
+        )
+
+        .map(
+
+            lesson => ({
+
+                id:
+                    lesson.id
+            })
+        ),
 
         // ======================================
         // OPTIONAL
@@ -184,16 +202,66 @@ function normalizeCourse(rawCourse = {}) {
 // NORMALIZE LESSON
 // ============================================
 
+// ============================================
+// NORMALIZE LESSON
+// Phase H block-native runtime
+// ============================================
+
 function normalizeLesson(rawLesson = {}) {
 
     const lesson =
         cleanObject(rawLesson);
 
-    return {
+    // ========================================
+    // BLOCKS
+    // ========================================
 
-        // ======================================
-        // REQUIRED
-        // ======================================
+    const blocks =
+
+        Array.isArray(
+            lesson.blocks
+        )
+
+            ? lesson.blocks
+
+            : [];
+
+    // ========================================
+    // VIDEO NORMALIZATION
+    // ========================================
+
+    const normalizedBlocks =
+
+        blocks.map(block => {
+
+            // ==================================
+            // VIDEO
+            // ==================================
+
+            if (block.type === "video") {
+
+                return {
+
+                    ...block,
+
+                    videoUrl:
+
+                        block.videoUrl ||
+
+                        block.content ||
+
+                        ""
+                };
+            }
+
+            return block;
+        });
+
+    // ========================================
+    // NORMALIZED LESSON
+    // ========================================
+
+    return {
 
         id:
 
@@ -217,30 +285,9 @@ function normalizeLesson(rawLesson = {}) {
             lesson.title ||
             "Untitled Lesson",
 
-        order:
-
-            Number(
-                lesson.order || 1
-            ),
-
-        xpReward:
-
-            Number(
-                lesson.xpReward || 10
-            ),
-
-        // ======================================
-        // OPTIONAL STRINGS
-        // ======================================
-
         description:
 
             lesson.description ||
-            "",
-
-        content:
-
-            lesson.content ||
             "",
 
         duration:
@@ -253,95 +300,33 @@ function normalizeLesson(rawLesson = {}) {
             lesson.difficulty ||
             "beginner",
 
-        videoUrl:
+        order:
 
-            lesson.videoUrl ||
-            lesson.video ||
-            "",
+            Number(
+                lesson.order || 1
+            ),
+
+        xpReward:
+
+            Number(
+                lesson.xpReward || 10
+            ),
 
         version:
 
             lesson.version ||
-            "1.0",
+            "phase-h-runtime",
 
-        // ======================================
-        // OPTIONAL ARRAYS
-        // ======================================
+        // ====================================
+        // BLOCK-NATIVE
+        // ====================================
 
-        workflowSteps:
+        blocks:
+            normalizedBlocks,
 
-            typeof lesson.workflowSteps === "string"
-
-                ? lesson.workflowSteps
-                    .split(";")
-                    .map(
-                        item => item.trim()
-                    )
-                    .filter(Boolean)
-
-                : [],
-
-        practicalNotes:
-
-            typeof lesson.practicalNotes === "string"
-
-                ? lesson.practicalNotes
-                    .split(";")
-                    .map(
-                        item => item.trim()
-                    )
-                    .filter(Boolean)
-
-                : [],
-
-        commonMistakes:
-
-            typeof lesson.commonMistakes === "string"
-
-                ? lesson.commonMistakes
-                    .split(";")
-                    .map(
-                        item => item.trim()
-                    )
-                    .filter(Boolean)
-
-                : [],
-
-        objectives:
-
-            typeof lesson.objectives === "string"
-
-                ? lesson.objectives
-                    .split(";")
-                    .map(
-                        item => item.trim()
-                    )
-                    .filter(Boolean)
-
-                : [],
-
-        tags:
-
-            typeof lesson.tags === "string"
-
-                ? lesson.tags
-                    .split(";")
-                    .map(
-                        item => item.trim()
-                    )
-                    .filter(Boolean)
-
-                : [],
-
-        resources:
-
-            Array.isArray(
-                lesson.resources
-            )
-
-                ? lesson.resources
-
-                : [],
+        // ====================================
+        // QUIZ
+        // ====================================
 
         quiz:
 
@@ -382,6 +367,11 @@ export function saveImportedCourses(
 
         JSON.stringify(normalized)
     );
+
+    const importedLessons =
+
+    getImportedLessons();
+
 }
 
 // ============================================
@@ -413,16 +403,32 @@ export function saveImportedLessons(
     lessons = []
 ) {
 
-    const normalized =
+    // ========================================
+// PHASE H TRANSFORM
+// ========================================
 
+const transformedLessons =
+
+    transformSpreadsheetLessons(
         lessons
-            .map(normalizeLesson)
-            .filter(
-                lesson =>
-                    lesson.id &&
-                    lesson.courseId
-            );
+    );
 
+// ========================================
+// NORMALIZE
+// ========================================
+
+const normalized =
+
+    transformedLessons
+
+        .map(normalizeLesson)
+
+        .filter(
+            lesson =>
+                lesson.id &&
+                lesson.courseId
+        );
+            
     console.log(
         "NORMALIZED LESSONS",
         normalized

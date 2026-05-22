@@ -1,17 +1,15 @@
 // ============================================
 // IMPORT SPREADSHEET LESSONS
-// Bulk spreadsheet lesson pipeline
+// Phase H block-native import runtime
 // ============================================
 
 import {
-    transformSpreadsheetLesson
-}
-    from "./spreadsheetLessonTransformer.js";
 
-import {
-    importDataLessons
+    transformSpreadsheetLessons
+
 }
-    from "./importDataLessons.js";
+
+from "./spreadsheetLessonTransformer.js";
 
 // ============================================
 // IMPORT SPREADSHEET LESSONS
@@ -23,21 +21,24 @@ export function importSpreadsheetLessons(
 
 ) {
 
-    // ========================================
-    // TRANSFORM
-    // ========================================
+    const importedLessons =
 
-    const transformedLessons =
-
-        rows.map(
-            transformSpreadsheetLesson
+        transformSpreadsheetLessons(
+            rows
         );
 
-    // ========================================
-    // IMPORT
-    // ========================================
+    return {
 
-    return importDataLessons(
-        transformedLessons
-    );
+        ok: true,
+
+        importedLessons,
+
+        rejectedLessons: [],
+
+        totalImported:
+            importedLessons.length,
+
+        totalRejected:
+            0
+    };
 }

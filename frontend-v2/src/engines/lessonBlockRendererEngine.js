@@ -81,7 +81,7 @@ export function renderLessonBlock(
                 class="lesson-video-status"
             >
 
-                Sẵn sàng học
+                Video bài học
 
             </div>
 
@@ -93,30 +93,7 @@ export function renderLessonBlock(
             title="${block.title || ""}"
             allowfullscreen
         ></iframe>
-
-        <div class="lesson-video-controls">
-
-            <button
-                id="playVideoBtn"
-                class="lesson-video-play-btn"
-            >
-
-                ▶
-
-            </button>
-
-            <div class="video-progress">
-
-                <div
-                    class="video-progress-fill"
-                ></div>
-
-                </div>
-
-            </div>
-
-        </div>
-
+        
         </section>
 
     `;

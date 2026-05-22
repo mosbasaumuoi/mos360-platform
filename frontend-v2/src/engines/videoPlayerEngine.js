@@ -1,18 +1,21 @@
 // ============================================
 // MOS360 VIDEO PLAYER ENGINE
-// Lesson video runtime
+// Lesson completion runtime
 // ============================================
 
 import {
+
     completeLesson
+
 }
-    from "./lessonCompletionEngine.js";
+
+from "./lessonCompletionEngine.js";
 
 // ============================================
 // BIND VIDEO PLAYER
 // ============================================
 
-export function bindVideoPlayer({
+export async function bindVideoPlayer({
 
     lesson,
     course,
@@ -23,11 +26,9 @@ export function bindVideoPlayer({
 
 }) {
 
-    const playBtn =
-
-        document.querySelector(
-            "#playVideoBtn"
-        );
+    // ========================================
+    // VIDEO STATUS
+    // ========================================
 
     const videoStatus =
 
@@ -35,131 +36,103 @@ export function bindVideoPlayer({
             "#videoStatus"
         );
 
-    const progressFill =
+    if (!videoStatus) {
+        return;
+    }
 
-        document.querySelector(
-            ".video-progress-fill"
+    // ========================================
+    // QUIZ MODE
+    // ========================================
+
+    const hasQuiz =
+
+        lesson.quiz &&
+        lesson.quiz.length > 0;
+
+    // ========================================
+    // REQUIRE QUIZ COMPLETION
+    // ========================================
+
+    if (hasQuiz) {
+
+        videoStatus.innerText =
+
+            "Hoàn thành quiz để kết thúc bài học";
+
+        console.log(
+
+            "[MOS360:VIDEO] quiz required for completion"
         );
-
-    if (
-
-        !playBtn
-        ||
-        !videoStatus
-        ||
-        !progressFill
-
-    ) {
 
         return;
     }
 
-    let playing = false;
+    // ========================================
+    // VIDEO ONLY LESSON
+    // ========================================
 
-    let progress = 0;
+    videoStatus.innerText =
 
-    playBtn.onclick = async () => {
+        "Xem video để hoàn thành bài học";
 
-        // ======================================
-        // PREVENT DOUBLE PLAY
-        // ======================================
+    // ========================================
+    // AUTO COMPLETE DELAY
+    // ========================================
 
-        if (playing) {
+    setTimeout(async () => {
+
+        // ====================================
+        // FIRST COMPLETION ONLY
+        // ====================================
+
+        const firstCompletion =
+
+            !completedLessons.includes(
+                lessonId
+            );
+
+        if (!firstCompletion) {
             return;
         }
 
-        playing = true;
+        // ====================================
+        // COMPLETE LESSON
+        // ====================================
 
-        progress = 0;
+        completedLessons =
 
-        // ======================================
-        // RESET UI
-        // ======================================
+            await completeLesson({
 
-        progressFill.style.width =
-            "0%";
+                lesson,
+
+                course,
+
+                lessonId,
+
+                courseId
+            });
+
+        // ====================================
+        // UPDATE STATUS
+        // ====================================
 
         videoStatus.innerText =
-            "Playing lesson...";
 
-        playBtn.innerHTML =
-            "⏸";
+            "✅ Đã hoàn thành bài học";
 
-        // ======================================
-        // VIDEO LOOP
-        // ======================================
+        console.log(
 
-        const interval =
+            "[MOS360:VIDEO] lesson completed"
+        );
 
-            setInterval(async () => {
+        // ====================================
+        // RERENDER
+        // ====================================
 
-                progress += 1;
+        if (onComplete) {
 
-                progressFill.style.width =
+            onComplete();
+        }
 
-                    `${progress}%`;
-
-                // ==================================
-                // FINISH
-                // ==================================
-
-                if (progress >= 100) {
-
-                    clearInterval(
-                        interval
-                    );
-
-                    // ================================
-                    // REPLAY MODE
-                    // ================================
-
-                    playBtn.innerHTML =
-                        "↻";
-
-                    videoStatus.innerText =
-
-                        "✅ Hoàn thành bài học • Bạn đang tiến bộ rất tốt";
-
-                    // ================================
-                    // FIRST COMPLETION ONLY
-                    // ================================
-
-                    const firstCompletion =
-
-                        !completedLessons.includes(
-                            lessonId
-                        );
-
-                    if (firstCompletion) {
-
-                        completedLessons =
-
-                            await completeLesson({
-
-                                lesson,
-
-                                course,
-
-                                lessonId,
-
-                                courseId
-
-                            });
-                    }
-
-                    playing = false;
-
-                    // ================================
-                    // RERENDER PAGE
-                    // ================================
-
-                    if (onComplete) {
-
-                        onComplete();
-
-                    }
-                }
-
-            }, 60);
-    };
+    }, 30000);
 }

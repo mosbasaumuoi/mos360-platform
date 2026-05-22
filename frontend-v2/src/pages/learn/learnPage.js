@@ -358,6 +358,14 @@ export async function renderLearnPage() {
 
         </section>
 
+        <!-- ACTIONS -->
+
+        <section class="lesson-actions-section">
+
+         ${actionButton}
+
+        </section>
+        
         <!-- QUIZ -->
 
         ${renderQuizSection(

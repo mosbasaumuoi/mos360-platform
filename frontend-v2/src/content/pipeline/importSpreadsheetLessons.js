@@ -1,6 +1,6 @@
 // ============================================
 // IMPORT SPREADSHEET LESSONS
-// Phase H block-native import runtime
+// Canonical persistence runtime
 // ============================================
 
 import {
@@ -9,7 +9,7 @@ import {
 
 }
 
-from "./spreadsheetLessonTransformer.js";
+    from "./spreadsheetLessonTransformer.js";
 
 // ============================================
 // IMPORT SPREADSHEET LESSONS
@@ -27,11 +27,84 @@ export function importSpreadsheetLessons(
             rows
         );
 
+    // ========================================
+    // BUILD COURSE GRAPH
+    // ========================================
+
+    const courseMap = {};
+
+    importedLessons.forEach(
+
+        lesson => {
+
+            if (
+
+                !courseMap[
+                lesson.courseId
+                ]
+
+            ) {
+
+                courseMap[
+                    lesson.courseId
+                ] = [];
+            }
+
+            courseMap[
+                lesson.courseId
+            ].push({
+
+                id:
+                    lesson.id,
+
+                title:
+                    lesson.title,
+
+                description:
+                    lesson.description || "",
+
+                duration:
+                    lesson.duration || "15 phút",
+
+                order:
+                    lesson.order || 1
+            });
+        }
+    );
+
+    // ========================================
+    // SORT COURSE LESSONS
+    // ========================================
+
+    Object.values(
+
+        courseMap
+
+    ).forEach(
+
+        lessons => {
+
+            lessons.sort(
+
+                (a, b) =>
+
+                    Number(a.order || 0)
+
+                    -
+
+                    Number(b.order || 0)
+            );
+        }
+    );
+
     return {
 
         ok: true,
 
         importedLessons,
+
+        importedCourseGraphs:
+            courseMap,
 
         rejectedLessons: [],
 

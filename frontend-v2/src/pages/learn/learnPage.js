@@ -65,7 +65,13 @@ import {
   from "../../engines/lessonHeroEngine.js";
 
 import {
-  renderLessonBlocks
+
+  renderLessonBlocks,
+
+  bindPracticeMissions,
+
+  renderPracticeSection
+
 }
   from "../../engines/lessonBlockRendererEngine.js";
 
@@ -358,6 +364,14 @@ export async function renderLearnPage() {
 
         </section>
 
+        <!-- PRACTICE -->
+
+          ${renderPracticeSection(
+
+          normalizedLesson.practice || []
+
+          )}
+        
         <!-- ACTIONS -->
 
         <section class="lesson-actions-section">
@@ -422,6 +436,12 @@ export async function renderLearnPage() {
   // QUIZ
   // ========================================
 
+  // ========================================
+  // PRACTICE MISSIONS
+  // ========================================
+
+  bindPracticeMissions();
+  
   bindQuiz({
 
     quiz:

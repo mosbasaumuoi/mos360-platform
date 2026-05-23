@@ -21,9 +21,9 @@ export const LESSON_BLOCK_TYPES = [
 
     "quiz",
 
-    "practical",
+    "practice",
 
-    "tips",
+    "callout",
 
     "download",
 

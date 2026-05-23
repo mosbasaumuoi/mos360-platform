@@ -19,7 +19,7 @@ import {
     from "./quizNormalizer.js";
 
 // ============================================
-// RENDER QUIZ
+// RENDER QUIZ SECTION
 // ============================================
 
 export function renderQuizSection(
@@ -28,126 +28,82 @@ export function renderQuizSection(
 
 ) {
 
-    // ========================================
-    // NO QUIZ
-    // ========================================
-
     const normalizedQuiz =
 
         normalizeQuiz(
             quiz
         );
 
+    // ========================================
+    // EMPTY
+    // ========================================
+
     if (!normalizedQuiz.length) {
+
         return "";
     }
 
     // ========================================
-    // QUIZ HTML
-    // ========================================
-
-    const questionsHtml =
-
-        normalizedQuiz.map(
-
-            (
-                question,
-                index
-            ) => {
-
-                const optionsHtml =
-
-                    question.options.map(
-
-                        (
-                            option,
-                            optionIndex
-                        ) => {
-
-                            return `
-
-                <button
-
-                  class="quiz-option-btn"
-
-                  data-question="${index}"
-
-                  data-answer="${optionIndex}"
-
-                >
-
-                  ${option}
-
-                </button>
-
-              `;
-                        }
-
-                    ).join("");
-
-                return `
-
-          <div class="quiz-question-card">
-
-            <div class="quiz-question-number">
-
-              Câu ${index + 1}
-
-            </div>
-
-            <h3>
-
-              ${question.question}
-
-            </h3>
-
-            <div class="quiz-options">
-
-              ${optionsHtml}
-
-            </div>
-
-          </div>
-
-        `;
-            }
-
-        ).join("");
-
-    // ========================================
-    // SECTION
+    // QUIZ ENTRY
     // ========================================
 
     return `
 
-    <section class="lesson-quiz-section">
+        <section class="lesson-quiz-entry">
 
-      <div class="section-heading">
+            <div class="quiz-entry-shell">
 
-        <h2>
+                <div class="quiz-entry-top">
 
-          Củng cố kiến thức
+                    <div class="quiz-entry-icon">
 
-        </h2>
+                        🧠
 
-        <p>
+                    </div>
 
-          Trả lời nhanh vài câu hỏi ngắn
-          để ghi nhớ workflow Office tốt hơn.
+                    <div>
 
-        </p>
+                        <div class="quiz-entry-label">
 
-      </div>
+                            KNOWLEDGE CHECK
 
-      <div class="quiz-questions">
+                        </div>
 
-        ${questionsHtml}
+                        <h2>
 
-      </div>
+                            Kiểm tra kiến thức
 
-    </section>
+                        </h2>
 
-  `;
+                    </div>
+
+                </div>
+
+                <p class="quiz-entry-description">
+
+                    Hoàn thành ${normalizedQuiz.length}
+                    câu hỏi ngắn để củng cố workflow
+                    và xác nhận bạn đã hiểu bài học.
+
+                </p>
+
+                <button
+
+                    id="startQuizBtn"
+
+                    class="start-quiz-btn"
+
+                >
+
+                    Bắt đầu kiểm tra
+
+                </button>
+
+            </div>
+
+        </section>
+
+    `;
 }
 
 // ============================================
@@ -167,109 +123,276 @@ export function bindQuiz({
         );
 
     if (!normalizedQuiz.length) {
+
         return;
     }
 
-    document
-        .querySelectorAll(
-            ".quiz-option-btn"
-        )
+    // ========================================
+    // START BUTTON
+    // ========================================
 
-        .forEach((button) => {
+    const startBtn =
 
-            button.onclick = () => {
+        document.querySelector(
+            "#startQuizBtn"
+        );
 
-                const questionIndex =
+    if (!startBtn) {
 
-                    Number(
-                        button.dataset.question
-                    );
+        return;
+    }
 
-                const answerIndex =
+    // ========================================
+    // OPEN QUIZ
+    // ========================================
 
-                    Number(
-                        button.dataset.answer
-                    );
+    startBtn.onclick = () => {
 
-                const question =
+        let currentQuestion = 0;
 
-                    normalizedQuiz[
-                    questionIndex
-                    ];
+        let score = 0;
 
-                // ====================================
-                // VALIDATE QUESTION
-                // ====================================
+        renderQuizModal();
 
-                const validQuestion =
+        // ====================================
+        // RENDER QUESTION
+        // ====================================
 
-                    validateQuizQuestion(
-                        question
-                    );
+        function renderQuestion() {
 
-                if (!validQuestion) {
+            const question =
 
-                    return;
-                }    
+                normalizedQuiz[
+                currentQuestion
+                ];
 
+            const optionsHtml =
 
-                const correct =
+                question.options.map(
 
-                    answerIndex ===
-                    question.correctAnswer;
+                    (
+                        option,
+                        index
+                    ) => `
 
-                // ====================================
-                // RESET QUESTION
-                // ====================================
+                        <button
 
-                document
-                    .querySelectorAll(
+                            class="focus-quiz-option"
 
-                        `[data-question="${questionIndex}"]`
+                            data-answer="${index}"
 
-                    )
+                        >
 
-                    .forEach((item) => {
+                            ${option}
 
-                        item.classList.remove(
-                            "correct",
-                            "wrong"
-                        );
+                        </button>
 
-                    });
+                    `
 
-                // ====================================
-                // APPLY RESULT
-                // ====================================
+                ).join("");
 
-                button.classList.add(
+            document.querySelector(
 
-                    correct
-                        ? "correct"
-                        : "wrong"
+                ".focus-quiz-body"
 
+            ).innerHTML = `
+
+                <div class="focus-quiz-progress">
+
+                    Câu ${currentQuestion + 1}
+                    / ${normalizedQuiz.length}
+
+                </div>
+
+                <h2 class="focus-quiz-question">
+
+                    ${question.question}
+
+                </h2>
+
+                <div class="focus-quiz-options">
+
+                    ${optionsHtml}
+
+                </div>
+
+            `;
+
+            bindAnswers(question);
+        }
+
+        // ====================================
+        // ANSWERS
+        // ====================================
+
+        function bindAnswers(question) {
+
+            document
+
+                .querySelectorAll(
+                    ".focus-quiz-option"
+                )
+
+                .forEach((button) => {
+
+                    button.onclick = () => {
+
+                        const answer =
+
+                            Number(
+                                button.dataset.answer
+                            );
+
+                        const correct =
+
+                            answer ===
+                            question.correctAnswer;
+
+                        if (correct) {
+
+                            score += 1;
+
+                            button.classList.add(
+                                "correct"
+                            );
+
+                        } else {
+
+                            button.classList.add(
+                                "wrong"
+                            );
+
+                        }
+
+                        setTimeout(() => {
+
+                            currentQuestion += 1;
+
+                            // ====================
+                            // FINISH
+                            // ====================
+
+                            if (
+
+                                currentQuestion >=
+                                normalizedQuiz.length
+
+                            ) {
+
+                                renderQuizResult();
+
+                                return;
+                            }
+
+                            renderQuestion();
+
+                        }, 700);
+                    };
+                });
+        }
+
+        // ====================================
+        // MODAL
+        // ====================================
+
+        function renderQuizModal() {
+
+            const overlay =
+
+                document.createElement(
+                    "div"
                 );
 
-                // ====================================
-                // FEEDBACK
-                // ====================================
+            overlay.className =
+                "focus-quiz-overlay";
 
-                showFeedback({
+            overlay.innerHTML = `
 
-                    type:
-                        correct
-                            ? "success"
-                            : "warning",
+                <div class="focus-quiz-modal">
 
-                    message:
+                    <div class="focus-quiz-body">
 
-                        correct
+                    </div>
 
-                            ? "✅ Chính xác • Bạn đang ghi nhớ rất tốt"
+                </div>
 
-                            : "💡 Chưa đúng • Hãy thử lại để củng cố workflow"
+            `;
 
-                });
+            document.body.appendChild(
+                overlay
+            );
+
+            document.body.style.overflow =
+                "hidden";
+
+            renderQuestion();
+        }
+
+        // ====================================
+        // RESULT
+        // ====================================
+
+        function renderQuizResult() {
+
+            document.querySelector(
+
+                ".focus-quiz-body"
+
+            ).innerHTML = `
+
+                <div class="focus-quiz-result">
+
+                    <div class="focus-quiz-score">
+
+                        ${score}
+                        / ${normalizedQuiz.length}
+
+                    </div>
+
+                    <h2>
+
+                        Hoàn thành kiểm tra
+
+                    </h2>
+
+                    <p>
+
+                        Bạn đang tiến bộ rất tốt.
+                        Hãy tiếp tục duy trì momentum học tập.
+
+                    </p>
+
+                    <button
+
+                        id="closeQuizBtn"
+
+                        class="close-quiz-btn"
+
+                    >
+
+                        Tiếp tục học
+
+                    </button>
+
+                </div>
+
+            `;
+
+            document.querySelector(
+
+                "#closeQuizBtn"
+
+            ).onclick = () => {
+
+                document
+                    .querySelector(
+                        ".focus-quiz-overlay"
+                    )
+                    ?.remove();
+
+                document.body.style.overflow =
+                    "";
             };
-        });
+        }
+    };
 }

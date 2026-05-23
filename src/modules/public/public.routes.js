@@ -1,19 +1,95 @@
-import { json } from "../../utils/response.js";
+import {
+  json
+}
+  from "../../utils/response.js";
+
 import {
   trackEvent
 }
   from "../tracking/tracking.service.js";
 
-export async function handlePublic(request, env, ctx, runtime) {
+import {
+  EVENT_TYPES
+}
+  from "../tracking/tracking.events.js";
 
-  const url = new URL(request.url);
-  const source = url.searchParams.get("source");
+export async function handlePublic(
+
+  request,
+  env
+
+) {
+
+  const url =
+
+    new URL(request.url);
+
+  const source =
+
+    url.searchParams.get(
+      "source"
+    );
 
   if (!source) {
-    return json("Missing source", 400);
+
+    return json(
+      "Missing source",
+      400
+    );
   }
 
-  await trackEvent(runtime, source);
+  // ======================================
+  // SOURCE WHITELIST
+  // ======================================
 
-  return json({ source });
+  const allowedSources = [
+
+    "homepage",
+    "landing",
+    "certificate",
+    "social",
+    "campaign"
+
+  ];
+
+  if (
+
+    !allowedSources.includes(
+      source
+    )
+
+  ) {
+
+    return json(
+      "Invalid source",
+      400
+    );
+  }
+
+  // ======================================
+  // TRACK
+  // ======================================
+
+  await trackEvent(
+
+    env,
+
+    {
+
+      type:
+        EVENT_TYPES.CERTIFICATE_VERIFIED,
+
+      metadata: {
+
+        source
+      }
+    }
+  );
+
+  return json({
+
+    ok: true,
+
+    source
+  });
 }

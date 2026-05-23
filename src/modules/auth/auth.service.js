@@ -32,14 +32,27 @@ export async function login(
   // DEMO AUTH
   // ========================================
 
+  // ========================================
+  // ENV AUTH
+  // ========================================
+
+  const adminEmail =
+    env.ADMIN_EMAIL;
+
+  const adminPassword =
+    env.ADMIN_PASSWORD;
+
   if (
-    email !== "admin@mos360.vn"
+
+    email !== adminEmail
     ||
-    password !== "123456"
+
+    password !== adminPassword
+
   ) {
 
     return null;
-  }
+  } 
 
   // ========================================
   // ENSURE USER EXISTS
@@ -92,7 +105,7 @@ export async function login(
         alg: "HS256"
       })
 
-      .setExpirationTime("2h")
+      .setExpirationTime("8h")
 
       .sign(
         encoder.encode(
@@ -120,7 +133,20 @@ export async function login(
 
     token,
 
-    user
+    user: {
+
+      id:
+        user.id,
+
+      email:
+        user.email,
+
+      role:
+        user.role,
+
+      name:
+        user.name
+    }
   };
 }
 

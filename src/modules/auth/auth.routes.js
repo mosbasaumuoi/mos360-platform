@@ -18,12 +18,7 @@ export async function handleLogin(
 
     const body =
       await request.json();
-
-    console.log(
-      "[LOGIN BODY]",
-      body
-    );
-
+   
     // ======================================
     // LOGIN
     // ======================================
@@ -34,11 +29,6 @@ export async function handleLogin(
         body.password,
         env
       );
-
-    console.log(
-      "[LOGIN RESULT]",
-      result
-    );
 
     // ======================================
     // INVALID

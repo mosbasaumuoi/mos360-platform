@@ -1,6 +1,6 @@
 // ============================================
 // BLOCK PRESETS
-// Reusable semantic lesson blocks
+// Canonical semantic lesson blocks
 // ============================================
 
 // ============================================
@@ -72,7 +72,7 @@ export function createWorkflowBlock({
 }
 
 // ============================================
-// TIPS BLOCK
+// CALLOUT BLOCK
 // ============================================
 
 export function createTipsBlock({
@@ -88,18 +88,23 @@ export function createTipsBlock({
     return {
 
         type:
-            "tips",
+            "callout",
 
         priority,
 
+        variant:
+            "tip",
+
         title,
 
-        items
+        content:
+
+            items.join("<br>")
     };
 }
 
 // ============================================
-// PRACTICAL BLOCK
+// PRACTICE BLOCK
 // ============================================
 
 export function createPracticalBlock({
@@ -113,11 +118,20 @@ export function createPracticalBlock({
     return {
 
         type:
-            "practical",
+            "practice",
 
         priority,
 
-        content
+        title:
+            "Áp dụng ngay",
+
+        tasks:
+
+            content
+
+                .split("\n")
+
+                .filter(Boolean)
     };
 }
 
@@ -144,7 +158,8 @@ export function createCheckpointBlock({
 
         title,
 
-        message
+        content:
+            message
     };
 }
 

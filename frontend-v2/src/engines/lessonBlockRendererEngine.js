@@ -66,7 +66,13 @@ export function renderLessonBlock(
     class="lesson-video-block cinematic-spacing"
 >
 
-    <div class="video-block-shell">
+    <div
+    class="video-block-shell"
+    style="
+        overflow: visible;
+        transform: none;
+    "
+>
 
         <div class="lesson-video-top">
 
@@ -88,10 +94,16 @@ export function renderLessonBlock(
         </div>
 
         <iframe
-            class="lesson-video-frame"
-            src="${block.videoUrl || ""}"
-            title="${block.title || ""}"
-            allowfullscreen
+    class="lesson-video-frame"
+    style="
+        position: relative;
+        z-index: 1;
+        border: none;
+    "
+    src="${block.videoUrl || ""}"
+    title="${block.title || ""}"
+    frameborder="0"
+    allowfullscreen
         ></iframe>
         
         </section>
@@ -240,52 +252,7 @@ export function renderLessonBlock(
         `;
     }
 
-    // ========================================
-    // PRACTICE
-    // ========================================
-
-    if (block.type === "practice") {
-
-        return `
-
-<section class="lesson-practice-block cinematic-spacing">
-
-    <div class="practice-shell">
-
-        <div class="practice-top">
-
-            <div class="practice-label">
-
-                THỰC HÀNH
-
-            </div>
-
-            <div class="practice-badge">
-
-                APPLY NOW
-            </div>
-
-        </div>
-
-        <h2>
-
-            ${block.title || ""}
-
-        </h2>
-
-        <div class="practice-content">
-
-            ${block.content || ""}
-
-        </div>
-
-    </div>
-
-</section>
-
-        `;
-    }
-
+    
     // ========================================
     // RESOURCE
     // ========================================
@@ -336,37 +303,7 @@ export function renderLessonBlock(
 
         `;
     }
-
-    // ========================================
-    // QUIZ
-    // ========================================
-
-    if (block.type === "quiz") {
-
-        return `
-
-<section class="lesson-quiz-block cinematic-spacing">
-
-    <div class="quiz-shell">
-
-        <div class="quiz-label">
-
-            QUICK CHECK
-        </div>
-
-        <h2>
-
-            Kiểm tra nhanh
-
-        </h2>
-
-    </div>
-
-</section>
-
-        `;
-    }
-
+    
     // ========================================
     // CHECKPOINT
     // ========================================
@@ -395,7 +332,7 @@ export function renderLessonBlock(
 
         <p>
 
-            ${block.message || ""}
+            ${block.content || ""}
 
         </p>
 
@@ -444,4 +381,126 @@ export function renderLessonBlocks(
                 )
         )
         .join("");
+}
+
+// ============================================
+// BIND PRACTICE MISSIONS
+// ============================================
+
+export function bindPracticeMissions() {
+
+    document
+
+        .querySelectorAll(
+            ".practice-mission-item"
+        )
+
+        .forEach((item) => {
+
+            item.onclick = () => {
+
+                item.classList.toggle(
+                    "completed"
+                );
+            };
+        });
+}
+
+// ============================================
+// RENDER PRACTICE SECTION
+// ============================================
+
+export function renderPracticeSection(
+
+    practice = []
+
+) {
+
+    if (
+
+        !Array.isArray(practice)
+        ||
+        !practice.length
+
+    ) {
+
+        return "";
+    }
+
+    return practice.map((item) => `
+
+<section class="lesson-practice-block cinematic-spacing">
+
+    <div class="practice-shell">
+
+        <div class="practice-top">
+
+            <div class="practice-label">
+
+                THỰC HÀNH
+
+            </div>
+
+            <div class="practice-badge">
+
+                APPLY NOW
+
+            </div>
+
+        </div>
+
+        <h2>
+
+            ${item.title || ""}
+
+        </h2>
+
+        <div class="practice-mission-list">
+
+            ${(item.tasks || [])
+
+            .map(
+
+                (
+                    task,
+                    taskIndex
+                ) => `
+
+<div
+    class="practice-mission-item"
+    data-mission="${taskIndex}"
+>
+
+    <button
+        class="practice-check-btn"
+    >
+
+        <span>
+
+            ✓
+
+        </span>
+
+    </button>
+
+    <div class="practice-mission-content">
+
+        ${task}
+
+    </div>
+
+</div>
+
+                    `
+            )
+
+            .join("")}
+
+        </div>
+
+    </div>
+
+</section>
+
+    `).join("");
 }

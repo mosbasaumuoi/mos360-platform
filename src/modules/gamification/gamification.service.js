@@ -32,6 +32,10 @@ export async function addXP(
     return user;
 }
 
+// ============================================
+// DAILY STREAK
+// ============================================
+
 export async function updateDailyStreak(
     env,
     email
@@ -67,15 +71,45 @@ export async function updateDailyStreak(
         user.progression.streak = 1;
     }
 
-    // ========================================
-    // NEXT DAY
-    // ========================================
+    else {
 
-    else if (
-        now - lastActive >= oneDay
-    ) {
+        const daysDiff =
 
-        user.progression.streak += 1;
+            Math.floor(
+
+                (now - lastActive)
+
+                /
+
+                oneDay
+            );
+
+        // ====================================
+        // SAME DAY
+        // ====================================
+
+        if (daysDiff <= 0) {
+
+            // keep streak
+        }
+
+        // ====================================
+        // NEXT DAY
+        // ====================================
+
+        else if (daysDiff === 1) {
+
+            user.progression.streak += 1;
+        }
+
+        // ====================================
+        // MISSED DAYS
+        // ====================================
+
+        else {
+
+            user.progression.streak = 1;
+        }
     }
 
     user.progression.lastActive =

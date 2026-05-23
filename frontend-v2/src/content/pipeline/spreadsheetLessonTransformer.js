@@ -54,7 +54,7 @@ function normalizeYoutubeUrl(
 
     if (watchMatch) {
 
-        return `https://www.youtube.com/embed/${watchMatch[1]}`;
+        return `https://www.youtube.com/embed/${watchMatch[1]}?rel=0&playsinline=1`;
     }
 
     // ========================================
@@ -68,31 +68,25 @@ function normalizeYoutubeUrl(
             /youtu\.be\/([^?]+)/
 
         );
-
+        
     if (shortMatch) {
 
-        return `https://www.youtube.com/embed/${shortMatch[1]}`;
+        return `https://www.youtube.com/embed/${shortMatch[1]}?rel=0&playsinline=1`;
     }
 
     return url;
 }
 
 // ============================================
-// CREATE BLOCK
+// CREATE SEMANTIC ENTRY
 // ============================================
 
-function createBlock(
-
-    row
-
-) {
+function createSemanticEntry(row) {
 
     const type =
-
         row.blockType;
 
     const content =
-
         row.content || "";
 
     // ========================================
@@ -103,19 +97,24 @@ function createBlock(
 
         return {
 
-            type:
-                "video",
+            entity: "block",
 
-            priority:
-                row.priority || "critical",
+            data: {
 
-            title:
-                row.title || "Lesson Video",
+                type:
+                    "video",
 
-            videoUrl:
-                normalizeYoutubeUrl(
-                    content
-                )
+                priority:
+                    row.priority || "critical",
+
+                title:
+                    row.title || "Lesson Video",
+
+                videoUrl:
+                    normalizeYoutubeUrl(
+                        content
+                    )
+            }
         };
     }
 
@@ -127,23 +126,32 @@ function createBlock(
 
         return {
 
-            type:
-                "workflow",
+            entity: "block",
 
-            priority:
-                row.priority || "primary",
+            data: {
 
-            steps:
+                type:
+                    "workflow",
 
-                String(content)
+                priority:
+                    row.priority || "primary",
 
-                    .split(";")
+                title:
+                    "Workflow",
 
-                    .map(
-                        step => step.trim()
-                    )
+                steps:
 
-                    .filter(Boolean)
+                    String(content)
+
+                        .split(";")
+
+                        .map(
+                            step =>
+                                step.trim()
+                        )
+
+                        .filter(Boolean)
+            }
         };
     }
 
@@ -153,21 +161,43 @@ function createBlock(
 
     if (type === "callout") {
 
+        let metadata = {};
+
+        try {
+
+            metadata =
+
+                typeof row.metadata === "string"
+
+                    ? JSON.parse(
+                        row.metadata
+                    )
+
+                    : row.metadata || {};
+
+        } catch { }
+
         return {
 
-            type:
-                "callout",
+            entity: "block",
 
-            variant:
-                "tip",
+            data: {
 
-            priority:
-                row.priority || "secondary",
+                type:
+                    "callout",
 
-            title:
-                "Mẹo thực hành",
+                variant:
+                    metadata.variant || "tip",
 
-            content
+                priority:
+                    row.priority || "secondary",
+
+                title:
+                    metadata.title ||
+                    "Mẹo thực hành",
+
+                content
+            }
         };
     }
 
@@ -177,28 +207,85 @@ function createBlock(
 
     if (type === "practice") {
 
-        return {
+        let metadata = {};
 
-            type:
-                "practice",
+        try {
 
-            priority:
-                row.priority || "primary",
+            metadata =
 
-            title:
-                "Bài tập thực hành",
+                typeof row.metadata === "string"
 
-            tasks:
-
-                String(content)
-
-                    .split(";")
-
-                    .map(
-                        item => item.trim()
+                    ? JSON.parse(
+                        row.metadata
                     )
 
-                    .filter(Boolean)
+                    : row.metadata || {};
+
+        } catch { }
+
+        return {
+
+            entity: "practice",
+
+            data: {
+
+                title:
+                    metadata.title ||
+                    "Bài tập thực hành",
+
+                tasks:
+
+                    String(content)
+
+                        .split(";")
+
+                        .map(
+                            task =>
+                                task.trim()
+                        )
+
+                        .filter(Boolean)
+            }
+        };
+    }
+
+    // ========================================
+    // QUIZ
+    // ========================================
+
+    if (type === "quiz") {
+
+        let metadata = {};
+
+        try {
+
+            metadata =
+
+                typeof row.metadata === "string"
+
+                    ? JSON.parse(
+                        row.metadata
+                    )
+
+                    : row.metadata || {};
+
+        } catch { }
+
+        return {
+
+            entity: "quiz",
+
+            data: {
+
+                question:
+                    metadata.question || "",
+
+                options:
+                    metadata.options || [],
+
+                correctAnswer:
+                    metadata.correct || 0
+            }
         };
     }
 
@@ -210,16 +297,21 @@ function createBlock(
 
         return {
 
-            type:
-                "checkpoint",
+            entity: "block",
 
-            priority:
-                row.priority || "secondary",
+            data: {
 
-            title:
-                "Learning Checkpoint",
+                type:
+                    "checkpoint",
 
-            content
+                priority:
+                    row.priority || "reinforcement",
+
+                title:
+                    "Learning Checkpoint",
+
+                content
+            }
         };
     }
 
@@ -229,13 +321,18 @@ function createBlock(
 
     return {
 
-        type:
-            "text",
+        entity: "block",
 
-        priority:
-            row.priority || "primary",
+        data: {
 
-        content
+            type:
+                "text",
+
+            priority:
+                row.priority || "primary",
+
+            content
+        }
     };
 }
 
@@ -290,7 +387,7 @@ export function transformSpreadsheetLessons(
 
                 lessonRows[0];
 
-            return {
+            const lesson = {
 
                 id:
                     first.id,
@@ -314,26 +411,95 @@ export function transformSpreadsheetLessons(
                     "phase-h-semantic-runtime",
 
                 order:
-                    1,
 
-                blocks:
+                    Number(
+                        first.lessonOrder || 1
+                    ),
 
-                    lessonRows
+                blocks: [],
 
-                        .sort(
+                quiz: [],
 
-                            (a, b) =>
-
-                                Number(a.order || 0)
-                                -
-                                Number(b.order || 0)
-                        )
-
-                        .map(
-                            createBlock
-                        ),
-
-                quiz: []
+                practice: []
             };
+
+            // ========================================
+            // BUILD SEMANTIC STRUCTURE
+            // ========================================
+
+            lessonRows
+
+                .sort(
+
+                    (a, b) =>
+
+                        Number(a.blockOrder || 0)
+                        -
+                        Number(b.blockOrder || 0)
+                )
+
+                .forEach((row) => {
+
+                    const semantic =
+
+                        createSemanticEntry(
+                            row
+                        );
+
+                    if (!semantic) {
+                        return;
+                    }
+
+                    // ====================================
+                    // BLOCK
+                    // ====================================
+
+                    if (
+
+                        semantic.entity === "block"
+
+                    ) {
+
+                        lesson.blocks.push(
+                            semantic.data
+                        );
+
+                        return;
+                    }
+
+                    // ====================================
+                    // QUIZ
+                    // ====================================
+
+                    if (
+
+                        semantic.entity === "quiz"
+
+                    ) {
+
+                        lesson.quiz.push(
+                            semantic.data
+                        );
+
+                        return;
+                    }
+
+                    // ====================================
+                    // PRACTICE
+                    // ====================================
+
+                    if (
+
+                        semantic.entity === "practice"
+
+                    ) {
+
+                        lesson.practice.push(
+                            semantic.data
+                        );
+                    }
+                });
+
+            return lesson;
         });
 }

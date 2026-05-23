@@ -1,6 +1,33 @@
+import {
+
+    cacheEngine
+
+}
+
+    from "../../runtime/cacheEngine.js";
+
+// ============================================
+// GET ANALYTICS
+// ============================================
+
 export async function getAnalytics(
     env
 ) {
+
+    // ========================================
+    // CACHE
+    // ========================================
+
+    const cached =
+
+        cacheEngine.get(
+            "analytics"
+        );
+
+    if (cached) {
+
+        return cached;
+    }
 
     // ========================================
     // USERS
@@ -24,51 +51,60 @@ export async function getAnalytics(
         await env.MOS360_CREDENTIALS_KV.list();
 
     // ========================================
-    // LESSON COMPLETIONS
+    // ANALYTICS
     // ========================================
 
     let lessonCompleted = 0;
 
-    for (const key of events.keys) {
-
-        const raw =
-            await env.MOS360_TRACKING_KV.get(
-                key.name
-            );
-
-        if (!raw) {
-            continue;
-        }
-
-        const event =
-            JSON.parse(raw);
-
-        if (
-            event.type ===
-            "LESSON_COMPLETED"
-        ) {
-
-            lessonCompleted += 1;
-        }
-    }
-
     const latestEvents = [];
 
-    for (const key of events.keys) {
+    // ========================================
+    // SINGLE PASS EVENT SCAN
+    // ========================================
 
-        const raw =
-            await env.MOS360_TRACKING_KV.get(
-                key.name
-            );
+    const eventPayloads =
 
-        if (!raw) {
-            continue;
-        }
+        await Promise.all(
 
-        latestEvents.push(
-            JSON.parse(raw)
+            events.keys.map(
+
+                async key => {
+
+                    const raw =
+
+                        await env
+                            .MOS360_TRACKING_KV
+                            .get(key.name);
+
+                    if (!raw) {
+                        return null;
+                    }
+
+                    return JSON.parse(raw);
+                }
+            )
         );
-    }
+
+    eventPayloads
+
+        .filter(Boolean)
+
+        .forEach(event => {
+
+            if (
+
+                event.type ===
+                "LESSON_COMPLETED"
+
+            ) {
+
+                lessonCompleted += 1;
+            }
+
+            latestEvents.push(
+                event
+            );
+        });
 
     latestEvents.sort(
 
@@ -76,26 +112,45 @@ export async function getAnalytics(
 
             b.createdAt - a.createdAt
     );
-    
-    const usersList = [];
 
-    for (const key of users.keys) {
+    // ========================================
+    // USERS LIST
+    // ========================================
 
-        const raw =
-            await env.MOS360_USERS_KV.get(
-                key.name
-            );
+    const usersPayloads =
 
-        if (!raw) {
-            continue;
-        }
+        await Promise.all(
 
-        usersList.push(
-            JSON.parse(raw)
+            users.keys.map(
+
+                async key => {
+
+                    const raw =
+
+                        await env
+                            .MOS360_USERS_KV
+                            .get(key.name);
+
+                    if (!raw) {
+                        return null;
+                    }
+
+                    return JSON.parse(raw);
+                }
+            )
         );
-    }
 
-    return {
+    const usersList =
+
+        usersPayloads.filter(
+            Boolean
+        );
+
+    // ========================================
+    // RESULT
+    // ========================================
+
+    const analytics = {
 
         totalUsers:
             users.keys.length,
@@ -112,7 +167,21 @@ export async function getAnalytics(
             latestEvents.slice(0, 10),
 
         users:
-            usersList    
-
+            usersList
     };
+
+    // ========================================
+    // CACHE RESULT
+    // ========================================
+
+    cacheEngine.set(
+
+        "analytics",
+
+        analytics,
+
+        1000 * 10
+    );
+
+    return analytics;
 }

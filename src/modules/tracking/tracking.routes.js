@@ -1,4 +1,6 @@
-import { json }
+import {
+    json
+}
     from "../../utils/response.js";
 
 import {
@@ -7,62 +9,116 @@ import {
     from "./tracking.service.js";
 
 import {
-    EVENT_TYPES
+    verifyToken
 }
-    from "./tracking.events.js";    
+    from "../auth/auth.service.js";
+
+// ============================================
+// TRACK EVENT
+// ============================================
 
 export async function handleTrackEvent(
+
     request,
     env
+
 ) {
 
     try {
 
+        // ======================================
+        // BODY
+        // ======================================
+
         const body =
             await request.json();
 
-        // ========================================
-        // EVENT TYPE VALIDATION
-        // ========================================
+        // ======================================
+        // AUTH
+        // ======================================
 
-        if (
+        const authHeader =
 
-            !Object.values(
-                EVENT_TYPES
-            ).includes(
-                body.type
-            )
+            request.headers.get(
+                "Authorization"
+            );
 
-        ) {
+        if (!authHeader) {
 
             return json(
-                "Invalid event type",
-                400
+                "Unauthorized",
+                401
             );
-        }    
+        }
 
-        console.log(
+        const token =
 
-            "[MOS360:TRACKING]",
+            authHeader.replace(
+                "Bearer ",
+                ""
+            );
 
-            body.type,
+        const user =
 
-            body
+            await verifyToken(
+                token,
+                env
+            );
 
-        );
+        if (!user) {
+
+            return json(
+                "Invalid token",
+                401
+            );
+        }
+
+        // ======================================
+        // TRACK EVENT
+        // ======================================
 
         const event =
+
             await trackEvent(
+
                 env,
-                body
+
+                {
+
+                    ...body,
+
+                    userId:
+                        user.userId,
+
+                    email:
+                        user.email
+                }
             );
 
-        return json(event);
+        // ======================================
+        // RESPONSE
+        // ======================================
+
+        return json({
+
+            ok: true,
+
+            data: event
+        });
 
     } catch (error) {
 
+        console.error(
+
+            "[MOS360:TRACKING]",
+
+            error
+        );
+
         return json(
-            error.message,
+
+            "Failed to track event",
+
             500
         );
     }

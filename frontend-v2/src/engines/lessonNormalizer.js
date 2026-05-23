@@ -219,13 +219,19 @@ function createPracticeBlock(
         title:
             "Áp dụng ngay",
 
-        content:
+        tasks:
 
-            lesson.practicalContent ||
+            (
 
-            lesson.practicalNotes.join(
-                "<br>"
+                lesson.practicalContent ||
+
+                lesson.practicalNotes.join("\n")
+
             )
+
+                .split("\n")
+
+                .filter(Boolean)
     };
 }
 
@@ -323,7 +329,7 @@ function createContinuityBlock(
             title:
                 "Hoàn thành thêm một bước thực hành",
 
-            message:
+            content:
                 "Kỹ năng Office được xây dựng tốt nhất thông qua luyện tập đều đặn từng bước nhỏ."
         };
     }
@@ -355,7 +361,7 @@ function createContinuityBlock(
             title:
                 "Tiếp tục duy trì workflow học tập",
 
-            message:
+            content:
                 "Workflow rõ ràng sẽ giúp bạn hình thành kỹ năng nhanh và ổn định hơn."
         };
     }
@@ -375,7 +381,7 @@ function createContinuityBlock(
         title:
             "Tiếp tục duy trì momentum học tập",
 
-        message:
+        content:
             "Chỉ cần học tập đều đặn mỗi ngày, kỹ năng sẽ phát triển tự nhiên theo thời gian."
     };
 }
@@ -518,7 +524,16 @@ export function normalizeLesson(
 
     ) {
 
-        return lesson;
+        return {
+
+            ...lesson,
+
+            quiz:
+                lesson.quiz || [],
+
+            practice:
+                lesson.practice || []
+        };
     }
 
     // ========================================

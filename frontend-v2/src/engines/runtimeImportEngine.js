@@ -10,6 +10,44 @@ import {
 
 from "../content/pipeline/spreadsheetLessonTransformer.js";
 
+import { validateLesson } from "../validation/lessonValidationEngine";
+
+import {
+
+    createImportEntry,
+
+    registerImport
+
+}
+
+from "../runtime/importRegistry";
+
+import {
+
+    createImportSnapshot,
+
+    registerSnapshot
+
+}
+
+from "../runtime/importRegistry";
+
+import {
+
+    safelyMergeLessons
+
+}
+
+from "../runtime/lessonMutationEngine";
+
+import {
+
+    ensureRuntimeCompatibility
+
+}
+
+from "../runtime/runtimeCompatibilityEngine";
+
 
 const IMPORT_COURSES_KEY =
     "mos360_imported_courses";
@@ -340,6 +378,33 @@ function normalizeLesson(rawLesson = {}) {
     };
 }
 
+function removeDuplicateLessons(
+    lessons = []
+) {
+
+    const seen = new Set();
+
+    return lessons.filter(lesson => {
+
+        const key =
+            `${lesson.courseId}-${lesson.id}`;
+
+        if (seen.has(key)) {
+
+            console.warn(
+                "[MOS360] Duplicate lesson skipped:",
+                key
+            );
+
+            return false;
+        }
+
+        seen.add(key);
+
+        return true;
+    });
+}
+
 // ============================================
 // SAVE COURSES
 // ============================================
@@ -350,16 +415,104 @@ export function saveImportedCourses(
 
     const normalized =
 
-        courses
-            .map(normalizeCourse)
-            .filter(
-                course => course.id
-            );
+    removeDuplicateLessons(
 
-    console.log(
-        "NORMALIZED COURSES",
-        normalized
+        transformedLessons
+
+            .map(normalizeLesson)
+
+            .filter(
+                lesson =>
+                    lesson.id &&
+                    lesson.courseId
+            )
+
+            .filter((lesson) => {
+
+                const validationResult =
+                    validateLesson(lesson);
+
+                if (!validationResult.valid) {
+
+                    console.error(
+
+                        "[MOS360] Lesson validation failed:",
+
+                        {
+                            lessonId:
+                                lesson.id,
+
+                            errors:
+                                validationResult.errors
+                        }
+                    );
+
+                    return false;
+                }
+
+                if (
+                    validationResult.warnings
+                        .length > 0
+                ) {
+
+                    console.warn(
+
+                        "[MOS360] Lesson validation warnings:",
+
+                        {
+                            lessonId:
+                                lesson.id,
+
+                            warnings:
+                                validationResult.warnings
+                        }
+                    );
+                }
+
+                return true;
+            })
     );
+
+    const importEntry =
+    createImportEntry({
+
+        source:
+            "spreadsheet-import",
+
+        courseCount:
+            getImportedCourses()
+                .length,
+
+        lessonCount:
+            normalized.length,
+
+        semanticVersion:
+            "phase-h1",
+
+        validationWarnings:
+            [],
+
+        validationErrors:
+            []
+    });
+
+registerImport(
+    importEntry
+);
+    
+    const snapshot =
+    createImportSnapshot({
+
+        lessons:
+            normalized,
+
+        semanticVersion:
+            "phase-h1"
+    });
+
+registerSnapshot(
+    snapshot
+);
 
     localStorage.setItem(
 
@@ -427,19 +580,91 @@ const normalized =
             lesson =>
                 lesson.id &&
                 lesson.courseId
-        );
+        )
+
+        .filter((lesson) => {
+
+            const validationResult =
+                validateLesson(lesson);
+
+            // ============================
+            // VALIDATION FAILED
+            // ============================
+
+            if (!validationResult.valid) {
+
+                console.error(
+
+                    "[MOS360] Lesson validation failed:",
+
+                    {
+                        lessonId:
+                            lesson.id,
+
+                        errors:
+                            validationResult.errors
+                    }
+                );
+
+                return false;
+            }
+
+            // ============================
+            // VALIDATION WARNINGS
+            // ============================
+
+            if (
+                validationResult.warnings
+                    .length > 0
+            ) {
+
+                console.warn(
+
+                    "[MOS360] Lesson validation warnings:",
+
+                    {
+                        lessonId:
+                            lesson.id,
+
+                        warnings:
+                            validationResult.warnings
+                    }
+                );
+            }
+
+            return true;
+        });
             
     console.log(
         "NORMALIZED LESSONS",
         normalized
     );
 
-    localStorage.setItem(
+    const existingLessons =
+    getImportedLessons();
 
-        IMPORT_LESSONS_KEY,
-
-        JSON.stringify(normalized)
+    const compatibleLessons =
+    ensureRuntimeCompatibility(
+        normalized
     );
+    
+    const mergedLessons =
+    safelyMergeLessons({
+
+        existingLessons,
+
+        importedLessons:
+        compatibleLessons
+    });
+
+localStorage.setItem(
+
+    IMPORT_LESSONS_KEY,
+
+    JSON.stringify(
+        mergedLessons
+    )
+);
 }
 
 // ============================================

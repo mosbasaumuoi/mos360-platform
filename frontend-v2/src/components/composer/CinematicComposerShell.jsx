@@ -1,19 +1,36 @@
+import {
+
+    useComposerPreviewStore
+
+}
+
+    from "../../runtime/composer/composerPreviewStore";
+
 export default function CinematicComposerShell({
 
     title = "Semantic Composer",
 
     subtitle =
-        "Orchestrate learning momentum",
+    "Orchestrate learning momentum",
 
     children
 
 }) {
 
+    const {
+
+        previewEnabled,
+
+        togglePreview
+
+    } = useComposerPreviewStore();
+
     return (
 
         <div className="
             min-h-screen
-            bg-[#f7f7f5]
+            bg-neutral-100
+            text-neutral-900
         ">
 
             {/* ========================= */}
@@ -25,6 +42,7 @@ export default function CinematicComposerShell({
                 top-0
                 z-20
                 border-b
+                border-neutral-200
                 bg-white/80
                 backdrop-blur-xl
             ">
@@ -32,19 +50,26 @@ export default function CinematicComposerShell({
                 <div className="
                     max-w-7xl
                     mx-auto
-                    px-6
-                    py-5
+                    px-8
+                    py-6
                     flex
                     items-center
                     justify-between
                 ">
 
-                    <div>
+                    {/* ===================== */}
+                    {/* TITLE */}
+                    {/* ===================== */}
+
+                    <div className="
+                        space-y-1
+                    ">
 
                         <div className="
-                            text-xl
-                            font-semibold
+                            text-3xl
+                            font-bold
                             tracking-tight
+                            text-neutral-900
                         ">
 
                             {title}
@@ -53,8 +78,7 @@ export default function CinematicComposerShell({
 
                         <div className="
                             text-sm
-                            opacity-50
-                            mt-1
+                            text-neutral-500
                         ">
 
                             {subtitle}
@@ -63,35 +87,73 @@ export default function CinematicComposerShell({
 
                     </div>
 
+                    {/* ===================== */}
+                    {/* ACTIONS */}
+                    {/* ===================== */}
+
                     <div className="
                         flex
                         items-center
                         gap-3
                     ">
 
-                        <button className="
-                            rounded-xl
-                            border
-                            px-4
-                            py-2
-                            text-sm
-                            hover:bg-black/5
-                            transition-colors
-                        ">
+                        <button
 
-                            Preview
+                            onClick={
+                                togglePreview
+                            }
+
+                            className={`
+                                rounded-2xl
+                                border
+                                px-5
+                                py-2.5
+                                text-sm
+                                font-medium
+                                transition-all
+                                duration-200
+
+                                ${previewEnabled
+
+                                    ? `
+                                        border-orange-500
+                                        bg-orange-500
+                                        text-white
+                                        shadow-md
+                                      `
+
+                                    : `
+                                        border-neutral-200
+                                        bg-white
+                                        text-neutral-700
+                                        hover:border-orange-300
+                                        hover:bg-orange-50
+                                      `
+                                }
+                            `}
+                        >
+
+                            {previewEnabled
+
+                                ? "Previewing"
+
+                                : "Preview"
+                            }
 
                         </button>
 
                         <button className="
-                            rounded-xl
+                            rounded-2xl
                             bg-black
                             text-white
-                            px-4
-                            py-2
+                            px-5
+                            py-2.5
                             text-sm
+                            font-medium
+                            shadow-sm
                             hover:opacity-90
-                            transition-opacity
+                            transition-all
+                            duration-200
                         ">
 
                             Publish
@@ -111,8 +173,8 @@ export default function CinematicComposerShell({
             <div className="
                 max-w-7xl
                 mx-auto
-                px-6
-                py-8
+                px-8
+                py-10
             ">
 
                 {children}

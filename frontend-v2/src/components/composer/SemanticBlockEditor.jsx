@@ -4,7 +4,7 @@ import {
 
 }
 
-from "../../runtime/blockEditingEngine";
+from "../../runtime/composer/blockEditingEngine";
 
 export default function SemanticBlockEditor({
 

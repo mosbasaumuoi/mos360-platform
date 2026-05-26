@@ -13,376 +13,198 @@ export default function SemanticRuntimeBlock({
             onClick={onFocus}
 
             className={`
-                rounded-3xl
-                border
-                cursor-pointer
+relative
+overflow - hidden
+rounded - 3xl
+border
+cursor - pointer
+transition - all
 
-                transition-all
+                ${
+    block.flowTransition === "cinematic"
+    ? "duration-700"
+    : ""
+}
 
-                // ====================
-                // FLOW TRANSITIONS
-                // ====================
+                ${
+    block.flowTransition === "breathing"
+    ? "duration-1000"
+    : ""
+}
 
-                ${block.flowTransition === "cinematic"
-                    ? "duration-700"
-                    : ""
-                }
+                ${
+    block.flowTransition === "soft"
+    ? "duration-500"
+    : ""
+}
 
-                ${block.flowTransition === "breathing"
-                    ? "duration-1000"
-                    : ""
-                }
+                ${
+    block.flowTransition === "light"
+    ? "duration-300"
+    : ""
+}
 
-                ${block.flowTransition === "soft"
-                    ? "duration-500"
-                    : ""
-                }
+                ${
+    block.flowRole === "entry"
+    ? "mt-12"
+    : ""
+}
 
-                ${block.flowTransition === "light"
-                    ? "duration-300"
-                    : ""
-                }
+                ${
+    block.flowRole === "resolution"
+    ? "mb-20"
+    : ""
+}
 
-                // ====================
-                // FLOW ROLE
-                // ====================
+                ${
+    block.flowRole === "recovery"
+    ? "max-w-2xl mx-auto"
+    : ""
+}
 
-                ${block.flowRole === "entry"
-                    ? "mt-16"
-                    : ""
-                }
+                ${
+    block.flowIntensity === "high"
+    ? "shadow-xl"
+    : ""
+}
 
-                ${block.flowRole === "resolution"
-                    ? "mb-24"
-                    : ""
-                }
+                ${
+    block.flowIntensity === "low"
+    ? "opacity-90"
+    : ""
+}
 
-                ${block.flowRole === "recovery"
-                    ? "max-w-2xl mx-auto"
-                    : ""
-                }
+                ${
+    block.semanticSurface === "immersive"
+    ? "bg-white"
+    : ""
+}
 
-                // ====================
-                // FLOW INTENSITY
-                // ====================
+                ${
+    block.semanticSurface === "reflection"
+    ? "bg-black/[0.02]"
+    : ""
+}
 
-                ${block.flowIntensity === "high"
-                    ? "shadow-lg"
-                    : ""
-                }
+                ${
+    block.semanticSurface === "support"
+    ? "bg-black/[0.015]"
+    : ""
+}
 
-                ${block.flowIntensity === "low"
-                    ? "opacity-90"
-                    : ""
-                }
+                ${
+    block.semanticSurface === "recovery"
+    ? "bg-black/[0.01]"
+    : ""
+}
 
-                // ====================
-                // SEMANTIC SURFACE
-                // ====================
+                ${
+    block.semanticSurface === "challenge"
+    ? "border-black/20"
+    : ""
+}
 
-                ${block.semanticSurface === "immersive"
-                    ? "bg-white"
-                    : ""
-                }
+                ${
+    block.focusState === "active"
+    ? "scale-[1.01]"
+    : ""
+}
 
-                ${block.semanticSurface === "reflection"
-                    ? "bg-black/[0.02]"
-                    : ""
-                }
+                ${
+    block.focusState === "near"
+    ? "opacity-90"
+    : ""
+}
 
-                ${block.semanticSurface === "support"
-                    ? "bg-black/[0.015]"
-                    : ""
-                }
+                ${
+    block.focusState === "dimmed"
+    ? "opacity-40 scale-[0.985]"
+    : ""
+}
 
-                ${block.semanticSurface === "recovery"
-                    ? "bg-black/[0.01]"
-                    : ""
-                }
+                ${
+    block.surfaceSpacing === "expanded"
+    ? "px-8 py-8"
+    : "px-7 py-6"
+}
 
-                ${block.semanticSurface === "challenge"
-                    ? "border-black/20"
-                    : ""
-                }
+                ${
+    block.surfaceSpacing === "breathing"
+    ? "py-12"
+    : ""
+}
 
-                // ====================
-                // FOCUS
-                // ====================
+                ${
+    block.adaptiveState === "recovery"
+    ? "opacity-80"
+    : ""
+}
 
-                ${block.focusState === "active"
-                    ? "scale-[1.015]"
-                    : ""
-                }
+                ${
+    block.adaptiveState === "guided"
+    ? "ring-1 ring-black/10"
+    : ""
+}
 
-                ${block.focusState === "near"
-                    ? "opacity-85"
-                    : ""
-                }
-
-                ${block.focusState === "dimmed"
-                    ? "opacity-30 scale-[0.985]"
-                    : ""
-                }
-
-                // ====================
-                // SPACING
-                // ====================
-
-                ${block.surfaceSpacing === "expanded"
-                    ? "p-10"
-                    : "p-8"
-                }
-
-                ${block.surfaceSpacing === "breathing"
-                    ? "py-14"
-                    : ""
-                }
-
-                ${block.adaptiveState === "recovery"
-                    ? "opacity-80"
-                    : ""
-                }
-
-                ${block.adaptiveState === "guided"
-                    ? "ring-1 ring-black/10"
-                    : ""
-                }
-
-                ${block.adaptiveState === "immersive"
-                    ? "scale-[1.01]"
-                    : ""
-                }
-            `}
+                ${
+    block.adaptiveState === "immersive"
+    ? "scale-[1.01]"
+    : ""
+}
+`}
         >
-
-            {/* ================================= */}
-            {/* RUNTIME BODY */}
-            {/* ================================= */}
 
             <RuntimeBlockRenderer
                 block={block}
             />
 
-            {/* ===================================== */}
-            {/* PROGRESSION SUPPORT */}
-            {/* ===================================== */}
-
-            <div className="
-                mt-6
-                text-sm
-                opacity-45
-                leading-relaxed
-            ">
-
-                {block.progressionGuidance}
-
-            </div>
-
-            <div className="
-                mt-3
-                text-xs
-                opacity-35
-                leading-relaxed
-            ">
-
-                {block.sessionContinuity}
-
-            </div>
-
-            <div className="
-                mt-4
-                rounded-2xl
-                bg-black/[0.02]
-                px-4
-                py-3
-            ">
+            {block.progressionGuidance && (
 
                 <div className="
-                    text-[11px]
-                    uppercase
-                    tracking-[0.2em]
-                    opacity-30
-                    mb-2
-                ">
-
-                    Mastery State
-
-                </div>
-
-                <div className="
+                    mt-6
                     text-sm
+                    text-neutral-500
                     leading-relaxed
-                    opacity-60
+                    max-w-2xl
                 ">
 
-                    {block.masterySupport}
+                    {block.progressionGuidance}
 
                 </div>
+
+            )}
+
+            {block.sessionContinuity && (
 
                 <div className="
                     mt-4
-                    rounded-2xl
-                    border
-                    border-black/[0.04]
-                    px-4
-                    py-3
+                    text-xs
+                    text-neutral-400
+                    leading-relaxed
+                    tracking-wide
                 ">
 
-                    <div className="
-                        text-[11px]
-                        uppercase
-                        tracking-[0.2em]
-                        opacity-30
-                        mb-2
-                    ">
-
-                        Adaptive Difficulty
-
-                    </div>
-
-                    <div className="
-                        mt-4
-                        rounded-2xl
-                        bg-black/[0.015]
-                        px-4
-                        py-3
-                    ">
-
-                        <div className="
-                            text-[11px]
-                            uppercase
-                            tracking-[0.2em]
-                            opacity-30
-                            mb-2
-                        ">
-
-                            Reinforcement Intelligence
-
-                        </div>
-
-                        <div className="
-                            mt-4
-                            rounded-2xl
-                            border
-                            border-black/[0.04]
-                            px-4
-                            py-3
-                        ">
-
-                            <div className="
-                                text-[11px]
-                                uppercase
-                                tracking-[0.2em]
-                                opacity-30
-                                mb-2
-                            ">
-
-                                Semantic Routing
-
-                            </div>
-
-                            <div className="
-                                mt-4
-                                rounded-2xl
-                                bg-black/[0.015]
-                                px-4
-                                py-3
-                            ">
-
-                                <div className="
-                                    text-[11px]
-                                    uppercase
-                                    tracking-[0.2em]
-                                    opacity-30
-                                    mb-2
-                                ">
-
-                                    Capability Graph
-
-                                </div>
-
-                                <div className="
-                                    mt-4
-                                    rounded-2xl
-                                    border
-                                    border-black/[0.04]
-                                    px-4
-                                    py-3
-                                ">
-
-                                    <div className="
-                                        text-[11px]
-                                        uppercase
-                                        tracking-[0.2em]
-                                        opacity-30
-                                        mb-2
-                                    ">
-
-                                        Dynamic Topology
-
-                                    </div>
-
-                                    <div className="
-                                        text-sm
-                                        leading-relaxed
-                                        opacity-60
-                                    ">
-
-                                        {block.topologySupport}
-
-                                    </div>
-
-                                </div>
-
-                                <div className="
-                                    text-sm
-                                    leading-relaxed
-                                    opacity-60
-                                ">
-
-                                    {block.capabilitySupport}
-
-                                </div>
-
-                            </div>
-
-                            <div className="
-                                text-sm
-                                leading-relaxed
-                                opacity-60
-                            ">
-
-                                {block.semanticSupport}
-
-                            </div>
-
-                        </div>
-
-                        <div className="
-                            text-sm
-                            leading-relaxed
-                            opacity-60
-                        ">
-
-                            {block.reinforcementSupport}
-
-                        </div>
-
-                    </div>
-
-                    <div className="
-                        text-sm
-                        leading-relaxed
-                        opacity-60
-                    ">
-
-                        {block.difficultySupport}
-
-                    </div>
+                    {block.sessionContinuity}
 
                 </div>
 
-            </div>
+            )}
+
+            {block.progressionSupport && (
+
+                <div className="
+                    mt-5
+                    text-sm
+                    text-neutral-500
+                    leading-relaxed
+                    max-w-2xl
+                ">
+
+                    {block.progressionSupport}
+
+                </div>
+
+            )}
 
         </div>
     );
@@ -450,10 +272,6 @@ function RuntimeBlockRenderer({
     }
 }
 
-/* ========================================= */
-/* VIDEO */
-/* ========================================= */
-
 function VideoRuntimeBlock({
 
     block
@@ -463,7 +281,7 @@ function VideoRuntimeBlock({
     return (
 
         <div className="
-            space-y-6
+            space-y-5
         ">
 
             <div className="
@@ -489,7 +307,7 @@ function VideoRuntimeBlock({
             ">
 
                 <div className="
-                    text-3xl
+                    text-[2rem]
                     font-semibold
                     tracking-tight
                     leading-tight
@@ -497,6 +315,7 @@ function VideoRuntimeBlock({
 
                     {block.title ||
                         "Cinematic Learning Flow"}
+
                 </div>
 
                 <div className="
@@ -515,10 +334,6 @@ function VideoRuntimeBlock({
     );
 }
 
-/* ========================================= */
-/* CHECKPOINT */
-/* ========================================= */
-
 function CheckpointRuntimeBlock({
 
     block
@@ -532,7 +347,7 @@ function CheckpointRuntimeBlock({
             mx-auto
             text-center
             py-4
-            space-y-6
+            space-y-5
         ">
 
             <div className="
@@ -547,14 +362,15 @@ function CheckpointRuntimeBlock({
             </div>
 
             <div className="
-                text-3xl
+                text-[2rem]
                 font-semibold
-                leading-relaxed
+                leading-tight
                 tracking-tight
             ">
 
                 {block.title ||
                     "Pause and reconnect with your progression"}
+
             </div>
 
             <div className="
@@ -571,10 +387,6 @@ function CheckpointRuntimeBlock({
     );
 }
 
-/* ========================================= */
-/* REINFORCEMENT */
-/* ========================================= */
-
 function ReinforcementRuntimeBlock({
 
     block
@@ -586,7 +398,7 @@ function ReinforcementRuntimeBlock({
         <div className="
             max-w-xl
             mx-auto
-            py-2
+            py-3
             space-y-4
         ">
 
@@ -609,15 +421,12 @@ function ReinforcementRuntimeBlock({
 
                 {block.message ||
                     "Your progression is still moving forward"}
+
             </div>
 
         </div>
     );
 }
-
-/* ========================================= */
-/* PRACTICE */
-/* ========================================= */
 
 function PracticeRuntimeBlock({
 
@@ -643,20 +452,21 @@ function PracticeRuntimeBlock({
             </div>
 
             <div className="
-                text-3xl
+                text-[2rem]
                 font-semibold
                 tracking-tight
             ">
 
                 {block.title ||
                     "Hands-on Progression"}
+
             </div>
 
             <div className="
                 rounded-[2rem]
                 border
                 bg-black/[0.02]
-                p-8
+                p-6
                 text-sm
                 leading-relaxed
             ">
@@ -668,10 +478,6 @@ function PracticeRuntimeBlock({
         </div>
     );
 }
-
-/* ========================================= */
-/* QUIZ */
-/* ========================================= */
 
 function QuizRuntimeBlock({
 
@@ -697,50 +503,19 @@ function QuizRuntimeBlock({
             </div>
 
             <div className="
-                text-3xl
+                text-[2rem]
                 font-semibold
                 tracking-tight
             ">
 
                 {block.title ||
                     "Learning Challenge"}
-            </div>
-
-            <div className="
-                space-y-4
-            ">
-
-                <div className="
-                    rounded-2xl
-                    border
-                    p-5
-                    text-sm
-                ">
-
-                    Option A
-
-                </div>
-
-                <div className="
-                    rounded-2xl
-                    border
-                    p-5
-                    text-sm
-                ">
-
-                    Option B
-
-                </div>
 
             </div>
 
         </div>
     );
 }
-
-/* ========================================= */
-/* DEFAULT */
-/* ========================================= */
 
 function DefaultRuntimeBlock({
 
@@ -773,6 +548,7 @@ function DefaultRuntimeBlock({
 
                 {block.title ||
                     "Learning Runtime Block"}
+
             </div>
 
             <div className="

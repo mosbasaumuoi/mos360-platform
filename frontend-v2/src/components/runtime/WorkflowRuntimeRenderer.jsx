@@ -1,87 +1,51 @@
 import { useState } from "react";
 
-import {
-    buildWorkflowGraphRuntime
-}
-from "../../runtime/workflowGraphRuntime";
-
-import {
-    buildAdaptiveSequencingRuntime
-}
-from "../../runtime/adaptiveSequencingRuntime";
-
-import {
-    buildRevisitIntelligenceRuntime
-}
-from "../../runtime/revisitIntelligenceRuntime";
-
-import {
-    buildMasteryTrackingRuntime
-}
-from "../../runtime/masteryTrackingRuntime";
-
-import {
-    buildAdaptiveDifficultyRuntime
-}
-from "../../runtime/adaptiveDifficultyRuntime";
-
-import {
-    buildReinforcementIntelligenceRuntime
-}
-from "../../runtime/reinforcementIntelligenceRuntime";
-
-import {
-    buildSemanticRoutingRuntime
-}
-from "../../runtime/semanticRoutingRuntime";
-
-import {
-    buildCapabilityGraphRuntime
-}
-from "../../runtime/capabilityGraphRuntime";
-
-import {
-    buildDynamicTopologyRuntime
-}
-from "../../runtime/dynamicTopologyRuntime";
-
-import {
-    buildCinematicRuntime
-}
-from "../../runtime/cinematicRuntimeEngine";
-
-import {
-    buildRuntimeSurface
-}
-from "../../runtime/runtimeSurfaceEngine";
-
-import {
-    buildSemanticSurface
-}
-from "../../runtime/semanticSurfaceEngine";
-
-import {
-    buildLearningFlow
-}
-from "../../runtime/learningFlowRuntimeEngine";
-
-import {
-    buildAdaptiveProgressionRuntime
-}
-from "../../runtime/adaptiveProgressionRuntime";
-
-import {
-    buildProgressionGuidance
-}
-from "../../runtime/progressionGuidanceEngine";
-
-import {
-    buildRuntimeSessionContinuity
-}
-from "../../runtime/runtimeSessionContinuityEngine";
-
 import SemanticRuntimeBlock
 from "./SemanticRuntimeBlock";
+
+import {
+
+    buildProgressionIntelligenceRuntime,
+
+    buildMasteryIntelligenceRuntime,
+
+    buildSemanticIntelligenceRuntime,
+
+    buildCinematicRuntime,
+
+    buildRuntimeSurface,
+
+    buildSemanticSurface,
+
+    buildLearningFlow,
+
+    buildAdaptiveProgressionRuntime,
+
+    buildProgressionGuidance,
+
+    buildRuntimeSessionContinuity
+
+}
+
+    from "../../runtime";
+
+import {
+
+    normalizeRuntimeSignals
+
+}
+
+    from "../../runtime/system/runtimeSignalNormalizer";
+
+import {
+
+    applyRuntimePhase,
+
+    RUNTIME_PHASES
+
+}
+
+    from "../../runtime/system/runtimeMutationLifecycle";    
 
 export default function WorkflowRuntimeRenderer({
 
@@ -97,7 +61,16 @@ export default function WorkflowRuntimeRenderer({
     ] = useState(0);
 
     // ========================================
-    // PIPELINE
+    // NORMALIZED SIGNALS
+    // ========================================
+
+    const runtimeSignals =
+        normalizeRuntimeSignals(
+            telemetry
+        );
+
+    // ========================================
+    // CORE RUNTIME
     // ========================================
 
     const cinematicRuntime =
@@ -113,85 +86,137 @@ export default function WorkflowRuntimeRenderer({
             cinematicRuntime
         );
 
-    const semanticRuntime =
+    const semanticSurface =
         buildSemanticSurface(
             runtimeSurface
         );
 
-    const flowRuntime =
+    const learningFlow =
         buildLearningFlow(
-            semanticRuntime
+            semanticSurface
         );
 
-    const adaptiveRuntime =
-        buildAdaptiveProgressionRuntime({
+    // ========================================
+    // ADAPTIVE FOUNDATION
+    // ========================================
+
+    const adaptivePhase =
+        applyRuntimePhase({
+
+            phase:
+                RUNTIME_PHASES.ADAPTIVE,
+
+            runtimeBuilder:
+                ({ blocks, telemetry }) => {
+
+                    const adaptiveRuntime =
+                        buildAdaptiveProgressionRuntime({
+
+                            blocks,
+
+                            telemetry
+                        });
+
+                    const guidanceRuntime =
+                        buildProgressionGuidance({
+
+                            blocks:
+                                adaptiveRuntime,
+
+                            telemetry
+                        });
+
+                    return (
+                        buildRuntimeSessionContinuity({
+
+                            blocks:
+                                guidanceRuntime,
+
+                            telemetry
+                        })
+                    );
+                },
 
             blocks:
-                flowRuntime,
+                learningFlow,
 
-            telemetry
+            telemetry:
+                runtimeSignals
         });
 
-    const guidanceRuntime =
-        buildProgressionGuidance({
+    // ========================================
+    // PROGRESSION
+    // ========================================
+
+    const progressionPhase =
+        applyRuntimePhase({
+
+            phase:
+                RUNTIME_PHASES.PROGRESSION,
+
+            runtimeBuilder:
+                buildProgressionIntelligenceRuntime,
 
             blocks:
-                adaptiveRuntime,
+                adaptivePhase.blocks,
 
-            telemetry
+            telemetry:
+                runtimeSignals
         });
 
-    const sessionRuntime =
-        buildRuntimeSessionContinuity({
+    // ========================================
+    // MASTERY
+    // ========================================
+
+    const masteryPhase =
+        applyRuntimePhase({
+
+            phase:
+                RUNTIME_PHASES.MASTERY,
+
+            runtimeBuilder:
+                buildMasteryIntelligenceRuntime,
 
             blocks:
-                guidanceRuntime,
+                progressionPhase.blocks,
 
-            telemetry
+            telemetry:
+                runtimeSignals
         });
 
-    const workflowRuntime =
-        buildWorkflowGraphRuntime({
+    // ========================================
+    // SEMANTIC
+    // ========================================
+
+    const semanticPhase =
+        applyRuntimePhase({
+
+            phase:
+                RUNTIME_PHASES.SEMANTIC,
+
+            runtimeBuilder:
+                buildSemanticIntelligenceRuntime,
+
+            blocks:
+                masteryPhase.blocks,
+
+            telemetry:
+                runtimeSignals
+        });
+
+    // ========================================
+    // FINAL RUNTIME
+    // ========================================
+
+    const runtime =
+        semanticPhase.blocks;
+
+    const progressionRuntime =
+        buildProgressionIntelligenceRuntime({
 
             blocks:
                 sessionRuntime,
 
-            telemetry
-        });
-
-    const sequencingRuntime =
-        buildAdaptiveSequencingRuntime({
-
-            blocks:
-                workflowRuntime,
-
-            telemetry
-        });
-
-    const revisitRuntime =
-        buildRevisitIntelligenceRuntime({
-
-            blocks:
-                sequencingRuntime,
-
-            telemetry
-        });
-
-    const masteryRuntime =
-        buildMasteryTrackingRuntime({
-
-            blocks:
-                revisitRuntime,
-
-            telemetry
-        });
-
-    const difficultyRuntime =
-        buildAdaptiveDifficultyRuntime({
-
-            blocks:
-                masteryRuntime,
-
             telemetry: {
 
                 ...telemetry,
@@ -202,63 +227,7 @@ export default function WorkflowRuntimeRenderer({
                         ?.masteryConfidence || 0
             }
         });
-
-    const reinforcementRuntime =
-        buildReinforcementIntelligenceRuntime({
-
-            blocks:
-                difficultyRuntime,
-
-            telemetry: {
-
-                ...telemetry,
-
-                masteryConfidence:
-
-                    masteryRuntime[activeIndex]
-                        ?.masteryConfidence || 0
-            }
-        });
-
-    const semanticRoutingRuntime =
-        buildSemanticRoutingRuntime({
-
-            blocks:
-                reinforcementRuntime,
-
-            telemetry
-        });
-
-    const capabilityGraphRuntime =
-        buildCapabilityGraphRuntime({
-
-            blocks:
-                semanticRoutingRuntime,
-
-            telemetry
-        });
-
-    // ========================================
-    // DYNAMIC TOPOLOGY
-    // ========================================
-
-    const runtime =
-        buildDynamicTopologyRuntime({
-
-            blocks:
-                capabilityGraphRuntime,
-
-            telemetry: {
-
-                ...telemetry,
-
-                masteryConfidence:
-
-                    masteryRuntime[activeIndex]
-                        ?.masteryConfidence || 0
-            }
-        });
-
+    
     return (
 
         <div className="

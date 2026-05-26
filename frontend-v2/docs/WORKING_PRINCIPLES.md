@@ -138,3 +138,147 @@ Nếu:
 feature phá foundation
 
 → foundation luôn ưu tiên hơn.
+
+
+
+
+New ruler MOS360
+
+WORKING DISCIPLINE — MOS360
+1. FINAL FILE THINKING
+KHÔNG:
+patch nhỏ liên tục
+
+↓
+
+MÀ:
+finalized runtime/domain file
+
+↓
+
+Mỗi lần sửa:
+
+cohesive
+production-shape
+ownership rõ
+evolution-ready
+2. KHÔNG ĐOÁN CODE
+Nếu chưa rõ:
+file thật
+runtime thật
+ownership thật
+orchestration thật
+
+↓
+
+Tôi sẽ:
+
+hỏi xác nhận file thực tế trước.
+3. FILE NGẮN → GỬI FULL FILE
+
+Ví dụ:
+
+runtime engines nhỏ
+utilities
+panels nhỏ
+hooks nhỏ
+
+↓
+
+Tôi sẽ:
+
+gửi full file hoàn chỉnh.
+4. FILE DÀI → SURGICAL REPLACEMENT
+
+Ví dụ:
+
+ComposerWorkspace
+RuntimeRenderer
+SemanticRuntimeBlock
+orchestration pipelines
+
+↓
+
+Tôi sẽ:
+
+chỉ rõ block cần xóa
+chỉ rõ vị trí insert
+chỉ rõ ownership change
+tránh paste 1000 dòng hỗn loạn
+5. KHÔNG “BUILD SONG SONG”
+
+Tôi sẽ luôn:
+
+ưu tiên converge vào foundation đang tồn tại
+
+KHÔNG:
+
+spawn runtime mới nếu existing runtime đã đủ ownership.
+6. NO ARCHITECTURE HALLUCINATION
+
+Sau review project thực tế:
+đây là rule cực quan trọng.
+
+↓
+
+Tôi sẽ:
+
+respect runtime reality
+respect phase 2 foundations
+reuse orchestration hiện có
+avoid conceptual overbuilding
+7. MỖI STEP = 1 DOMAIN HOÀN CHỈNH
+
+Ví dụ:
+
+KHÔNG:
+thêm 1 function nhỏ
+
+↓
+
+MÀ:
+Progression Intelligence Consolidation
+
+↓
+
+bao gồm:
+
+canonical ownership
+runtime flow
+cleanup
+migration
+integration direction
+8. TEST THEO HỆ THỐNG
+KHÔNG:
+test lẻ tẻ
+test từng panel
+test từng wording
+
+↓
+
+Mà:
+
+test theo runtime domain hoàn chỉnh.
+9. ƯU TIÊN:
+COMPLETION > EXPANSION
+
+Từ đây:
+mọi quyết định sẽ ưu tiên:
+
+coherence
+convergence
+operational maturity
+production readiness
+
+KHÔNG:
+
+thêm intelligence vô tận.
+10. NORTH STAR KHÔNG ĐỔI
+MOS360 = Semantic Learning Composition OS
+
+KHÔNG drift thành:
+
+AI dashboard
+emotional LMS
+feature soup
+orchestration spaghetti

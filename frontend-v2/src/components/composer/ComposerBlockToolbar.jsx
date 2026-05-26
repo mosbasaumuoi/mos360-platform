@@ -6,7 +6,7 @@ import {
 
 }
 
-from "../../runtime/composerToolbarEngine";
+    from "../../runtime/composer/composerToolbarEngine";
 
 export default function ComposerBlockToolbar({
 
@@ -19,18 +19,15 @@ export default function ComposerBlockToolbar({
     return (
 
         <div className="
-            rounded-2xl
-            border
-            bg-white
-            p-4
             flex
             flex-wrap
+            items-center
             gap-3
         ">
 
             {TOOLBAR_BLOCKS.map(
 
-                block => (
+                (block) => (
 
                     <button
 
@@ -38,7 +35,7 @@ export default function ComposerBlockToolbar({
 
                         onClick={() => {
 
-                            onBlocksChange(
+                            const updatedBlocks =
 
                                 insertToolbarBlock({
 
@@ -46,22 +43,51 @@ export default function ComposerBlockToolbar({
 
                                     type:
                                         block.type
-                                })
+                                });
+
+                            onBlocksChange(
+                                updatedBlocks
                             );
                         }}
 
                         className="
-                            rounded-xl
+                            group
+                            relative
+
+                            rounded-2xl
                             border
-                            px-4
-                            py-2
+                            border-neutral-200
+
+                            bg-white
+
+                            px-5
+                            py-2.5
+
                             text-sm
+                            font-medium
+                            text-neutral-700
+
+                            shadow-sm
+
                             transition-all
-                            hover:bg-black/5
+                            duration-200
+
+                            hover:-translate-y-[1px]
+                            hover:border-orange-300
+                            hover:bg-orange-50
+                            hover:text-orange-700
+                            hover:shadow-md
                         "
                     >
 
-                        {block.label}
+                        <span className="
+                            relative
+                            z-10
+                        ">
+
+                            {block.label}
+
+                        </span>
 
                     </button>
                 )

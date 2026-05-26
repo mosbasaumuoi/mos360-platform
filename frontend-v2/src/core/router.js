@@ -67,6 +67,11 @@ import {
 }
   from "../pages/admin/importPage.js";  
 
+import {
+  renderRuntimeTestPage
+}
+  from "../pages/runtime/runtimeTestPage.jsx";  
+
 // ============================================
 // ROUTES
 // ============================================
@@ -75,6 +80,9 @@ const routes = {
 
   "/":
     renderHomePage,
+
+  "/runtime-test":
+    renderRuntimeTestPage,  
 
   "/login":
     renderLoginPage,

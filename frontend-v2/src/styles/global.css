@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* =========================================
    MOS360 GLOBAL FOUNDATION
 ========================================= */
@@ -642,6 +644,7 @@ input:focus-visible {
     scroll-behavior:
       auto !important;
   }
+}
 
   /* =========================================
    SURFACE SYSTEM
@@ -1097,6 +1100,4 @@ body.page-transitioning #app {
     height:
       320px;
   }
-}
-
 }

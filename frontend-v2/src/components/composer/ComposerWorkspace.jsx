@@ -1,10 +1,16 @@
-import { useState } from "react";
+import {
+
+    useState
+
+}
+
+    from "react";
 
 import ComposerRuntimePreview
-from "./ComposerRuntimePreview";
+    from "../runtime/ComposerRuntimePreview";
 
 import SemanticBlockEditor
-from "./SemanticBlockEditor";
+    from "./SemanticBlockEditor";
 
 import {
 
@@ -12,35 +18,35 @@ import {
 
 }
 
-from "../../runtime/composerInteractionEngine";
+    from "../../runtime/composer/composerInteractionRuntime";
 
 import CinematicComposerShell
-from "./CinematicComposerShell";
+    from "./CinematicComposerShell";
 
 import ComposerBlockToolbar
-from "./ComposerBlockToolbar";
+    from "./ComposerBlockToolbar";
 
-import ComposerContinuityPanel
-from "./ComposerContinuityPanel";
-
-import ComposerMomentumPanel
-from "./ComposerMomentumPanel";
-
-import ReinforcementInsightsPanel
-from "./ReinforcementInsightsPanel";
+import ComposerRuntimeRail
+    from "../runtime/ComposerRuntimeRail";
 
 export default function ComposerWorkspace({
 
-    blocks = [],
-
-    onBlocksChange
+    blocks: initialBlocks = []
 
 }) {
 
     const [
 
-        interactionState,
+        blocks,
+        setBlocks
 
+    ] = useState(
+        initialBlocks
+    );
+
+    const [
+
+        interactionState,
         setInteractionState
 
     ] = useState(
@@ -51,117 +57,196 @@ export default function ComposerWorkspace({
 
         <CinematicComposerShell>
 
-            <div className="
-                grid
-                grid-cols-12
-                gap-6
-                items-start
-            ">
+            <div className="relative">
 
                 {/* ========================= */}
-                {/* PREVIEW RUNTIME */}
+                {/* PREVIEW WORKSPACE */}
                 {/* ========================= */}
 
-                <div className="
-                    col-span-8
-                    space-y-4
-                ">
+                <div>
 
                     <div className="
-                        text-sm
-                        font-semibold
-                        opacity-70
+                    relative
+                ">
+
+                        {/* ===================== */}
+                        {/* SECTION HEADER */}
+                        {/* ===================== */}
+
+                        <div className="
+                        flex
+                        items-center
+                        justify-between
+                        mb-6
                     ">
 
-                        Runtime Preview
+                            <div>
+
+                                <div className="
+                                text-lg
+                                font-semibold
+                                text-neutral-900
+                            ">
+
+                                    Runtime Preview
+
+                                </div>
+
+                                <div className="
+                                text-sm
+                                text-neutral-500
+                                mt-1
+                            ">
+
+                                    Adaptive semantic runtime orchestration
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        {/* ===================== */}
+                        {/* TOOLBAR */}
+                        {/* ===================== */}
+
+                        <div className="mb-8">
+
+                            <ComposerBlockToolbar
+
+                                blocks={blocks}
+
+                                onBlocksChange={
+                                    setBlocks
+                                }
+                            />
+
+                        </div>
+
+                        {/* ===================== */}
+                        {/* PREVIEW */}
+                        {/* ===================== */}
+
+                        <ComposerRuntimePreview
+
+                            blocks={blocks}
+
+                            interactionState={
+                                interactionState
+                            }
+
+                            onInteractionChange={
+                                setInteractionState
+                            }
+
+                            onBlocksChange={
+                                setBlocks
+                            }
+                        />
 
                     </div>
-
-                    <ComposerBlockToolbar
-
-                        blocks={blocks}
-
-                        onBlocksChange={
-                            onBlocksChange
-                        }
-                    />
-
-                    <ComposerRuntimePreview
-
-                        blocks={blocks}
-
-                        interactionState={
-                            interactionState
-                        }
-
-                        onInteractionChange={
-                            setInteractionState
-                        }
-                    />
 
                 </div>
 
                 {/* ========================= */}
-                {/* SEMANTIC EDITOR */}
+                {/* FLOATING EDITOR */}
                 {/* ========================= */}
 
                 <div className="
-                    col-span-4
-                    sticky
-                    top-24
-                ">
+                fixed
+                top-32
+                right-10
+                w-[340px]
+                space-y-5
+                z-30
+            ">
+
+                    {/* ===================== */}
+                    {/* EDITOR PANEL */}
+                    {/* ===================== */}
 
                     <div className="
+                    rounded-3xl
+                    border
+                    border-neutral-200
+                    bg-white/95
+                    backdrop-blur-xl
+                    shadow-[0_20px_80px_rgba(0,0,0,0.08)]
+                    p-6
+                ">
+
+                        <div className="mb-5">
+
+                            <div className="
+                            text-lg
+                            font-semibold
+                            text-neutral-900
+                        ">
+
+                                Semantic Editor
+
+                            </div>
+
+                            <div className="
+                            text-sm
+                            text-neutral-500
+                            mt-1
+                        ">
+
+                                Configure runtime semantics and progression
+
+                            </div>
+
+                        </div>
+
+                        <SemanticBlockEditor
+
+                            blocks={blocks}
+
+                            selectedBlockIndex={
+                                interactionState
+                                    ?.selectedBlockIndex
+                            }
+
+                            onBlocksChange={
+                                setBlocks
+                            }
+                        />
+
+                    </div>
+
+                    {/* ===================== */}
+                    {/* RUNTIME INSIGHTS */}
+                    {/* ===================== */}
+
+                    <div className="
+                    rounded-3xl
+                    border
+                    border-neutral-200
+                    bg-white/95
+                    backdrop-blur-xl
+                    shadow-[0_20px_80px_rgba(0,0,0,0.08)]
+                    p-5
+                ">
+
+                        <div className="
                         text-sm
                         font-semibold
-                        opacity-70
+                        text-neutral-700
                         mb-4
                     ">
 
-                        Semantic Editor
+                            Runtime Insights
 
-                    </div>
+                        </div>
 
-                    <SemanticBlockEditor
-
-                        blocks={blocks}
-
-                        selectedBlockIndex={
-                            interactionState
-                                .selectedBlockIndex
-                        }
-
-                        onBlocksChange={
-                            onBlocksChange
-                        }
-                    />
-
-                    <div className="mt-6">
-
-                        <ComposerContinuityPanel
+                        <ComposerRuntimeRail
 
                             blocks={blocks}
 
-                        />
-
-                    </div>
-
-                    <div className="mt-6">
-
-                        <ComposerMomentumPanel
-
-                            blocks={blocks}
-
-                        />
-
-                    </div>
-
-                    <div className="mt-6">
-
-                        <ReinforcementInsightsPanel
-
-                            lessonId="composer-preview"
-
+                            interactionState={
+                                interactionState
+                            }
                         />
 
                     </div>

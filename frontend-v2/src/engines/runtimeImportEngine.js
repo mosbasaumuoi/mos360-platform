@@ -20,7 +20,7 @@ import {
 
 }
 
-from "../runtime/importRegistry";
+from "../runtime/content/importRegistry.js";
 
 import {
 
@@ -30,7 +30,7 @@ import {
 
 }
 
-from "../runtime/importRegistry";
+from "../runtime/content/importRegistry.js";
 
 import {
 
@@ -38,7 +38,7 @@ import {
 
 }
 
-from "../runtime/lessonMutationEngine";
+from "../runtime/content/lessonMutationPipeline.js";
 
 import {
 
@@ -46,7 +46,7 @@ import {
 
 }
 
-from "../runtime/runtimeCompatibilityEngine";
+from "../runtime/system/runtimeCompatibilityEngine.js";
 
 
 const IMPORT_COURSES_KEY =

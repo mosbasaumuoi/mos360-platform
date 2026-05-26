@@ -28,15 +28,11 @@ export default function SemanticBlockEditor({
         return (
 
             <div className="
-                rounded-2xl
-                border
-                p-5
-                bg-white
                 text-sm
-                opacity-50
+                text-neutral-400
             ">
 
-                Select a block to edit
+              Select a block to edit
 
             </div>
         );

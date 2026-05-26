@@ -28,6 +28,7 @@ export default function CinematicComposerShell({
     return (
 
         <div className="
+            runtime-composer
             min-h-screen
             bg-neutral-100
             text-neutral-900

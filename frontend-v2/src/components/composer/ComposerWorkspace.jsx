@@ -57,13 +57,20 @@ export default function ComposerWorkspace({
 
         <CinematicComposerShell>
 
-            <div className="relative">
+            <div className="
+                grid
+                gap-8
+                xl:grid-cols-[minmax(0,1fr)_380px]
+                grid-cols-[minmax(0,1fr)_360px]
+                gap-10
+                items-start
+            ">
 
                 {/* ========================= */}
                 {/* PREVIEW WORKSPACE */}
                 {/* ========================= */}
 
-                <div>
+                <div className="min-w-0">
 
                     <div className="
                     relative
@@ -153,13 +160,11 @@ export default function ComposerWorkspace({
                 {/* ========================= */}
 
                 <div className="
-                fixed
-                top-32
-                right-10
-                w-[340px]
-                space-y-5
-                z-30
-            ">
+                    sticky
+                    runtime-inspector
+                    top-28
+                    space-y-5
+                ">
 
                     {/* ===================== */}
                     {/* EDITOR PANEL */}
@@ -168,6 +173,7 @@ export default function ComposerWorkspace({
                     <div className="
                     rounded-3xl
                     border
+                    runtime-panel
                     border-neutral-200
                     bg-white/95
                     backdrop-blur-xl
@@ -222,6 +228,7 @@ export default function ComposerWorkspace({
                     <div className="
                     rounded-3xl
                     border
+                    runtime-panel
                     border-neutral-200
                     bg-white/95
                     backdrop-blur-xl

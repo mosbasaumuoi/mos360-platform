@@ -24,6 +24,14 @@ import {
 
 from "../../validation/lessonValidationEngine";
 
+import {
+
+    createComposerRuntimeMeta
+
+}
+
+    from "../../contracts/composerRuntimeContract";
+
 const COMPOSER_DRAFT_KEY =
     "mos360_composer_draft";
 

@@ -1,0 +1,187 @@
+/* =========================================
+   MOS360 RUNTIME COMPOSER ISOLATION
+========================================= */
+
+.runtime-composer {
+
+    --runtime-bg:
+        #f5f5f3;
+
+    --runtime-panel:
+        rgba(255, 255, 255, 0.92);
+
+    --runtime-border:
+        rgba(15, 23, 42, 0.08);
+
+    --runtime-text:
+        #111827;
+
+    --runtime-text-soft:
+        #6b7280;
+
+    --runtime-shadow:
+        0 20px 60px rgba(15, 23, 42, 0.08);
+
+    background:
+        var(--runtime-bg);
+
+    color:
+        var(--runtime-text);
+
+    min-height:
+        100vh;
+}
+
+/* =========================================
+   TYPOGRAPHY RESET
+========================================= */
+
+.runtime-composer h1,
+.runtime-composer h2,
+.runtime-composer h3,
+.runtime-composer h4,
+.runtime-composer h5,
+.runtime-composer h6 {
+
+    max-width:
+        none;
+
+    text-wrap:
+        normal;
+
+    line-height:
+        1.15;
+}
+
+.runtime-composer p {
+
+    max-width:
+        none;
+
+    line-height:
+        1.7;
+
+    color:
+        inherit;
+
+    text-wrap:
+        normal;
+}
+
+/* =========================================
+   PANEL SYSTEM
+========================================= */
+
+.runtime-panel {
+
+    background:
+        var(--runtime-panel);
+
+    border:
+        1px solid var(--runtime-border);
+
+    border-radius:
+        28px;
+
+    box-shadow:
+        var(--runtime-shadow);
+
+    backdrop-filter:
+        blur(12px);
+}
+
+/* =========================================
+   RUNTIME CARD
+========================================= */
+
+.runtime-card {
+
+    overflow:
+        hidden;
+
+    border-radius:
+        28px;
+
+    border:
+        1px solid rgba(15, 23, 42, 0.08);
+
+    background:
+        white;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+.runtime-card:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 20px 50px rgba(15, 23, 42, 0.08);
+}
+
+/* =========================================
+   INSPECTOR
+========================================= */
+
+.runtime-inspector {
+
+    position:
+        sticky;
+
+    top:
+        110px;
+}
+
+/* =========================================
+   TOOLBAR
+========================================= */
+
+.runtime-toolbar {
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        12px;
+}
+
+/* =========================================
+   BUTTON LANGUAGE
+========================================= */
+
+.runtime-button {
+
+    border:
+        1px solid rgba(15, 23, 42, 0.08);
+
+    background:
+        white;
+
+    color:
+        #374151;
+
+    border-radius:
+        18px;
+
+    transition:
+        all .2s ease;
+}
+
+.runtime-button:hover {
+
+    border-color:
+        rgba(255, 120, 0, 0.3);
+
+    background:
+        rgba(255, 120, 0, 0.04);
+
+    color:
+        #ea580c;
+}

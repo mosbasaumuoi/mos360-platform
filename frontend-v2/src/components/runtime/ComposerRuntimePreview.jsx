@@ -281,9 +281,10 @@ export default function ComposerRuntimePreview({
                                 relative
                                 overflow-hidden
                                 rounded-3xl
+                                runtime-card
                                 border
                                 bg-white/95
-                                p-7
+                                p-8
                                 shadow-[0_10px_40px_rgba(0,0,0,0.04)]
                                 transition-all
                                 duration-500
@@ -335,7 +336,7 @@ export default function ComposerRuntimePreview({
                                     ? "mt-24"
                                     : block.cinematicSpacing === "lg"
                                         ? "mt-16"
-                                        : "mt-6"
+                                        : "mt-8"
                                 }
                             `}
                         >

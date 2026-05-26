@@ -1,3 +1,11 @@
+import {
+
+    createComposerRuntimeMeta
+
+}
+
+    from "./composerRuntimeContract";
+
 export const RUNTIME_BLOCK_TYPES = [
 
     "hero",
@@ -33,6 +41,8 @@ export function createRuntimeBlock({
 } = {}) {
 
     return {
+
+        ...createComposerRuntimeMeta(),
 
         id:
 

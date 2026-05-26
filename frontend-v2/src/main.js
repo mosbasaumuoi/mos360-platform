@@ -5,7 +5,7 @@
 import "./styles/global.css";
 import "./styles/foundation/interactions.css";
 import "./styles/layouts/appLayout.css";
-
+import "./styles/components/runtimeComposer.css";
 import "./styles/pages/dashboard.css";
 import "./styles/pages/learn.css";
 import "./styles/pages/home.css";

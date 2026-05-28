@@ -20,7 +20,7 @@ import {
 
 }
 
-from "./importRegistry";
+    from "../import/importRegistry";
 
 // ============================================
 // SAFE OVERWRITE LESSONS

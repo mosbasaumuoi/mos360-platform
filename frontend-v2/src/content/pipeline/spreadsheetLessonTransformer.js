@@ -1,60 +1,58 @@
 // ============================================
-// SPREADSHEET LESSON TRANSFORMER
-// Spreadsheet -> semantic block runtime
+// MOS360 SPREADSHEET LESSON TRANSFORMER
+// Canonical runtime semantic transformer
 // ============================================
 
-import {
+// ============================================
+// NORMALIZE ID
+// ============================================
 
-    SPREADSHEET_LESSON_SCHEMA
+function normalizeId(
 
+    value = ""
+
+) {
+
+    return String(value)
+
+        .trim()
+
+        .toLowerCase()
+
+        .replace(/\s+/g, "-")
+
+        .replace(/[^a-z0-9-_]/g, "");
 }
 
-from "./spreadsheetLessonSchema.js";
-
 // ============================================
-// YOUTUBE NORMALIZER
+// YOUTUBE URL
 // ============================================
 
-function normalizeYoutubeUrl(
+function extractYoutubeEmbedUrl(
 
     url = ""
 
 ) {
 
     if (!url) {
+
         return "";
     }
 
     // ========================================
-    // ALREADY EMBED
-    // ========================================
-
-    if (
-
-        url.includes(
-            "/embed/"
-        )
-
-    ) {
-
-        return url;
-    }
-
-    // ========================================
-    // WATCH URL
+    // YOUTUBE WATCH
     // ========================================
 
     const watchMatch =
 
         url.match(
 
-            /v=([^&]+)/
-
+            /youtube\.com\/watch\?v=([^&]+)/i
         );
 
-    if (watchMatch) {
+    if (watchMatch?.[1]) {
 
-        return `https://www.youtube.com/embed/${watchMatch[1]}?rel=0&playsinline=1`;
+        return `https://www.youtube.com/embed/${watchMatch[1]}`;
     }
 
     // ========================================
@@ -65,308 +63,423 @@ function normalizeYoutubeUrl(
 
         url.match(
 
-            /youtu\.be\/([^?]+)/
-
+            /youtu\.be\/([^?]+)/i
         );
-        
-    if (shortMatch) {
 
-        return `https://www.youtube.com/embed/${shortMatch[1]}?rel=0&playsinline=1`;
+    if (shortMatch?.[1]) {
+
+        return `https://www.youtube.com/embed/${shortMatch[1]}`;
     }
 
     return url;
 }
 
 // ============================================
-// CREATE SEMANTIC ENTRY
+// CREATE VIDEO BLOCK
 // ============================================
 
-function createSemanticEntry(row) {
+function createVideoBlock(
 
-    const type =
-        row.blockType;
+    row = {}
 
-    const content =
-        row.content || "";
+) {
+
+    return {
+
+        id:
+            `${row.id}-video`,
+
+        type:
+            "video",
+
+        title:
+
+            row.videoTitle ||
+
+            row.title ||
+
+            "Lesson Video",
+
+        url:
+
+            extractYoutubeEmbedUrl(
+                row.videoUrl
+            ),
+
+        provider:
+            "youtube",
+
+        required:
+            true
+    };
+}
+
+// ============================================
+// CREATE TEXT BLOCK
+// ============================================
+
+function createTextBlock(
+
+    row = {}
+
+) {
+
+    return {
+
+        id:
+            `${row.id}-text`,
+
+        type:
+            "text",
+
+        title:
+            "Nội dung bài học",
+
+        content:
+
+            row.content ||
+
+            row.description ||
+
+            "Runtime semantic lesson",
+
+        required:
+            true
+    };
+}
+
+// ============================================
+// CREATE TIP BLOCK
+// ============================================
+
+function createTipBlock(
+
+    row = {}
+
+) {
+
+    return {
+
+        id:
+            `${row.id}-tip`,
+
+        type:
+            "tip",
+
+        title:
+            "Mẹo thực hành",
+
+        content:
+
+            row.tip ||
+
+            "Hãy luyện tập thường xuyên để tăng kỹ năng.",
+
+        required:
+            false
+    };
+}
+
+// ============================================
+// CREATE QUIZ BLOCK
+// ============================================
+
+function createQuizBlock(row = {}) {
+
+    const question =
+
+        row.quizQuestion
+        || "Bạn đã hiểu nội dung bài học chưa?";
+
+    return {
+
+        id: `${row.id}-quiz`,
+
+        type: "quiz",
+
+        title: "Kiểm tra kiến thức",
+
+        question,
+
+        answers: [
+
+            row.quizAnswerA || "Có",
+            row.quizAnswerB || "Chưa"
+
+        ],
+
+        correctAnswer: 0,
+
+        content: question
+
+    };
+}
+
+// ============================================
+// CREATE SUMMARY BLOCK
+// ============================================
+
+function createSummaryBlock(
+
+    row = {}
+
+) {
+
+    return {
+
+        id:
+            `${row.id}-summary`,
+
+        type:
+            "summary",
+
+        title:
+            "Tổng kết bài học",
+
+        content:
+
+            row.summary ||
+
+            row.content ||
+
+            "Bạn đã hoàn thành bài học.",
+
+        required:
+            true
+    };
+}
+
+// ============================================
+// CREATE FLOW
+// ============================================
+
+function createLessonFlow() {
+
+    return [
+
+        "intro",
+        "learning",
+        "practice",
+        "summary"
+    ];
+}
+
+// ============================================
+// CREATE LESSON
+// ============================================
+
+function createLesson(
+
+    lessonRows = []
+
+) {
+
+    const first =
+
+        lessonRows[0] || {};
+
+    const lessonId =
+
+        normalizeId(
+            first.id
+        );
+
+    const courseId =
+
+        normalizeId(
+            first.courseId
+        );
+
+    // ========================================
+    // BLOCKS
+    // ========================================
+
+    const blocks = [];
 
     // ========================================
     // VIDEO
     // ========================================
 
-    if (type === "video") {
+    if (first.videoUrl) {
 
-        return {
+        blocks.push(
 
-            entity: "block",
-
-            data: {
-
-                type:
-                    "video",
-
-                priority:
-                    row.priority || "critical",
-
-                title:
-                    row.title || "Lesson Video",
-
-                videoUrl:
-                    normalizeYoutubeUrl(
-                        content
-                    )
-            }
-        };
+            createVideoBlock(
+                first
+            )
+        );
     }
 
     // ========================================
-    // WORKFLOW
+    // TEXT
     // ========================================
 
-    if (type === "workflow") {
+    blocks.push(
 
-        return {
-
-            entity: "block",
-
-            data: {
-
-                type:
-                    "workflow",
-
-                priority:
-                    row.priority || "primary",
-
-                title:
-                    "Workflow",
-
-                steps:
-
-                    String(content)
-
-                        .split(";")
-
-                        .map(
-                            step =>
-                                step.trim()
-                        )
-
-                        .filter(Boolean)
-            }
-        };
-    }
+        createTextBlock(
+            first
+        )
+    );
 
     // ========================================
-    // CALLOUT
+    // TIP
     // ========================================
 
-    if (type === "callout") {
+    blocks.push(
 
-        let metadata = {};
-
-        try {
-
-            metadata =
-
-                typeof row.metadata === "string"
-
-                    ? JSON.parse(
-                        row.metadata
-                    )
-
-                    : row.metadata || {};
-
-        } catch { }
-
-        return {
-
-            entity: "block",
-
-            data: {
-
-                type:
-                    "callout",
-
-                variant:
-                    metadata.variant || "tip",
-
-                priority:
-                    row.priority || "secondary",
-
-                title:
-                    metadata.title ||
-                    "Mẹo thực hành",
-
-                content
-            }
-        };
-    }
-
-    // ========================================
-    // PRACTICE
-    // ========================================
-
-    if (type === "practice") {
-
-        let metadata = {};
-
-        try {
-
-            metadata =
-
-                typeof row.metadata === "string"
-
-                    ? JSON.parse(
-                        row.metadata
-                    )
-
-                    : row.metadata || {};
-
-        } catch { }
-
-        return {
-
-            entity: "practice",
-
-            data: {
-
-                title:
-                    metadata.title ||
-                    "Bài tập thực hành",
-
-                tasks:
-
-                    String(content)
-
-                        .split(";")
-
-                        .map(
-                            task =>
-                                task.trim()
-                        )
-
-                        .filter(Boolean)
-            }
-        };
-    }
+        createTipBlock(
+            first
+        )
+    );
 
     // ========================================
     // QUIZ
     // ========================================
 
-    if (type === "quiz") {
+    blocks.push(
 
-        let metadata = {};
-
-        try {
-
-            metadata =
-
-                typeof row.metadata === "string"
-
-                    ? JSON.parse(
-                        row.metadata
-                    )
-
-                    : row.metadata || {};
-
-        } catch { }
-
-        return {
-
-            entity: "quiz",
-
-            data: {
-
-                question:
-                    metadata.question || "",
-
-                options:
-                    metadata.options || [],
-
-                correctAnswer:
-                    metadata.correct || 0
-            }
-        };
-    }
+        createQuizBlock(
+            first
+        )
+    );
 
     // ========================================
-    // CHECKPOINT
+    // SUMMARY
     // ========================================
 
-    if (type === "checkpoint") {
+    blocks.push(
 
-        return {
-
-            entity: "block",
-
-            data: {
-
-                type:
-                    "checkpoint",
-
-                priority:
-                    row.priority || "reinforcement",
-
-                title:
-                    "Learning Checkpoint",
-
-                content
-            }
-        };
-    }
+        createSummaryBlock(
+            first
+        )
+    );
 
     // ========================================
-    // DEFAULT TEXT
+    // QUIZ
+    // ========================================
+
+    const quiz = [
+
+        {
+
+            id:
+                `${lessonId}-quiz`,
+
+            question:
+
+                first.quizQuestion ||
+
+                "Bạn đã hiểu bài học chưa?",
+
+            answers: [
+
+                first.quizAnswerA || "Có",
+                first.quizAnswerB || "Chưa"
+
+            ],
+
+            correctAnswer:
+                0
+        }
+    ];
+
+    // ========================================
+    // LESSON
     // ========================================
 
     return {
 
-        entity: "block",
+        // ====================================
+        // CORE
+        // ====================================
 
-        data: {
+        id:
+            lessonId,
 
-            type:
-                "text",
+        lessonId:
+            lessonId,
 
-            priority:
-                row.priority || "primary",
+        courseId:
+            courseId,
 
-            content
-        }
+        // ====================================
+        // CONTENT
+        // ====================================
+
+        title:
+
+            first.title ||
+
+            "Untitled Lesson",
+
+        description:
+
+            first.description ||
+
+            "Runtime semantic lesson",
+
+        summary:
+
+            first.summary ||
+
+            first.description ||
+
+            "Runtime summary",
+
+        // ====================================
+        // LEARNING
+        // ====================================
+
+        difficulty:
+
+            first.difficulty ||
+
+            "beginner",
+
+        duration:
+
+            first.duration ||
+
+            "10 phút",
+
+        status:
+            "runtime",
+
+        flow:
+            createLessonFlow(),
+
+        // ====================================
+        // RUNTIME
+        // ====================================
+
+        blocks,
+
+        quiz,
+
+        // ====================================
+        // VIDEO
+        // ====================================
+
+        videoUrl:
+
+            extractYoutubeEmbedUrl(
+                first.videoUrl
+            ),
+
+        // ====================================
+        // GOVERNANCE
+        // ====================================
+
+        runtimeImported:
+            true,
+
+        semanticVersion:
+            "phase-h-canonical-transformer"
     };
 }
 
 // ============================================
-// GROUP LESSONS
-// ============================================
-
-function groupLessons(
-
-    rows = []
-
-) {
-
-    const grouped = {};
-
-    rows.forEach(row => {
-
-        const lessonId =
-
-            row.id;
-
-        if (!grouped[lessonId]) {
-
-            grouped[lessonId] = [];
-        }
-
-        grouped[lessonId].push(row);
-    });
-
-    return grouped;
-}
-
-// ============================================
-// TRANSFORM SPREADSHEET LESSONS
+// TRANSFORM LESSONS
 // ============================================
 
 export function transformSpreadsheetLessons(
@@ -375,131 +488,65 @@ export function transformSpreadsheetLessons(
 
 ) {
 
-    const grouped =
+    if (
 
-        groupLessons(rows);
+        !Array.isArray(rows)
 
-    return Object.values(grouped)
+        ||
 
-        .map(lessonRows => {
+        rows.length === 0
 
-            const first =
+    ) {
 
-                lessonRows[0];
+        return [];
+    }
 
-            const lesson = {
+    // ========================================
+    // GROUP LESSON ROWS
+    // ========================================
 
-                id:
-                    first.id,
+    const lessonGroups = {};
 
-                courseId:
-                    first.courseId,
+    rows.forEach(
 
-                title:
-                    first.title,
+        row => {
 
-                description:
-                    "Bài học thực hành Office",
+            const lessonId =
 
-                duration:
-                    "15 phút",
+                normalizeId(
+                    row.id
+                );
 
-                difficulty:
-                    "beginner",
+            if (!lessonId) {
 
-                version:
-                    "phase-h-semantic-runtime",
+                return;
+            }
 
-                order:
+            if (
 
-                    Number(
-                        first.lessonOrder || 1
-                    ),
+                !lessonGroups[lessonId]
 
-                blocks: [],
+            ) {
 
-                quiz: [],
+                lessonGroups[lessonId] = [];
+            }
 
-                practice: []
-            };
+            lessonGroups[lessonId]
 
-            // ========================================
-            // BUILD SEMANTIC STRUCTURE
-            // ========================================
+                .push(row);
+        }
+    );
 
-            lessonRows
+    // ========================================
+    // CREATE LESSONS
+    // ========================================
 
-                .sort(
+    return Object.values(
 
-                    (a, b) =>
+        lessonGroups
 
-                        Number(a.blockOrder || 0)
-                        -
-                        Number(b.blockOrder || 0)
-                )
+    ).map(
 
-                .forEach((row) => {
-
-                    const semantic =
-
-                        createSemanticEntry(
-                            row
-                        );
-
-                    if (!semantic) {
-                        return;
-                    }
-
-                    // ====================================
-                    // BLOCK
-                    // ====================================
-
-                    if (
-
-                        semantic.entity === "block"
-
-                    ) {
-
-                        lesson.blocks.push(
-                            semantic.data
-                        );
-
-                        return;
-                    }
-
-                    // ====================================
-                    // QUIZ
-                    // ====================================
-
-                    if (
-
-                        semantic.entity === "quiz"
-
-                    ) {
-
-                        lesson.quiz.push(
-                            semantic.data
-                        );
-
-                        return;
-                    }
-
-                    // ====================================
-                    // PRACTICE
-                    // ====================================
-
-                    if (
-
-                        semantic.entity === "practice"
-
-                    ) {
-
-                        lesson.practice.push(
-                            semantic.data
-                        );
-                    }
-                });
-
-            return lesson;
-        });
+        createLesson
+    );
 }

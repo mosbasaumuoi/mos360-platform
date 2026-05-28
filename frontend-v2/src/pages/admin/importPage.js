@@ -1,26 +1,41 @@
 // ============================================
 // MOS360 IMPORT PAGE
-// Google Sheet import runtime
+// Runtime-governed spreadsheet import
 // ============================================
 
 import {
+
     renderAppLayout
+
 }
+
     from "../../layouts/appLayout.js";
 
 import {
+
     fetchSheetTab
+
 }
-    from "../../engines/googleSheetEngine.js";   
-    
+
+    from "../../engines/googleSheetEngine.js";
+
 import {
 
-    saveImportedCourses,
+    importRuntimeLessons,
 
-    saveImportedLessons
+    getImportedLessons
 
 }
-    from "../../engines/runtimeImportEngine.js";    
+
+    from "../../engines/runtimeImportEngine.js";
+
+import {
+
+    getRuntimeLessonReadiness
+
+}
+
+    from "../../runtime/content/runtimeLessonService";
 
 // ============================================
 // RENDER IMPORT PAGE
@@ -49,7 +64,7 @@ export function renderImportPage() {
         <p>
 
             Paste Google Sheet ID để import
-            course và lesson runtime.
+            runtime lessons.
 
         </p>
 
@@ -76,7 +91,7 @@ export function renderImportPage() {
                 class="import-btn"
             >
 
-                Import Courses
+                Load Courses
 
             </button>
 
@@ -85,7 +100,7 @@ export function renderImportPage() {
                 class="import-btn secondary"
             >
 
-                Import Lessons
+                Import Runtime Lessons
 
             </button>
 
@@ -125,7 +140,7 @@ function bindImportActions() {
         );
 
     // ========================================
-    // IMPORT COURSES
+    // LOAD COURSES
     // ========================================
 
     document
@@ -155,7 +170,7 @@ function bindImportActions() {
 
                 statusEl.innerHTML =
 
-                    "Đang import courses...";
+                    "Đang load courses...";
 
                 const result =
 
@@ -165,7 +180,6 @@ function bindImportActions() {
 
                         tabName:
                             "courses"
-
                     });
 
                 if (!result.ok) {
@@ -182,17 +196,40 @@ function bindImportActions() {
                     result.data
                 );
 
-                saveImportedCourses(
-                    result.data
-                );
-
                 statusEl.innerHTML =
 
-                    `✅ Fetch ${result.data.length} courses thành công`;
+                    `
+                    <div class="
+                        rounded-2xl
+                        border
+                        border-green-500/20
+                        bg-black/20
+                        p-5
+                        mt-5
+                    ">
 
-                statusEl.innerHTML =
+                        <div class="
+                            text-xl
+                            text-green-400
+                            font-semibold
+                        ">
 
-                    "✅ Import courses thành công (runtime foundation)";
+                            ✅ Courses Loaded
+
+                        </div>
+
+                        <div class="
+                            mt-3
+                            text-sm
+                            text-neutral-400
+                        ">
+
+                            ${result.data.length} courses detected
+
+                        </div>
+
+                    </div>
+                    `;
             }
         );
 
@@ -227,7 +264,7 @@ function bindImportActions() {
 
                 statusEl.innerHTML =
 
-                    "Đang import lessons...";
+                    "Đang import runtime lessons...";
 
                 const result =
 
@@ -237,7 +274,6 @@ function bindImportActions() {
 
                         tabName:
                             "lessons"
-
                     });
 
                 if (!result.ok) {
@@ -254,17 +290,131 @@ function bindImportActions() {
                     result.data
                 );
 
-                saveImportedLessons(
-                    result.data
+                // ====================================
+                // IMPORT INTO RUNTIME
+                // ====================================
+
+                const importResult =
+
+                    await importRuntimeLessons(
+                        result.data
+                    );
+
+                console.log(
+                    "IMPORT RESULT",
+                    importResult
                 );
 
+                // ====================================
+                // IMPORTED LESSONS
+                // ====================================
+
+                const importedLessons =
+
+                    importResult?.importedLessons
+                    ||
+                    getImportedLessons()
+                    ||
+                    [];
+
+                console.log(
+                    "IMPORTED LESSONS",
+                    importedLessons
+                );
+
+                // ====================================
+                // FIRST LESSON READINESS
+                // ====================================
+
+                const firstLesson =
+
+                    importedLessons?.[0];
+
+                const readiness =
+
+                    firstLesson
+
+                        ? getRuntimeLessonReadiness(
+                            firstLesson.id
+                        )
+
+                        : {
+
+                            progression: 0,
+
+                            readyForRuntime: false,
+
+                            validationErrors: []
+                        };
+
+                console.log(
+                    "RUNTIME READINESS",
+                    readiness
+                );
+
+                // ====================================
+                // STATUS UI
+                // ====================================
+
                 statusEl.innerHTML =
 
-                    `✅ Fetch ${result.data.length} lessons thành công`;
+                    `
+                <div class="
+                    rounded-2xl
+                    border
+                    border-orange-500/20
+                    bg-black/20
+                    p-5
+                    mt-5
+                ">
 
-                statusEl.innerHTML =
+                    <div class="
+                        text-sm
+                        text-neutral-400
+                    ">
 
-                    "✅ Import lessons thành công (runtime foundation)";
+                        Runtime Readiness
+
+                    </div>
+
+                    <div class="
+                        mt-2
+                        text-3xl
+                        font-semibold
+                        text-white
+                    ">
+
+                        ${readiness.progression}%
+
+                    </div>
+
+                    <div class="
+                        mt-2
+                        text-sm
+                        text-orange-300
+                    ">
+
+                        ${readiness.readyForRuntime
+
+                        ? "✅ Runtime Ready"
+
+                        : "⚠️ Needs Stabilization"
+                    }
+
+                    </div>
+
+                    <div class="
+                        mt-4
+                        text-xs
+                        text-neutral-500
+                    ">
+
+                        Imported ${importedLessons.length} runtime lessons
+
+                    </div>
+
+                </div>
+                `;
             }
         );
 }

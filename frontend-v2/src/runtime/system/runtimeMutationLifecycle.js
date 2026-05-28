@@ -7,14 +7,7 @@
  * - orchestration lifecycle stabilization
  * - runtime phase consistency
  * - mutation observability hooks
- *
- * THIS IS:
- * - canonical runtime lifecycle layer
- *
- * MUST NOT:
- * - mutate blocks unpredictably
- * - reorder orchestration phases dynamically
- * - create hidden runtime side-effects
+ * - semantic mutation lifecycle
  */
 
 // ============================================
@@ -32,6 +25,12 @@ export const RUNTIME_PHASES = {
     PROGRESSION:
         "progression-intelligence",
 
+    REINFORCEMENT:
+        "reinforcement-runtime",
+
+    OBSERVABILITY:
+        "observability-runtime",
+
     MASTERY:
         "mastery-intelligence",
 
@@ -47,13 +46,17 @@ export function createRuntimeSnapshot({
 
     phase,
 
-    blocks = []
+    blocks = [],
+
+    metadata = {}
 
 }) {
 
     return {
 
         phase,
+
+        metadata,
 
         timestamp:
             Date.now(),
@@ -75,15 +78,24 @@ export function applyRuntimePhase({
 
     blocks = [],
 
-    telemetry = {}
+    telemetry = {},
+
+    observability = null
+
 }) {
 
-    const snapshot =
+    const beforeSnapshot =
         createRuntimeSnapshot({
 
             phase,
 
-            blocks
+            blocks,
+
+            metadata: {
+
+                lifecycle:
+                    "before-mutation"
+            }
         });
 
     const mutatedBlocks =
@@ -94,13 +106,102 @@ export function applyRuntimePhase({
             telemetry
         });
 
+    const afterSnapshot =
+        createRuntimeSnapshot({
+
+            phase,
+
+            blocks:
+                mutatedBlocks,
+
+            metadata: {
+
+                lifecycle:
+                    "after-mutation"
+            }
+        });
+
+    const mutationReport =
+
+        createMutationReport({
+
+            phase,
+
+            beforeSnapshot,
+
+            afterSnapshot
+        });
+
+    if (
+
+        typeof observability ===
+        "function"
+
+    ) {
+
+        observability(
+            mutationReport
+        );
+    }
+
     return {
 
         phase,
 
-        snapshot,
+        beforeSnapshot,
+
+        afterSnapshot,
+
+        mutationReport,
 
         blocks:
             mutatedBlocks
+    };
+}
+
+// ============================================
+// CREATE MUTATION REPORT
+// ============================================
+
+function createMutationReport({
+
+    phase,
+
+    beforeSnapshot = {},
+
+    afterSnapshot = {}
+
+}) {
+
+    return {
+
+        phase,
+
+        beforeBlocks:
+
+            beforeSnapshot
+                ?.blockCount || 0,
+
+        afterBlocks:
+
+            afterSnapshot
+                ?.blockCount || 0,
+
+        mutationDelta:
+
+            (
+                afterSnapshot
+                    ?.blockCount || 0
+            )
+
+            -
+
+            (
+                beforeSnapshot
+                    ?.blockCount || 0
+            ),
+
+        createdAt:
+            Date.now()
     };
 }

@@ -3,33 +3,17 @@
  * Adaptive Signal Engine
  *
  * RESPONSIBILITY:
- * - aggregate telemetry
- * - learning state analysis
- * - continuity analysis
- * - reinforcement signals
- * - pacing state
+ * - lightweight runtime signals
+ * - adaptive overlays
+ * - continuity hints
+ * - reinforcement hints
+ * - deterministic runtime guidance
  *
  * MUST NOT:
- * - mutate runtime
- * - adapt lessons directly
- * - render analytics UI
+ * - own telemetry systems
+ * - own analytics authority
+ * - mutate persisted runtime
  */
-
-import {
-
-    getTelemetryByLesson
-
-}
-
-from "./learningTelemetryEngine";
-
-import {
-
-    getMomentumStatus
-
-}
-
-from "./momentumTelemetryEngine";
 
 // ============================================
 // BUILD LEARNING SIGNALS
@@ -39,58 +23,65 @@ export function buildLearningSignals(
     lessonId
 ) {
 
-    const telemetry =
-        getTelemetryByLesson(
+    // ========================================
+    // LIGHTWEIGHT RUNTIME SIGNALS
+    // ========================================
+
+    const runtimeSession =
+
+        safelyReadRuntimeSession(
             lessonId
         );
 
-    const completedBlocks =
-
-        telemetry.filter(
-
-            event =>
-
-                event.type ===
-                "block-complete"
-
-        ).length;
-
     const hesitationCount =
 
-        telemetry.filter(
-
-            event =>
-
-                event.type ===
-                "hesitation"
-
-        ).length;
+        runtimeSession
+            ?.hesitationCount || 0;
 
     const retryCount =
 
-        telemetry.filter(
+        runtimeSession
+            ?.retryCount || 0;
 
-            event =>
+    const reinforcementCount =
 
-                event.type ===
-                "retry"
+        runtimeSession
+            ?.reinforcementCount || 0;
 
-        ).length;
+    const completedBlocks =
+
+        runtimeSession
+            ?.completedBlocks || 0;
 
     const exitedEarly =
 
-        telemetry.some(
+        runtimeSession
+            ?.exitedEarly || false;
 
-            event =>
-
-                event.type ===
-                "session-exit"
-        );
+    // ========================================
+    // MOMENTUM STATE
+    // ========================================
 
     const momentum =
-        getMomentumStatus({
+
+        resolveMomentumState({
 
             completedBlocks,
+
+            hesitationCount,
+
+            retryCount,
+
+            exitedEarly
+        });
+
+    // ========================================
+    // RUNTIME HEALTH
+    // ========================================
+
+    const runtimeHealth =
+
+        calculateRuntimeHealth({
 
             hesitationCount,
 
@@ -103,8 +94,8 @@ export function buildLearningSignals(
 
         lessonId,
 
-        telemetryCount:
-            telemetry.length,
+        overlayMode:
+            true,
 
         completedBlocks,
 
@@ -112,14 +103,110 @@ export function buildLearningSignals(
 
         retryCount,
 
+        reinforcementCount,
+
         exitedEarly,
 
-        momentum
+        momentum,
+
+        runtimeHealth
     };
 }
 
 // ============================================
-// SHOULD REINFORCE
+// SAFE SESSION ACCESS
+// ============================================
+
+function safelyReadRuntimeSession(
+    lessonId
+) {
+
+    try {
+
+        const raw = localStorage.getItem(
+
+            `mos360_runtime_${ lessonId } `
+        );
+
+        if (!raw) {
+
+            return {};
+        }
+
+        return JSON.parse(raw);
+
+    }
+
+    catch {
+
+        return {};
+    }
+}
+
+// ============================================
+// MOMENTUM STATE
+// ============================================
+
+function resolveMomentumState({
+
+    completedBlocks = 0,
+
+    hesitationCount = 0,
+
+    retryCount = 0,
+
+    exitedEarly = false
+
+}) {
+
+    if (
+        exitedEarly
+    ) {
+
+        return {
+
+            status:
+                "interrupted"
+        };
+    }
+
+    if (
+
+        hesitationCount >= 3
+        ||
+        retryCount >= 3
+
+    ) {
+
+        return {
+
+            status:
+                "decaying"
+        };
+    }
+
+    if (
+
+        completedBlocks >= 3
+
+    ) {
+
+        return {
+
+            status:
+                "accelerating"
+        };
+    }
+
+    return {
+
+        status:
+            "stable"
+    };
+}
+
+// ============================================
+// SHOULD INJECT REINFORCEMENT
 // ============================================
 
 export function shouldInjectReinforcement(
@@ -161,4 +248,41 @@ export function shouldRecoverContinuity(
     return (
         signals.exitedEarly
     );
+}
+
+// ============================================
+// RUNTIME HEALTH
+// ============================================
+
+function calculateRuntimeHealth({
+
+    hesitationCount = 0,
+
+    retryCount = 0,
+
+    exitedEarly = false
+
+}) {
+
+    if (
+
+        exitedEarly
+        &&
+        hesitationCount >= 3
+
+    ) {
+
+        return "unstable";
+    }
+
+    if (
+
+        retryCount >= 3
+
+    ) {
+
+        return "recovering";
+    }
+
+    return "healthy";
 }

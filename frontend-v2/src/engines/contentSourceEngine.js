@@ -1,6 +1,6 @@
 // ============================================
 // MOS360 CONTENT SOURCE ENGINE
-// Unified runtime content gateway
+// Canonical runtime bridge integration
 // ============================================
 
 import {
@@ -9,23 +9,10 @@ import {
     from "../services/api.js";
 
 import {
-    importCourse,
-    importLesson
-}
-    from "./contentImportEngine.js";
-
-import {
     getRegisteredCourse,
-    getRegisteredLesson,
-    getRegisteredCourses
+    getRegisteredLesson
 }
     from "./contentRegistryEngine.js";
-
-import {
-    getImportedCourses,
-    getImportedLessons
-}
-    from "./runtimeImportEngine.js";
 
 import {
     COURSE_SOURCES,
@@ -33,110 +20,49 @@ import {
 }
     from "../content/courseSourceRegistry.js";
 
-// ============================================
-// ATTACH LESSONS TO COURSE
-// ============================================
+import {
 
-function attachLessonsToCourse(course) {
+    normalizeRuntimeCourseId,
 
-    const runtimeLessons =
-        getImportedLessons();
+    attachRuntimeLessons,
 
-    const courseLessons =
+    buildRuntimeCourseShell,
 
-        runtimeLessons
+    buildRuntimeOnlyCourses,
 
-            .filter(
+    getRuntimeLessons
 
-                lesson =>
-
-                    lesson.courseId ===
-                    course.id
-            )
-
-            .map(
-
-                lesson => ({
-
-                    id:
-                        lesson.id,
-
-                    title:
-                        lesson.title,
-
-                    description:
-                        lesson.description || "",
-
-                    duration:
-                        lesson.duration || "10 phút"
-
-                })
-            );
-
-    return {
-
-        ...course,
-
-        lessons:
-
-            courseLessons.length
-
-                ? courseLessons
-
-                : (course.lessons || [])
-    };
 }
+
+    from "./runtimeCourseBridge.js";
 
 // ============================================
 // LOAD COURSE
 // ============================================
 
 export async function loadCourse(
+
     courseId
+
 ) {
 
-    // ========================================
-    // RUNTIME IMPORT
-    // ========================================
+    const normalizedCourseId =
 
-    const runtimeCourses =
-        getImportedCourses();
-
-    const runtimeCourse =
-
-        runtimeCourses.find(
-
-            course =>
-                course.id === courseId
+        normalizeRuntimeCourseId(
+            courseId
         );
-
-    if (runtimeCourse) {
-
-        return {
-
-            ok: true,
-
-            source:
-                "runtime-import",
-
-            data:
-                attachLessonsToCourse(
-                    runtimeCourse
-                )
-        };
-    }
 
     // ========================================
     // REGISTRY
     // ========================================
 
-    const cachedCourse =
+    const registeredCourse =
 
         getRegisteredCourse(
-            courseId
+            normalizedCourseId
         );
 
-    if (cachedCourse) {
+    if (registeredCourse) {
 
         return {
 
@@ -146,8 +72,9 @@ export async function loadCourse(
                 "registry",
 
             data:
-                attachLessonsToCourse(
-                    cachedCourse
+
+                attachRuntimeLessons(
+                    registeredCourse
                 )
         };
     }
@@ -158,11 +85,20 @@ export async function loadCourse(
 
     const staticCourse =
 
-        COURSE_SOURCES.find(
+        (COURSE_SOURCES || [])
 
-            course =>
-                course.id === courseId
-        );
+            .find(
+
+                course =>
+
+                    normalizeRuntimeCourseId(
+                        course.id
+                    )
+
+                    ===
+
+                    normalizedCourseId
+            );
 
     if (staticCourse) {
 
@@ -174,9 +110,34 @@ export async function loadCourse(
                 "static",
 
             data:
-                attachLessonsToCourse(
+
+                attachRuntimeLessons(
                     staticCourse
                 )
+        };
+    }
+
+    // ========================================
+    // RUNTIME FALLBACK
+    // ========================================
+
+    const runtimeCourse =
+
+        buildRuntimeCourseShell(
+            normalizedCourseId
+        );
+
+    if (runtimeCourse) {
+
+        return {
+
+            ok: true,
+
+            source:
+                "runtime",
+
+            data:
+                runtimeCourse
         };
     }
 
@@ -188,7 +149,7 @@ export async function loadCourse(
 
         await apiGet(
 
-            `/courses/${courseId}`,
+            `/courses/${normalizedCourseId}`,
 
             {
                 silent: true
@@ -214,7 +175,8 @@ export async function loadCourse(
             "api",
 
         data:
-            attachLessonsToCourse(
+
+            attachRuntimeLessons(
                 result.data
             )
     };
@@ -231,23 +193,36 @@ export async function loadLesson({
 
 }) {
 
+    const normalizedCourseId =
+
+        normalizeRuntimeCourseId(
+            courseId
+        );
+
     // ========================================
     // RUNTIME
     // ========================================
 
-    const runtimeLessons =
-        getImportedLessons();
-
     const runtimeLesson =
 
-        runtimeLessons.find(
+        getRuntimeLessons()
 
-            lesson =>
+            .find(
 
-                lesson.id === lessonId
-                &&
-                lesson.courseId === courseId
-        );
+                lesson =>
+
+                    normalizeRuntimeCourseId(
+                        lesson.courseId
+                    )
+
+                    ===
+
+                    normalizedCourseId
+
+                    &&
+
+                    lesson.id === lessonId
+            );
 
     if (runtimeLesson) {
 
@@ -256,7 +231,7 @@ export async function loadLesson({
             ok: true,
 
             source:
-                "runtime-import",
+                "runtime",
 
             data:
                 runtimeLesson
@@ -267,13 +242,14 @@ export async function loadLesson({
     // REGISTRY
     // ========================================
 
-    const cachedLesson =
+    const registeredLesson =
 
         getRegisteredLesson(
-            `${courseId}:${lessonId}`
+
+            `${normalizedCourseId}:${lessonId}`
         );
 
-    if (cachedLesson) {
+    if (registeredLesson) {
 
         return {
 
@@ -283,7 +259,7 @@ export async function loadLesson({
                 "registry",
 
             data:
-                cachedLesson
+                registeredLesson
         };
     }
 
@@ -293,14 +269,24 @@ export async function loadLesson({
 
     const staticLesson =
 
-        LESSON_SOURCES.find(
+        (LESSON_SOURCES || [])
 
-            lesson =>
+            .find(
 
-                lesson.id === lessonId
-                &&
-                lesson.courseId === courseId
-        );
+                lesson =>
+
+                    normalizeRuntimeCourseId(
+                        lesson.courseId
+                    )
+
+                    ===
+
+                    normalizedCourseId
+
+                    &&
+
+                    lesson.id === lessonId
+            );
 
     if (staticLesson) {
 
@@ -324,7 +310,7 @@ export async function loadLesson({
 
         await apiGet(
 
-            `/learn/${courseId}/${lessonId}`,
+            `/learn/${normalizedCourseId}/${lessonId}`,
 
             {
                 silent: true
@@ -360,26 +346,34 @@ export async function loadLesson({
 
 export async function loadCourses() {
 
-    const runtimeCourses =
-
-        getImportedCourses().map(
-
-            attachLessonsToCourse
-        );
+    // ========================================
+    // STATIC COURSES
+    // ========================================
 
     const staticCourses =
 
-        (COURSE_SOURCES || []).map(
+        (COURSE_SOURCES || [])
 
-            attachLessonsToCourse
-        );
+            .map(
 
-    const mergedCourses = [
+                attachRuntimeLessons
+            );
 
-        ...runtimeCourses,
+    // ========================================
+    // RUNTIME-ONLY COURSES
+    // ========================================
 
-        ...staticCourses
-    ];
+    const runtimeOnlyCourses =
+
+        buildRuntimeOnlyCourses({
+
+            existingCourses:
+                staticCourses
+        });
+
+    // ========================================
+    // MERGE
+    // ========================================
 
     return {
 
@@ -388,8 +382,12 @@ export async function loadCourses() {
         source:
             "merged",
 
-        data:
-            mergedCourses
+        data: [
+
+            ...runtimeOnlyCourses,
+
+            ...staticCourses
+        ]
     };
 }
 
@@ -398,7 +396,9 @@ export async function loadCourses() {
 // ============================================
 
 export async function loadCourseDetail(
+
     courseId
+
 ) {
 
     return loadCourse(
@@ -412,14 +412,5 @@ export async function loadCourseDetail(
 
 export async function loadCourseManifests() {
 
-    return {
-
-        ok: true,
-
-        source:
-            "runtime",
-
-        data:
-            COURSE_SOURCES || []
-    };
+    return loadCourses();
 }

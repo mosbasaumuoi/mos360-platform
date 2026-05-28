@@ -90,7 +90,7 @@ import {
   composeLesson
 
 }
-  from "../../runtime/composer/compositionEngine.js";
+  from "../../runtime/_future/compositionEngine.js";
 
 
 // ============================================

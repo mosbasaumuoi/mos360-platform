@@ -68,10 +68,13 @@ import {
   from "../pages/admin/importPage.js";  
 
 import {
-  renderRuntimeTestPage
-}
-  from "../pages/runtime/runtimeTestPage.jsx";  
 
+  renderRuntimeLessonTestPage
+
+}
+
+  from "../pages/runtime/runtimeLessonTestPage.jsx";  
+  
 // ============================================
 // ROUTES
 // ============================================
@@ -80,10 +83,11 @@ const routes = {
 
   "/":
     renderHomePage,
-
+ 
   "/runtime-test":
-    renderRuntimeTestPage,  
 
+    renderRuntimeLessonTestPage,  
+  
   "/login":
     renderLoginPage,
 

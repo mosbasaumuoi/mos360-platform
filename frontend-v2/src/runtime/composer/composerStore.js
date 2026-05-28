@@ -32,6 +32,14 @@ import {
 
     from "../../contracts/composerRuntimeContract";
 
+import {
+
+    importRuntimeLesson
+
+}
+
+    from "../import/importRuntimeLessonPipeline"; 
+
 const COMPOSER_DRAFT_KEY =
     "mos360_composer_draft";
 
@@ -130,6 +138,42 @@ export function resetComposerDraft() {
     );
 
     return emptyDraft;
+}
+
+// ============================================
+// IMPORT COMPOSER DRAFT
+// ============================================
+
+export function importComposerDraft(
+
+    rawLesson = {}
+
+) {
+
+    const importedLesson =
+
+        importRuntimeLesson(
+            rawLesson
+        );
+
+    return {
+
+        ...createEmptyComposerState(),
+
+        ...importedLesson.lesson,
+
+        validationStatus:
+
+            importedLesson.valid
+
+                ? "valid"
+
+                : "invalid",
+
+        validationErrors:
+
+            importedLesson.errors
+    };
 }
 
 // ============================================

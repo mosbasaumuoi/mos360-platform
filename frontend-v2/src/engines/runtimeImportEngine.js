@@ -1,238 +1,138 @@
 // ============================================
-// RUNTIME IMPORT ENGINE
-// Normalize imported runtime content
+// MOS360 RUNTIME IMPORT ENGINE
+// Hybrid semantic runtime convergence
 // ============================================
-import {
 
-    transformSpreadsheetLessons
-
-}
-
-from "../content/pipeline/spreadsheetLessonTransformer.js";
-
-import { validateLesson } from "../validation/lessonValidationEngine";
+import { importSpreadsheetLessons }
+    from "../content/pipeline/importSpreadsheetLessons.js";
 
 import {
-
-    createImportEntry,
-
-    registerImport
-
+    validateRuntimeLesson
 }
-
-from "../runtime/content/importRegistry.js";
+    from "./runtimeSemanticValidationEngine.js";
 
 import {
 
-    createImportSnapshot,
+    normalizeValidationResult
 
-    registerSnapshot
-
-}
-
-from "../runtime/content/importRegistry.js";
-
-import {
-
-    safelyMergeLessons
-
-}
-
-from "../runtime/content/lessonMutationPipeline.js";
-
-import {
-
-    ensureRuntimeCompatibility
-
-}
-
-from "../runtime/system/runtimeCompatibilityEngine.js";
-
-
-const IMPORT_COURSES_KEY =
-    "mos360_imported_courses";
-
-const IMPORT_LESSONS_KEY =
-    "mos360_imported_lessons";
+} from "../validation/normalizeValidationResult";    
 
 // ============================================
-// CLEAN OBJECT KEYS
+// STORAGE
 // ============================================
 
-function cleanObject(obj = {}) {
-
-    return Object.fromEntries(
-
-        Object.entries(obj).map(
-
-            ([key, value]) => [
-
-                String(key).trim(),
-
-                typeof value === "string"
-                    ? value.trim()
-                    : value
-
-            ]
-        )
-    );
-}
+const STORAGE_KEY =
+    "mos360_runtime_import_lessons";
 
 // ============================================
-// NORMALIZE COURSE
+// LEGACY → PHASE-H BRIDGE
 // ============================================
 
-function normalizeCourse(rawCourse = {}) {
-
-    const course =
-        cleanObject(rawCourse);
-
-    const id =
-
-        course.courseId ||
-        course.id ||
-        course.slug ||
-        "";
+function normalizeRuntimeBlock(
+    block = {}
+) {
 
     return {
 
-        // ======================================
-        // REQUIRED
-        // ======================================
+        ...block,
 
-        id,
+        // ====================================
+        // SEMANTIC VOCABULARY
+        // ====================================
 
-        courseId: id,
+        kind:
+            block.kind
+            ||
+            block.type
+            ||
+            "content",
 
-        slug:
+        surface:
+            block.surface
+            ||
+            block.semanticSurface
+            ||
+            "knowledge",
 
-            course.slug ||
-            id,
+        flow:
+            block.flow
+            ||
+            block.lessonFlow
+            ||
+            "learning",
 
-        title:
+        // ====================================
+        // PHASE-H COMPATIBILITY
+        // ====================================
 
-            course.title ||
-            "Untitled Course",
+        type:
+            block.type
+            ||
+            block.kind
+            ||
+            "content",
 
-        description:
+        semanticSurface:
+            block.semanticSurface
+            ||
+            block.surface
+            ||
+            "knowledge",
 
-            course.description ||
-            "Khóa học MOS runtime.",
+        lessonFlow:
+            block.lessonFlow
+            ||
+            block.flow
+            ||
+            "learning",
 
-        category:
+        // ====================================
+        // SEMANTIC RUNTIME
+        // ====================================
 
-            course.category ||
-            "office",
+        priority:
+            Number(block.priority ?? 1),
 
-        level:
+        momentum:
+            Number(block.momentum ?? 1),
 
-            course.level ||
-            "beginner",
-
-        xpReward:
-
-            Number(
-                course.xpReward || 0
-            ),
-
-        lessons:
-
-    getImportedLessons()
-
-        .filter(
-
-            lesson =>
-
-                lesson.courseId === id
-        )
-
-        .map(
-
-            lesson => ({
-
-                id:
-                    lesson.id
-            })
-        ),
-
-        // ======================================
-        // OPTIONAL
-        // ======================================
-
-        thumbnail:
-
-            course.thumbnail ||
-            "/assets/courses/default.jpg",
-
-        duration:
-
-            course.duration ||
-            "Đang cập nhật",
-
-        difficulty:
-
-            course.difficulty ||
-            "beginner",
-
-        status:
-
-            course.status ||
+        engagement:
+            block.engagement
+            ||
             "active",
 
-        version:
+        cognitiveLoad:
+            block.cognitiveLoad
+            ||
+            "medium",
 
-            course.version ||
-            "1.0",
+        reinforcement:
+            Number(block.reinforcement ?? 1),
 
-        tags:
+        semanticWeight:
+            Number(block.semanticWeight ?? 1),
 
-            Array.isArray(
-                course.tags
-            )
+        progressionState:
+            block.progressionState
+            ||
+            "available",
 
-                ? course.tags
+        // ====================================
+        // RUNTIME SAFETY
+        // ====================================
 
-                : [],
+        title:
+            block.title
+            ||
+            "Runtime Block",
 
-        objectives:
+        content:
+            block.content
+            ||
+            "",
 
-            Array.isArray(
-                course.objectives
-            )
-
-                ? course.objectives
-
-                : [],
-
-        skills:
-
-            Array.isArray(
-                course.skills
-            )
-
-                ? course.skills
-
-                : [],
-
-        requirements:
-
-            Array.isArray(
-                course.requirements
-            )
-
-                ? course.requirements
-
-                : [],
-
-        learningOutcomes:
-
-            Array.isArray(
-                course.learningOutcomes
-            )
-
-                ? course.learningOutcomes
-
-                : []
+        runtimeBridge:
+            true
     };
 }
 
@@ -240,450 +140,255 @@ function normalizeCourse(rawCourse = {}) {
 // NORMALIZE LESSON
 // ============================================
 
-// ============================================
-// NORMALIZE LESSON
-// Phase H block-native runtime
-// ============================================
-
-function normalizeLesson(rawLesson = {}) {
-
-    const lesson =
-        cleanObject(rawLesson);
-
-    // ========================================
-    // BLOCKS
-    // ========================================
-
-    const blocks =
-
-        Array.isArray(
-            lesson.blocks
-        )
-
-            ? lesson.blocks
-
-            : [];
-
-    // ========================================
-    // VIDEO NORMALIZATION
-    // ========================================
-
-    const normalizedBlocks =
-
-        blocks.map(block => {
-
-            // ==================================
-            // VIDEO
-            // ==================================
-
-            if (block.type === "video") {
-
-                return {
-
-                    ...block,
-
-                    videoUrl:
-
-                        block.videoUrl ||
-
-                        block.content ||
-
-                        ""
-                };
-            }
-
-            return block;
-        });
-
-    // ========================================
-    // NORMALIZED LESSON
-    // ========================================
+function normalizeRuntimeLesson(
+    lesson = {}
+) {
 
     return {
 
-        id:
-
-            lesson.id ||
-            lesson.lessonId ||
-            "",
-
-        lessonId:
-
-            lesson.lessonId ||
-            lesson.id ||
-            "",
-
-        courseId:
-
-            lesson.courseId ||
-            "",
-
-        title:
-
-            lesson.title ||
-            "Untitled Lesson",
-
-        description:
-
-            lesson.description ||
-            "",
-
-        duration:
-
-            lesson.duration ||
-            "10 phút",
-
-        difficulty:
-
-            lesson.difficulty ||
-            "beginner",
-
-        order:
-
-            Number(
-                lesson.order || 1
-            ),
-
-        xpReward:
-
-            Number(
-                lesson.xpReward || 10
-            ),
-
-        version:
-
-            lesson.version ||
-            "phase-h-runtime",
+        ...lesson,
 
         // ====================================
-        // BLOCK-NATIVE
+        // LESSON STATUS
+        // ====================================
+
+        status:
+            "runtime",
+
+        runtimeImported:
+            true,
+
+        semanticVersion:
+            "phase-h-runtime-bridge",
+
+        // ====================================
+        // SEMANTIC RUNTIME FIELDS
+        // ====================================
+
+        momentum:
+            Number(lesson.momentum ?? 1),
+
+        engagement:
+            lesson.engagement
+            ||
+            "active",
+
+        cognitiveLoad:
+            lesson.cognitiveLoad
+            ||
+            "medium",
+
+        reinforcement:
+            Number(lesson.reinforcement ?? 1),
+
+        semanticWeight:
+            Number(lesson.semanticWeight ?? 1),
+
+        // ====================================
+        // BLOCKS
         // ====================================
 
         blocks:
-            normalizedBlocks,
-
-        // ====================================
-        // QUIZ
-        // ====================================
-
-        quiz:
 
             Array.isArray(
-                lesson.quiz
+                lesson.blocks
             )
 
-                ? lesson.quiz
+                ? lesson.blocks.map(
+                    normalizeRuntimeBlock
+                )
 
                 : []
     };
 }
 
-function removeDuplicateLessons(
-    lessons = []
-) {
-
-    const seen = new Set();
-
-    return lessons.filter(lesson => {
-
-        const key =
-            `${lesson.courseId}-${lesson.id}`;
-
-        if (seen.has(key)) {
-
-            console.warn(
-                "[MOS360] Duplicate lesson skipped:",
-                key
-            );
-
-            return false;
-        }
-
-        seen.add(key);
-
-        return true;
-    });
-}
-
 // ============================================
-// SAVE COURSES
-// ============================================
-
-export function saveImportedCourses(
-    courses = []
-) {
-
-    const normalized =
-
-    removeDuplicateLessons(
-
-        transformedLessons
-
-            .map(normalizeLesson)
-
-            .filter(
-                lesson =>
-                    lesson.id &&
-                    lesson.courseId
-            )
-
-            .filter((lesson) => {
-
-                const validationResult =
-                    validateLesson(lesson);
-
-                if (!validationResult.valid) {
-
-                    console.error(
-
-                        "[MOS360] Lesson validation failed:",
-
-                        {
-                            lessonId:
-                                lesson.id,
-
-                            errors:
-                                validationResult.errors
-                        }
-                    );
-
-                    return false;
-                }
-
-                if (
-                    validationResult.warnings
-                        .length > 0
-                ) {
-
-                    console.warn(
-
-                        "[MOS360] Lesson validation warnings:",
-
-                        {
-                            lessonId:
-                                lesson.id,
-
-                            warnings:
-                                validationResult.warnings
-                        }
-                    );
-                }
-
-                return true;
-            })
-    );
-
-    const importEntry =
-    createImportEntry({
-
-        source:
-            "spreadsheet-import",
-
-        courseCount:
-            getImportedCourses()
-                .length,
-
-        lessonCount:
-            normalized.length,
-
-        semanticVersion:
-            "phase-h1",
-
-        validationWarnings:
-            [],
-
-        validationErrors:
-            []
-    });
-
-registerImport(
-    importEntry
-);
-    
-    const snapshot =
-    createImportSnapshot({
-
-        lessons:
-            normalized,
-
-        semanticVersion:
-            "phase-h1"
-    });
-
-registerSnapshot(
-    snapshot
-);
-
-    localStorage.setItem(
-
-        IMPORT_COURSES_KEY,
-
-        JSON.stringify(normalized)
-    );
-
-    const importedLessons =
-
-    getImportedLessons();
-
-}
-
-// ============================================
-// GET COURSES
-// ============================================
-
-export function getImportedCourses() {
-
-    try {
-
-        return JSON.parse(
-
-            localStorage.getItem(
-                IMPORT_COURSES_KEY
-            ) || "[]"
-        );
-
-    } catch {
-
-        return [];
-    }
-}
-
-// ============================================
-// SAVE LESSONS
+// STORAGE HELPERS
 // ============================================
 
 export function saveImportedLessons(
     lessons = []
 ) {
 
-    // ========================================
-// PHASE H TRANSFORM
-// ========================================
+    localStorage.setItem(
 
-const transformedLessons =
+        STORAGE_KEY,
 
-    transformSpreadsheetLessons(
-        lessons
-    );
-
-// ========================================
-// NORMALIZE
-// ========================================
-
-const normalized =
-
-    transformedLessons
-
-        .map(normalizeLesson)
-
-        .filter(
-            lesson =>
-                lesson.id &&
-                lesson.courseId
+        JSON.stringify(
+            lessons
         )
-
-        .filter((lesson) => {
-
-            const validationResult =
-                validateLesson(lesson);
-
-            // ============================
-            // VALIDATION FAILED
-            // ============================
-
-            if (!validationResult.valid) {
-
-                console.error(
-
-                    "[MOS360] Lesson validation failed:",
-
-                    {
-                        lessonId:
-                            lesson.id,
-
-                        errors:
-                            validationResult.errors
-                    }
-                );
-
-                return false;
-            }
-
-            // ============================
-            // VALIDATION WARNINGS
-            // ============================
-
-            if (
-                validationResult.warnings
-                    .length > 0
-            ) {
-
-                console.warn(
-
-                    "[MOS360] Lesson validation warnings:",
-
-                    {
-                        lessonId:
-                            lesson.id,
-
-                        warnings:
-                            validationResult.warnings
-                    }
-                );
-            }
-
-            return true;
-        });
-            
-    console.log(
-        "NORMALIZED LESSONS",
-        normalized
     );
-
-    const existingLessons =
-    getImportedLessons();
-
-    const compatibleLessons =
-    ensureRuntimeCompatibility(
-        normalized
-    );
-    
-    const mergedLessons =
-    safelyMergeLessons({
-
-        existingLessons,
-
-        importedLessons:
-        compatibleLessons
-    });
-
-localStorage.setItem(
-
-    IMPORT_LESSONS_KEY,
-
-    JSON.stringify(
-        mergedLessons
-    )
-);
 }
-
-// ============================================
-// GET LESSONS
-// ============================================
 
 export function getImportedLessons() {
 
     try {
 
-        return JSON.parse(
+        const raw =
 
             localStorage.getItem(
-                IMPORT_LESSONS_KEY
-            ) || "[]"
+                STORAGE_KEY
+            );
+
+        if (!raw) {
+            return [];
+        }
+
+        return JSON.parse(raw);
+
+    } catch (error) {
+
+        console.error(
+            "[MOS360 Runtime] load failed",
+            error
         );
 
-    } catch {
-
         return [];
+    }
+}
+
+export function clearImportedLessons() {
+
+    localStorage.removeItem(
+        STORAGE_KEY
+    );
+}
+
+// ============================================
+// IMPORT RUNTIME LESSONS
+// ============================================
+
+export async function importRuntimeLessons(
+    rows = []
+) {
+
+    try {
+
+        // ============================================
+        // IMPORT SEMANTIC LESSONS
+        // ============================================
+
+        const importResult =
+            await importSpreadsheetLessons(
+                rows
+            );
+
+        console.log(
+            "IMPORT RESULT",
+            importResult
+        );
+
+        const importedLessons =
+            importResult.importedLessons || [];
+
+        console.log(
+            "IMPORTED LESSONS",
+            importedLessons
+        );
+
+        // ============================================
+        // NORMALIZE
+        // ============================================
+
+        const normalizedLessons =
+            importedLessons.map(
+                normalizeRuntimeLesson
+            );
+
+        // ====================================
+        // VALIDATION
+        // Governance observer only
+        // ====================================
+
+        const validationResults =
+
+            normalizedLessons.map(
+                lesson => {
+
+                    const rawValidation =
+
+                        validateRuntimeLesson(
+                            lesson
+                        );
+
+                    const validation =
+
+                        normalizeValidationResult(
+                            rawValidation
+                        );
+
+                    if (!validation.valid) {
+
+                        console.warn(
+
+                            "[MOS360 Runtime Validation]",
+
+                            {
+
+                                lessonId:
+                                    lesson.id,
+
+                                valid:
+                                    validation.valid,
+
+                                errors:
+                                    validation.errors
+                            }
+                        );
+                    }
+
+                    return validation;
+                }
+            );
+
+        // ====================================
+        // SAVE
+        // ====================================
+
+        saveImportedLessons(
+            normalizedLessons
+        );
+
+        // ====================================
+        // RESULT
+        // ====================================
+
+        return {
+
+            success: true,
+
+            importedLessons:
+                normalizedLessons,
+
+            validationResults,
+
+            totalImported:
+                normalizedLessons.length,
+
+            totalRejected: 0
+        };
+
+    } catch (error) {
+
+        console.error(
+
+            "[MOS360 Runtime Import Failed]",
+
+            error
+        );
+
+        return {
+
+            success: false,
+
+            importedLessons: [],
+
+            totalImported: 0,
+
+            totalRejected: 0,
+
+            error:
+                error.message
+        };
     }
 }

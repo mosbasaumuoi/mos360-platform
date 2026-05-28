@@ -3,16 +3,18 @@
  * Adaptive Runtime Engine
  *
  * RESPONSIBILITY:
- * - adaptive orchestration
- * - reinforcement injection
- * - pacing adaptation
- * - continuity recovery
- * - deterministic runtime adaptation
+ * - adaptive overlay coordination
+ * - runtime enrichment
+ * - reinforcement signaling
+ * - continuity signaling
+ * - deterministic adaptive guidance
  *
  * MUST NOT:
+ * - own reinforcement runtime
+ * - own progression runtime
+ * - own continuity runtime
  * - mutate persisted lessons
- * - rewrite lesson structures
- * - bypass sequencing contracts
+ * - rewrite runtime ecosystems
  */
 
 import {
@@ -22,46 +24,6 @@ import {
 }
 
 from "./adaptiveSignalEngine";
-
-import {
-
-    buildReinforcementPlan
-
-}
-
-from "./reinforcementTimingEngine";
-
-import {
-
-    buildContinuityRecovery
-
-}
-
-from "./continuityRecoveryEngine";
-
-import {
-
-    buildAdaptiveSequence
-
-}
-
-from "./adaptiveSequencingEngine";
-
-import {
-
-    buildAdaptiveReinforcement
-
-}
-
-from "./adaptiveReinforcementEngine";
-
-import {
-
-    protectAdaptiveRuntime
-
-}
-
-from "./adaptiveProtectionEngine";
 
 // ============================================
 // BUILD ADAPTIVE RUNTIME
@@ -80,147 +42,159 @@ export function buildAdaptiveRuntime({
             lessonId
         );
 
-    const reinforcementPlan =
-        buildReinforcementPlan(
+    // ========================================
+    // LIGHTWEIGHT OVERLAY ADAPTATION
+    // ========================================
+
+    const adaptedBlocks =
+
+        applyAdaptiveOverlay({
+
+            blocks,
+
+            signals
+        });
+
+    // ========================================
+    // OVERLAY RUNTIME STATE
+    // ========================================
+
+    const runtimeState =
+
+        buildRuntimeState(
             signals
         );
-
-    let adaptedBlocks =
-        [...blocks];
-
-    // ================================
-    // REINFORCEMENT INJECTION
-    // ================================
-
-    if (
-        reinforcementPlan
-            .shouldInject
-    ) {
-
-        adaptedBlocks =
-            injectReinforcementBlock(
-                adaptedBlocks
-            );
-    }
-
-    // ================================
-    // DENSITY REDUCTION
-    // ================================
-
-    if (
-        reinforcementPlan
-            .shouldReduceDensity
-    ) {
-
-        adaptedBlocks =
-            reduceLearningDensity(
-                adaptedBlocks
-            );
-    }
-
-    const continuityRecovery =
-
-    buildContinuityRecovery({
-
-        signals,
-
-        blocks:
-            adaptedBlocks
-    });
-
-// ================================
-// CONTINUITY RECOVERY
-// ================================
-
-if (
-    continuityRecovery
-        .shouldRecover
-) {
-
-    adaptedBlocks =
-
-        continuityRecovery
-            .recoveryBlocks;
-}
-    
-    adaptedBlocks =
-    buildAdaptiveSequence({
-
-        blocks:
-            adaptedBlocks,
-
-        signals
-    });
-
-    adaptedBlocks =
-    buildAdaptiveReinforcement({
-
-        blocks:
-            adaptedBlocks,
-
-        signals
-    });
-
-    adaptedBlocks =
-    protectAdaptiveRuntime(
-        adaptedBlocks
-    );
 
     return {
 
         lessonId,
 
+        overlayMode:
+            true,
+
+        runtimeType:
+            "adaptive-overlay-runtime",
+
         signals,
 
-        reinforcementPlan,
-
-        continuityRecovery,
+        runtimeState,
 
         adaptedBlocks
     };
 }
 
 // ============================================
-// INJECT REINFORCEMENT BLOCK
+// APPLY ADAPTIVE OVERLAY
 // ============================================
 
-function injectReinforcementBlock(
-    blocks = []
-) {
+function applyAdaptiveOverlay({
 
-    return [
+    blocks = [],
 
-        ...blocks,
+    signals = {}
 
-        {
+}) {
 
-            type:
-                "reinforcement",
+    return blocks.map((block) => {
 
-            runtimeInjected:
-                true,
+        const normalized = {
+            ...block
+        };
 
-            message:
-                "Take a quick reinforcement pause"
+        // ====================================
+        // CONTINUITY OVERLAY
+        // ====================================
+
+        if (
+            signals.exitedEarly
+        ) {
+
+            normalized.continuityRecovery =
+                true;
         }
-    ];
+
+        // ====================================
+        // DENSITY OVERLAY
+        // ====================================
+
+        if (
+
+            signals.hesitationCount >= 3
+
+        ) {
+
+            normalized.adaptiveSpacing =
+                "expanded";
+        }
+
+        // ====================================
+        // REINFORCEMENT OVERLAY
+        // ====================================
+
+        if (
+
+            signals.reinforcementCount >= 3
+
+        ) {
+
+            normalized.reinforcementActive =
+                true;
+        }
+
+        // ====================================
+        // MOMENTUM OVERLAY
+        // ====================================
+
+        if (
+
+            signals.momentum
+                ?.status ===
+            "decaying"
+
+        ) {
+
+            normalized.momentumRecovery =
+                true;
+        }
+
+        return normalized;
+    });
 }
 
 // ============================================
-// REDUCE LEARNING DENSITY
+// BUILD RUNTIME STATE
 // ============================================
 
-function reduceLearningDensity(
-    blocks = []
+function buildRuntimeState(
+    signals = {}
 ) {
 
-    return blocks.map(
-        block => ({
+    return {
 
-            ...block,
+        reinforcementActive:
 
-            adaptiveSpacing:
-                "expanded"
-        })
-    );
+            signals.reinforcementCount >= 3,
+
+        continuityRecovery:
+
+            signals.exitedEarly || false,
+
+        adaptiveDensity:
+
+            signals.hesitationCount >= 3
+
+                ? "expanded"
+
+                : "normal",
+
+        momentumState:
+
+            signals.momentum
+                ?.status || "stable",
+
+        runtimeHealth:
+
+            signals.runtimeHealth
+            || "healthy"
+    };
 }

@@ -15,7 +15,7 @@ import {
 // IMPORT SPREADSHEET LESSONS
 // ============================================
 
-export function importSpreadsheetLessons(
+export async function importSpreadsheetLessons(
 
     rows = []
 

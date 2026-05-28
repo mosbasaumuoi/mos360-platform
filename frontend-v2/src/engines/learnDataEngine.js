@@ -1,8 +1,7 @@
 // ============================================
 // MOS360 LEARN DATA ENGINE
-// Learning page data orchestration runtime
+// Hybrid semantic runtime stabilization
 // ============================================
-
 
 import {
     getCourseCompletedKey
@@ -17,12 +16,12 @@ import {
 import {
     normalizeCourse
 }
-    from "./courseNormalizer.js";    
+    from "./courseNormalizer.js";
 
 import {
     normalizeLesson
 }
-    from "./lessonNormalizer.js";    
+    from "./lessonNormalizer.js";
 
 import {
     logWarn
@@ -38,19 +37,19 @@ import {
     validateCourseGraph,
     validateLessonDetail
 }
-    from "./contentValidationEngine.js";    
+    from "./contentValidationEngine.js";
 
 import {
     loadCourse,
     loadLesson
 }
-    from "./contentSourceEngine.js";    
+    from "./contentSourceEngine.js";
 
 import {
     registerCourse,
     registerLesson
 }
-    from "./contentRegistryEngine.js";    
+    from "./contentRegistryEngine.js";
 
 // ============================================
 // LOAD LEARN PAGE DATA
@@ -84,18 +83,24 @@ export async function loadLearnPageData({
         };
     }
 
-    const course =
-        courseResult.data;
-
-    
     // ========================================
-    // VALIDATE CONTENT GRAPH
+    // NORMALIZE COURSE
+    // ========================================
+
+    const normalizedCourse =
+
+        normalizeCourse(
+            courseResult.data
+        );
+
+    // ========================================
+    // VALIDATE COURSE GRAPH
     // ========================================
 
     const validCourseGraph =
 
         validateCourseGraph(
-            course
+            normalizedCourse
         );
 
     if (!validCourseGraph) {
@@ -107,7 +112,7 @@ export async function loadLearnPageData({
             type:
                 "invalid-course-graph"
         };
-    }    
+    }
 
     // ========================================
     // LOAD LESSON
@@ -133,18 +138,24 @@ export async function loadLearnPageData({
         };
     }
 
-    const lesson =
-        lessonResult.data;
-     
+    // ========================================
+    // NORMALIZE LESSON
+    // ========================================
+
+    const normalizedLesson =
+
+        normalizeLesson(
+            lessonResult.data
+        );
 
     // ========================================
-    // VALIDATE LESSON DETAIL
+    // VALIDATE LESSON
     // ========================================
 
     const validLesson =
 
         validateLessonDetail(
-            lesson
+            normalizedLesson
         );
 
     if (!validLesson) {
@@ -157,18 +168,18 @@ export async function loadLearnPageData({
                 "invalid-lesson"
         };
     }
-    
+
     // ========================================
-    // LESSON EXISTS IN COURSE GRAPH
+    // LESSON EXISTS IN COURSE
     // ========================================
 
     const lessonExists =
 
-        course.lessons.some(
+        normalizedCourse.lessons.some(
 
-            item =>
+            lesson =>
 
-                item.id === lessonId
+                lesson.id === lessonId
 
         );
 
@@ -193,9 +204,23 @@ export async function loadLearnPageData({
 
             type:
                 "lesson-graph-mismatch"
-
         };
     }
+
+    // ========================================
+    // REGISTER
+    // ========================================
+
+    registerCourse(
+        normalizedCourse
+    );
+
+    registerLesson(
+
+        `${courseId}:${lessonId}`,
+
+        normalizedLesson
+    );
 
     // ========================================
     // PROGRESSION
@@ -219,19 +244,18 @@ export async function loadLearnPageData({
 
     const currentIndex =
 
-        course.lessons.findIndex(
+        normalizedCourse.lessons.findIndex(
 
-            item =>
+            lesson =>
 
-                item.id === lessonId
-
+                lesson.id === lessonId
         );
 
     const nextLesson =
 
-        course.lessons[
+        normalizedCourse.lessons[
         currentIndex + 1
-        ];
+        ] || null;
 
     // ========================================
     // COURSE COMPLETED
@@ -246,7 +270,6 @@ export async function loadLearnPageData({
             ),
 
             false
-
         );
 
     // ========================================
@@ -255,7 +278,7 @@ export async function loadLearnPageData({
 
     const totalLessons =
 
-        course.lessons.length;
+        normalizedCourse.lessons.length;
 
     const completedCount =
 
@@ -263,26 +286,32 @@ export async function loadLearnPageData({
 
     const progressPercent =
 
-        Math.floor(
+        totalLessons > 0
 
-            (
-                completedCount
-                / totalLessons
-            ) * 100
+            ? Math.floor(
 
-        );
+                (
+                    completedCount
+                    / totalLessons
+                ) * 100
+
+            )
+
+            : 0;
 
     // ========================================
-    // RETURN
+    // RESULT
     // ========================================
 
     return {
 
         ok: true,
 
-        course,
+        course:
+            normalizedCourse,
 
-        lesson,
+        lesson:
+            normalizedLesson,
 
         completedLessons,
 
@@ -292,7 +321,14 @@ export async function loadLearnPageData({
 
         courseCompleted,
 
-        progressPercent
+        progressPercent,
 
+        runtime:
+
+            normalizedLesson.runtimeImported
+            ||
+            normalizedCourse.runtimeImported
+            ||
+            false
     };
 }

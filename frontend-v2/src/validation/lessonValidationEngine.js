@@ -93,22 +93,7 @@ function validateBlock(block, index, result) {
   }
 
   if (!isApprovedBlockType(block.type)) {
-
-  // ================================
-  // LEGACY COMPATIBILITY
-  // ================================
-
-  if (
-    isLegacyCompatibleBlock(block)
-  ) {
-
-    result.warnings.push(
-      `Legacy-compatible block detected at index ${index}`
-    );
-
-    return;
-  }
-
+  
   pushError(
     result,
     `Unsupported block type: ${block.type}`

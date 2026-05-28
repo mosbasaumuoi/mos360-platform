@@ -6,7 +6,7 @@ import {
 
 }
 
-    from "../../runtime/composer/composerToolbarEngine";
+    from "../../runtime/_future/composerToolbarEngine";
 
 export default function ComposerBlockToolbar({
 

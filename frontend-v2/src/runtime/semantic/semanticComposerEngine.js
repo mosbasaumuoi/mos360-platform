@@ -1,21 +1,28 @@
 // ============================================
 // MOS360 SEMANTIC COMPOSER ENGINE
-// Visual semantic lesson composition runtime
+// Hybrid semantic runtime overlay
 // ============================================
 
 import {
 
-    governBlocks
+    buildSemanticSurface
 
 }
-    from "./contentGovernance.js";
+    from "./semanticSurfaceEngine.js";
 
 import {
 
-    composeLesson
+    buildSemanticIntelligenceRuntime
 
 }
-    from "./compositionEngine.js";
+    from "./semanticIntelligenceRuntime.js";
+
+import {
+
+    buildAdaptiveRuntime
+
+}
+    from "../system/adaptiveRuntimeEngine.js";
 
 // ============================================
 // MOVE BLOCK
@@ -32,10 +39,6 @@ export function moveBlock({
     const blocks =
 
         [...(lesson.blocks || [])];
-
-    // ========================================
-    // INVALID INDEX
-    // ========================================
 
     if (
 
@@ -54,10 +57,6 @@ export function moveBlock({
 
         return lesson;
     }
-
-    // ========================================
-    // MOVE
-    // ========================================
 
     const [movedBlock] =
 
@@ -137,10 +136,6 @@ export function insertBlock({
 
         [...(lesson.blocks || [])];
 
-    // ========================================
-    // APPEND
-    // ========================================
-
     if (
 
         typeof index !==
@@ -158,10 +153,6 @@ export function insertBlock({
         };
     }
 
-    // ========================================
-    // INSERT
-    // ========================================
-
     blocks.splice(
 
         index,
@@ -178,28 +169,140 @@ export function insertBlock({
 }
 
 // ============================================
-// GOVERN COMPOSITION
+// BUILD SEMANTIC COMPOSITION
+// Hybrid runtime enrichment
 // ============================================
 
-export function governComposition(
+export function buildSemanticComposition({
 
-    lesson = {}
+    lesson = {},
 
-) {
+    telemetry = {}
 
-    const governedBlocks =
+}) {
 
-        governBlocks(
+    const originalBlocks =
 
-            lesson.blocks || []
+        Array.isArray(
+            lesson.blocks
+        )
+
+            ? lesson.blocks
+
+            : [];
+
+    // ========================================
+    // ADAPTIVE OVERLAY
+    // ========================================
+
+    const adaptiveRuntime =
+
+        buildAdaptiveRuntime({
+
+            lessonId:
+                lesson.id,
+
+            blocks:
+                originalBlocks
+        });
+
+    const adaptedBlocks =
+
+        adaptiveRuntime
+            ?.adaptedBlocks
+
+            ||
+
+            originalBlocks;
+
+    // ========================================
+    // SEMANTIC INTELLIGENCE OVERLAY
+    // ========================================
+
+    const semanticBlocks =
+
+        buildSemanticIntelligenceRuntime({
+
+            blocks:
+                adaptedBlocks,
+
+            telemetry
+        });
+
+    // ========================================
+    // SEMANTIC SURFACE OVERLAY
+    // ========================================
+
+    const surfacedBlocks =
+
+        buildSemanticSurface(
+            semanticBlocks
         );
+
+    // ========================================
+    // RETURN HYBRID RUNTIME
+    // ========================================
 
     return {
 
-        ...lesson,
+        lessonId:
+            lesson.id,
 
-        blocks:
-            governedBlocks
+        semanticAuthority:
+            true,
+
+        runtimeType:
+            "hybrid-semantic-runtime",
+
+        overlayMode:
+            true,
+
+        adaptiveRuntime,
+
+        semanticBlocks:
+            semanticBlocks.length,
+
+        previewBlocks:
+            surfacedBlocks,
+
+        originalBlocks:
+            originalBlocks.length,
+
+        surfacedBlocks:
+            surfacedBlocks.length,
+
+        observability: {
+
+            reinforcementState:
+
+                adaptiveRuntime
+                    ?.reinforcementPlan
+                    ?.reinforcementState
+
+                    ||
+
+                    "stable",
+
+            continuityRisk:
+
+                adaptiveRuntime
+                    ?.reinforcementPlan
+                    ?.continuityRisk
+
+                    ||
+
+                    "low",
+
+            runtimeHealth:
+
+                adaptiveRuntime
+                    ?.signals
+                    ?.runtimeHealth
+
+                    ||
+
+                    "healthy"
+        }
     };
 }
 
@@ -209,30 +312,18 @@ export function governComposition(
 
 export function previewComposition(
 
-    lesson = {}
+    lesson = {},
+
+    telemetry = {}
 
 ) {
 
-    const governed =
+    return buildSemanticComposition({
 
-        governComposition(
-            lesson
-        );
+        lesson,
 
-    const composedBlocks =
-
-        composeLesson(
-
-            governed.blocks || []
-        );
-
-    return {
-
-        ...governed,
-
-        previewBlocks:
-            composedBlocks
-    };
+        telemetry
+    });
 }
 
 // ============================================
@@ -241,33 +332,50 @@ export function previewComposition(
 
 export function generateComposerReport(
 
-    lesson = {}
+    lesson = {},
+
+    telemetry = {}
 
 ) {
 
     const preview =
 
-        previewComposition(
-            lesson
-        );
+        previewComposition({
+
+            lesson,
+
+            telemetry
+        });
 
     return {
 
         lessonId:
             lesson.id,
 
+        runtimeType:
+            "hybrid-semantic-runtime",
+
+        overlayMode:
+            true,
+
         totalBlocks:
             lesson.blocks
                 ?.length || 0,
+
+        semanticBlocks:
+            preview.semanticBlocks || 0,
 
         previewBlocks:
             preview.previewBlocks
                 ?.length || 0,
 
-        governed:
+        adaptive:
             true,
 
-        composed:
+        semantic:
+            true,
+
+        surfaced:
             true
     };
 }

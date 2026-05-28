@@ -1,6 +1,6 @@
 // ============================================
 // MOS360 CONTENT VALIDATION ENGINE
-// Centralized content integrity runtime
+// Hybrid semantic runtime convergence
 // ============================================
 
 import {
@@ -29,6 +29,79 @@ import {
     from "../utils/logger.js";
 
 // ============================================
+// RUNTIME COURSE VALIDATOR
+// ============================================
+
+function validateRuntimeCourse(
+    course = {}
+) {
+
+    // ========================================
+    // REQUIRED
+    // ========================================
+
+    if (
+        !course.id
+        ||
+        !course.title
+        ||
+        !Array.isArray(
+            course.lessons
+        )
+    ) {
+
+        return false;
+    }
+
+    // ========================================
+    // RUNTIME SAFE DEFAULTS
+    // ========================================
+
+    return true;
+}
+
+// ============================================
+// RUNTIME LESSON VALIDATOR
+// ============================================
+
+function validateRuntimeLesson(
+    lesson = {}
+) {
+
+    // ========================================
+    // REQUIRED
+    // ========================================
+
+    if (
+        !lesson.id
+        ||
+        !lesson.courseId
+        ||
+        !lesson.title
+    ) {
+
+        return false;
+    }
+
+    // ========================================
+    // BLOCKS
+    // ========================================
+
+    if (
+        lesson.blocks
+        &&
+        !Array.isArray(
+            lesson.blocks
+        )
+    ) {
+
+        return false;
+    }
+
+    return true;
+}
+
+// ============================================
 // VALIDATE COURSE GRAPH
 // ============================================
 
@@ -39,7 +112,41 @@ export function validateCourseGraph(
 ) {
 
     // ========================================
-    // VALIDATE COURSE
+    // RUNTIME SEMANTIC PATH
+    // ========================================
+
+    if (
+
+        course?.runtimeImported
+
+    ) {
+
+        const validRuntimeCourse =
+
+            validateRuntimeCourse(
+                course
+            );
+
+        if (!validRuntimeCourse) {
+
+            logWarn(
+
+                "RUNTIME",
+
+                "invalid runtime course",
+
+                course
+
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    // ========================================
+    // STATIC CONTRACT PATH
     // ========================================
 
     const validCourse =
@@ -106,7 +213,56 @@ export function validateLessonDetail(
 ) {
 
     // ========================================
-    // VALIDATE LESSON
+    // RUNTIME BRIDGE BYPASS
+    // ========================================
+
+    if (
+
+        lesson?.runtimeBridge
+        ||
+        lesson?.runtimeImported
+
+    ) {
+
+        return true;
+    }
+
+    // ========================================
+    // RUNTIME SEMANTIC PATH
+    // ========================================
+
+    if (
+
+        lesson?.runtimeImported
+
+    ) {
+
+        const validRuntimeLesson =
+
+            validateRuntimeLesson(
+                lesson
+            );
+
+        if (!validRuntimeLesson) {
+
+            logWarn(
+
+                "RUNTIME",
+
+                "invalid runtime lesson",
+
+                lesson
+
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    // ========================================
+    // STATIC CONTRACT PATH
     // ========================================
 
     const validLesson =

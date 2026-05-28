@@ -137,21 +137,37 @@ export function validateLessonBlock(
     }
 
     // ========================================
-    // PRIORITY
+    // HYBRID PRIORITY
     // ========================================
 
     if (
 
-        block.priority
-        &&
-
-        !LESSON_BLOCK_PRIORITIES.includes(
-            block.priority
-        )
+        block.priority !== undefined
 
     ) {
 
-        return false;
+        const validStringPriority =
+
+            LESSON_BLOCK_PRIORITIES.includes(
+                block.priority
+            );
+
+        const validNumericPriority =
+
+            typeof block.priority
+            ===
+            "number";
+
+        if (
+
+            !validStringPriority
+            &&
+            !validNumericPriority
+
+        ) {
+
+            return false;
+        }
     }
 
     // ========================================
@@ -171,6 +187,10 @@ export function validateLessonBlock(
 
         return false;
     }
+
+    // ========================================
+    // RUNTIME SAFE
+    // ========================================
 
     return true;
 }

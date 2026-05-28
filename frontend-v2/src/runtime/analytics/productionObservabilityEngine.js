@@ -1,6 +1,6 @@
 // ============================================
 // MOS360 PRODUCTION OBSERVABILITY ENGINE
-// Production ecosystem observability runtime
+// Canonical runtime observability authority
 // ============================================
 
 // ============================================
@@ -16,7 +16,38 @@ export const LOG_LEVELS = {
         "warn",
 
     ERROR:
-        "error"
+        "error",
+
+    CRITICAL:
+        "critical"
+};
+
+// ============================================
+// OBSERVABILITY EVENT TYPES
+// ============================================
+
+export const OBSERVABILITY_EVENT_TYPES = {
+
+    SESSION:
+        "session",
+
+    PROGRESSION:
+        "progression",
+
+    REINFORCEMENT:
+        "reinforcement",
+
+    CONTINUITY:
+        "continuity",
+
+    MUTATION:
+        "mutation",
+
+    GOVERNANCE:
+        "governance",
+
+    DIAGNOSTIC:
+        "diagnostic"
 };
 
 // ============================================
@@ -26,9 +57,17 @@ export const LOG_LEVELS = {
 export function createLogEntry({
 
     level = LOG_LEVELS.INFO,
+
     source = "runtime",
+
     message = "",
-    payload = null
+
+    payload = null,
+
+    eventType =
+        OBSERVABILITY_EVENT_TYPES.SESSION,
+
+    metadata = {}
 
 } = {}) {
 
@@ -36,15 +75,19 @@ export function createLogEntry({
 
         id:
 
-            `log_${Date.now()}`,
+            `log_${ Date.now() } `,
 
         level,
 
         source,
 
+        eventType,
+
         message,
 
         payload,
+
+        metadata,
 
         createdAt:
             Date.now()
@@ -58,8 +101,15 @@ export function createLogEntry({
 export function logRuntimeEvent({
 
     source = "runtime",
+
     message = "",
-    payload = null
+
+    payload = null,
+
+    eventType =
+        OBSERVABILITY_EVENT_TYPES.SESSION,
+
+    metadata = {}
 
 }) {
 
@@ -74,12 +124,16 @@ export function logRuntimeEvent({
 
             message,
 
-            payload
+            payload,
+
+            eventType,
+
+            metadata
         });
 
     console.log(
 
-        `[MOS360:${source}]`,
+        `[MOS360:${ source }]`,
 
         entry
     );
@@ -94,8 +148,15 @@ export function logRuntimeEvent({
 export function logRuntimeWarning({
 
     source = "runtime",
+
     message = "",
-    payload = null
+
+    payload = null,
+
+    eventType =
+        OBSERVABILITY_EVENT_TYPES.DIAGNOSTIC,
+
+    metadata = {}
 
 }) {
 
@@ -110,12 +171,16 @@ export function logRuntimeWarning({
 
             message,
 
-            payload
+            payload,
+
+            eventType,
+
+            metadata
         });
 
     console.warn(
 
-        `[MOS360:${source}:WARN]`,
+        `[MOS360:${ source }:WARN]`,
 
         entry
     );
@@ -130,8 +195,15 @@ export function logRuntimeWarning({
 export function logRuntimeError({
 
     source = "runtime",
+
     message = "",
-    payload = null
+
+    payload = null,
+
+    eventType =
+        OBSERVABILITY_EVENT_TYPES.DIAGNOSTIC,
+
+    metadata = {}
 
 }) {
 
@@ -146,12 +218,61 @@ export function logRuntimeError({
 
             message,
 
-            payload
+            payload,
+
+            eventType,
+
+            metadata
         });
 
     console.error(
 
-        `[MOS360:${source}:ERROR]`,
+        `[MOS360:${ source }:ERROR]`,
+
+        entry
+    );
+
+    return entry;
+}
+
+// ============================================
+// LOG CRITICAL
+// ============================================
+
+export function logCriticalRuntimeEvent({
+
+    source = "runtime",
+
+    message = "",
+
+    payload = null,
+
+    metadata = {}
+
+}) {
+
+    const entry =
+
+        createLogEntry({
+
+            level:
+                LOG_LEVELS.CRITICAL,
+
+            source,
+
+            message,
+
+            payload,
+
+            eventType:
+                OBSERVABILITY_EVENT_TYPES.DIAGNOSTIC,
+
+            metadata
+        });
+
+    console.error(
+
+        `[MOS360:${ source }:CRITICAL]`,
 
         entry
     );
@@ -166,10 +287,29 @@ export function logRuntimeError({
 export function generateProductionHealthReport({
 
     runtimeHealthy = true,
+
     governanceHealthy = true,
-    ecosystemHealthy = true
+
+    ecosystemHealthy = true,
+
+    continuityHealthy = true,
+
+    reinforcementHealthy = true,
+
+    progressionHealthy = true
 
 } = {}) {
+
+    const overallHealthy = [
+
+        runtimeHealthy,
+        governanceHealthy,
+        ecosystemHealthy,
+        continuityHealthy,
+        reinforcementHealthy,
+        progressionHealthy
+
+    ].every(Boolean);
 
     return {
 
@@ -179,13 +319,13 @@ export function generateProductionHealthReport({
 
         ecosystemHealthy,
 
-        overallHealthy:
+        continuityHealthy,
 
-            runtimeHealthy
-            &&
-            governanceHealthy
-            &&
-            ecosystemHealthy,
+        reinforcementHealthy,
+
+        progressionHealthy,
+
+        overallHealthy,
 
         generatedAt:
             Date.now()
@@ -199,38 +339,102 @@ export function generateProductionHealthReport({
 export function generateObservabilityReport({
 
     logs = [],
+
     health = {}
 
 }) {
+
+    const criticals =
+
+        logs.filter(
+
+            log =>
+
+                log.level ===
+                LOG_LEVELS.CRITICAL
+        );
+
+    const errors =
+
+        logs.filter(
+
+            log =>
+
+                log.level ===
+                LOG_LEVELS.ERROR
+        );
+
+    const warnings =
+
+        logs.filter(
+
+            log =>
+
+                log.level ===
+                LOG_LEVELS.WARN
+        );
 
     return {
 
         totalLogs:
             logs.length,
 
+        criticals:
+            criticals.length,
+
         errors:
-
-            logs.filter(
-
-                log =>
-
-                    log.level ===
-                    LOG_LEVELS.ERROR
-            ).length,
+            errors.length,
 
         warnings:
+            warnings.length,
 
-            logs.filter(
+        healthy:
 
-                log =>
-
-                    log.level ===
-                    LOG_LEVELS.WARN
-            ).length,
+            criticals.length === 0
+            &&
+            errors.length === 0,
 
         health,
 
         generatedAt:
             Date.now()
     };
+}
+
+// ============================================
+// GENERATE RUNTIME TIMELINE
+// ============================================
+
+export function generateRuntimeTimeline({
+
+    logs = []
+
+}) {
+
+    return logs
+
+        .sort(
+
+            (a, b) =>
+
+                a.createdAt - b.createdAt
+        )
+
+        .map((log) => ({
+
+            timestamp:
+                log.createdAt,
+
+            source:
+                log.source,
+
+            eventType:
+                log.eventType,
+
+            level:
+                log.level,
+
+            message:
+                log.message
+        }));
 }

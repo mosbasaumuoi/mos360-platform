@@ -9,6 +9,10 @@
 
 export const BLOCK_REGISTRY = {
 
+    // ========================================
+    // PLAYABLE CORE
+    // ========================================
+
     video: {
 
         type:
@@ -103,6 +107,145 @@ export const BLOCK_REGISTRY = {
 
         continuity:
             true
+    },
+
+    // ========================================
+    // SEMANTIC RUNTIME
+    // ========================================
+
+    intro: {
+
+        type:
+            "intro",
+
+        priority:
+            "primary",
+
+        cinematic:
+            true
+    },
+
+    tip: {
+
+        type:
+            "tip",
+
+        priority:
+            "secondary",
+
+        reinforcement:
+            true
+    },
+
+    summary: {
+
+        type:
+            "summary",
+
+        priority:
+            "secondary",
+
+        reinforcement:
+            true
+    },
+
+    reflection: {
+
+        type:
+            "reflection",
+
+        priority:
+            "reinforcement",
+
+        continuity:
+            true
+    },
+
+    momentum: {
+
+        type:
+            "momentum",
+
+        priority:
+            "reinforcement",
+
+        continuity:
+            true
+    },
+
+    knowledge: {
+
+        type:
+            "knowledge",
+
+        priority:
+            "secondary"
+    },
+
+    bridge: {
+
+        type:
+            "bridge",
+
+        priority:
+            "secondary",
+
+        cinematic:
+            true
+    },
+
+    note: {
+
+        type:
+            "note",
+
+        priority:
+            "optional"
+    },
+
+    action: {
+
+        type:
+            "action",
+
+        priority:
+            "primary",
+
+        actionable:
+            true
+    },
+
+    exercise: {
+
+        type:
+            "exercise",
+
+        priority:
+            "primary",
+
+        actionable:
+            true
+    },
+
+    challenge: {
+
+        type:
+            "challenge",
+
+        priority:
+            "primary",
+
+        interactive:
+            true
+    },
+
+    content: {
+
+        type:
+            "content",
+
+        priority:
+            "secondary"
     }
 };
 

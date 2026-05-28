@@ -7,38 +7,551 @@ import {
     from "../../contracts/runtimeBlockContract";
 
 import {
-
     normalizeRuntimeLessonShape
-
 }
-
     from "../../contracts/runtimeLessonContract";
-    
+
 import {
-
     RUNTIME_LESSON_STATUSES
-
 }
+    from "../../contracts/runtimeLessonContract";
 
-    from "../../contracts/runtimeLessonContract";   
-    
 import {
 
     mapLessonBlocksToFlow
 
 }
 
-    from "./runtimeLessonFlowMapper";    
+    from "./runtimeLessonFlowMapper";
 
 // ============================================
-// NORMALIZE LESSON
+// COMPILE VIDEO BLOCK
+// ============================================
+
+function compileVideoBlock(
+    block = {}
+) {
+
+    const compiled = {
+        ...block
+    };
+
+    if (
+
+        !compiled.videoUrl
+
+        &&
+
+        typeof compiled.content ===
+            "string"
+
+    ) {
+
+        const possibleUrl =
+            compiled.content.trim();
+
+        if (
+            possibleUrl.startsWith("http")
+        ) {
+
+            compiled.videoUrl =
+                possibleUrl;
+        }
+    }
+
+    return compiled;
+}
+
+// ============================================
+// COMPILE WORKFLOW BLOCK
+// ============================================
+
+function compileWorkflowBlock(
+    block = {}
+) {
+
+    const compiled = {
+        ...block
+    };
+
+    if (
+
+        !Array.isArray(
+            compiled.steps
+        )
+
+        &&
+
+        typeof compiled.content ===
+            "string"
+
+    ) {
+
+        compiled.steps =
+
+            compiled.content
+
+                .split(/\n|;/)
+
+                .map(
+                    step =>
+                        step.trim()
+                )
+
+                .filter(Boolean);
+    }
+
+    return compiled;
+}
+
+// ============================================
+// COMPILE CALLOUT BLOCK
+// ============================================
+
+function compileCalloutBlock(
+    block = {}
+) {
+
+    const compiled = {
+        ...block
+    };
+
+    const metadata =
+
+        typeof block.metadata ===
+            "object"
+
+            &&
+
+            block.metadata !== null
+
+                ? block.metadata
+
+                : {};
+
+    compiled.variant =
+
+        block.variant
+        ||
+        metadata.variant
+        ||
+        "tip";
+
+    compiled.title =
+
+        block.title
+        ||
+        metadata.title
+        ||
+        "Gợi ý";
+
+    compiled.content =
+
+        block.content
+        ||
+        block.description
+        ||
+        "";
+
+    return compiled;
+}
+
+// ============================================
+// COMPILE QUIZ BLOCK
+// ============================================
+
+function compileQuizBlock(
+    block = {}
+) {
+
+    const metadata =
+
+        typeof block.metadata ===
+            "object"
+
+            &&
+
+            block.metadata !== null
+
+                ? block.metadata
+
+                : {};
+
+    return {
+
+        ...block,
+
+        question:
+
+            metadata.question
+            ||
+            block.question
+            ||
+            block.content
+            ||
+            "",
+
+        answers:
+
+            Array.isArray(
+                metadata.answers
+            )
+
+                ? metadata.answers
+
+                : [],
+
+        correctAnswer:
+
+            typeof metadata.correctAnswer ===
+                "number"
+
+                    ? metadata.correctAnswer
+
+                    : 0,
+
+        explanation:
+
+            metadata.explanation
+            ||
+            ""
+    };
+}
+
+// ============================================
+// COMPILE PRACTICE BLOCK
+// ============================================
+
+function compilePracticeBlock(
+    block = {}
+) {
+
+    return {
+
+        ...block,
+
+        tasks:
+
+            Array.isArray(
+                block.tasks
+            )
+
+                ? block.tasks
+
+                : typeof block.content ===
+                    "string"
+
+                    ? block.content
+
+                        .split(/\n|;/)
+
+                        .map(
+                            task =>
+                                task.trim()
+                        )
+
+                        .filter(Boolean)
+
+                    : []
+    };
+}
+
+// ============================================
+// COMPILE BLOCK
+// ============================================
+
+function compileRuntimeBlock(
+    block = {}
+) {
+
+    switch (block.type) {
+
+        case "video":
+
+            return compileVideoBlock(
+                block
+            );
+
+        case "workflow":
+
+            return compileWorkflowBlock(
+                block
+            );
+
+        case "callout":
+
+            return compileCalloutBlock(
+                block
+            );
+
+        case "quiz":
+
+            return compileQuizBlock(
+                block
+            );
+
+        case "practice":
+
+            return compilePracticeBlock(
+                block
+            );
+
+        default:
+
+            return block;
+    }
+}
+
+// ============================================
+// EXTRACT PRACTICE
+// ============================================
+
+function extractPracticeBlocks(
+    blocks = []
+) {
+
+    return blocks
+
+        .filter(
+
+            block =>
+
+                block.type ===
+                "practice"
+        )
+
+        .map(block => ({
+
+            title:
+
+                block.title
+                ||
+                "Thực hành",
+
+            tasks:
+
+                Array.isArray(
+                    block.tasks
+                )
+
+                    ? block.tasks
+
+                    : []
+        }));
+}
+
+// ============================================
+// EXTRACT QUIZ
+// ============================================
+
+function extractQuizBlocks(
+    blocks = []
+) {
+
+    return blocks
+
+        .filter(
+
+            block =>
+
+                block.type ===
+                "quiz"
+        )
+
+        .map(block => ({
+
+            question:
+
+                block.question
+                ||
+                "",
+
+            answers:
+
+                Array.isArray(
+                    block.answers
+                )
+
+                    ? block.answers
+
+                    : [],
+
+            correctAnswer:
+
+                typeof block.correctAnswer ===
+                    "number"
+
+                    ? block.correctAnswer
+
+                    : 0,
+
+            explanation:
+
+                block.explanation
+                ||
+                ""
+        }));
+}
+
+// ============================================
+// FILTER RENDERABLE BLOCKS
+// ============================================
+
+function filterRenderableBlocks(
+    blocks = []
+) {
+
+    return blocks.filter(block =>
+
+        ![
+            "practice",
+            "quiz"
+        ].includes(
+            block.type
+        )
+    );
+}
+
+// ============================================
+// BUILD LEGACY COMPATIBILITY
+// ============================================
+
+function buildLegacyCompatibility(
+    blocks = []
+) {
+
+    const video =
+
+        blocks.find(
+            block =>
+                block.type ===
+                "video"
+        ) || null;
+
+    const workflow =
+
+        blocks.find(
+            block =>
+                block.type ===
+                "workflow"
+        ) || null;
+
+    const callouts =
+
+        blocks.filter(
+            block =>
+                block.type ===
+                "callout"
+        );
+
+    const summary =
+
+        blocks.find(
+            block =>
+                block.type ===
+                "summary"
+        ) || null;
+
+    return {
+
+        video,
+
+        workflow,
+
+        callouts,
+
+        summary
+    };
+}
+
+// ============================================
+// NORMALIZE RUNTIME LESSON
 // ============================================
 
 export function normalizeRuntimeLesson(
-
     lesson = {}
-
 ) {
+
+    // ========================================
+    // BLOCK NORMALIZATION
+    // ========================================
+
+    const normalizedBlocks =
+
+        normalizeRuntimeBlocks(
+
+            Array.isArray(
+                lesson.blocks
+            )
+
+                ? lesson.blocks
+
+                : []
+        );
+
+    // ========================================
+    // COMPILE RUNTIME BLOCKS
+    // ========================================
+
+    const compiledBlocks =
+
+        normalizedBlocks.map(
+            compileRuntimeBlock
+        );
+
+    // ========================================
+    // FLOW MAPPING
+    // ========================================
+
+    const flowBlocks =
+
+        mapLessonBlocksToFlow(
+            compiledBlocks
+        );
+
+    // ========================================
+    // PRACTICE
+    // ========================================
+
+    const practice =
+
+        extractPracticeBlocks(
+            flowBlocks
+        );
+
+    // ========================================
+    // QUIZ
+    // ========================================
+
+    const quiz =
+
+        extractQuizBlocks(
+            flowBlocks
+        );
+
+    // ========================================
+    // RENDERABLE BLOCKS
+    // ========================================
+
+    const renderableBlocks =
+
+        filterRenderableBlocks(
+            flowBlocks
+        );
+
+    // ========================================
+    // LEGACY COMPATIBILITY
+    // ========================================
+
+    const compatibility =
+
+        buildLegacyCompatibility(
+            flowBlocks
+        );
+
+    // ========================================
+    // FINAL LESSON
+    // ========================================
 
     return normalizeRuntimeLessonShape({
 
@@ -50,6 +563,7 @@ export function normalizeRuntimeLesson(
                 ? lesson.id
 
                 : crypto.randomUUID(),
+
         title:
 
             typeof lesson.title ===
@@ -84,7 +598,7 @@ export function normalizeRuntimeLesson(
 
                 ? lesson.semanticVersion
 
-                : "phase-h2",
+                : "phase-h-converged",
 
         status:
 
@@ -96,31 +610,40 @@ export function normalizeRuntimeLesson(
 
                 : "draft",
 
+        // ====================================
+        // RUNTIME BLOCKS
+        // ====================================
+
         blocks:
+            renderableBlocks,
 
-            mapLessonBlocksToFlow(
+        // ====================================
+        // PRACTICE
+        // ====================================
 
-                normalizeRuntimeBlocks(
+        practice,
 
-                    Array.isArray(
-                        lesson.blocks
-                    )
+        // ====================================
+        // QUIZ
+        // ====================================
 
-                        ? lesson.blocks
+        quiz,
 
-                        : []
-                )
-            ),
+        // ====================================
+        // LEGACY RUNTIME BRIDGE
+        // ====================================
 
-        quiz:
+        video:
+            compatibility.video,
 
-            Array.isArray(
-                lesson.quiz
-            )
+        workflow:
+            compatibility.workflow,
 
-                ? lesson.quiz
+        callouts:
+            compatibility.callouts,
 
-                : [],
+        summary:
+            compatibility.summary,
 
         createdAt:
 
@@ -147,13 +670,10 @@ export function normalizeRuntimeLesson(
 // ============================================
 
 export function normalizeRuntimeLessons(
-
     lessons = []
-
 ) {
 
     return lessons.map(
-
         normalizeRuntimeLesson
     );
 }

@@ -79,29 +79,19 @@ function extractYoutubeEmbedUrl(
 // ============================================
 
 function createVideoBlock(
-
     row = {}
-
 ) {
 
     return {
-
-        id:
-            `${row.id}-video`,
-
-        type:
-            "video",
+        id: `${row.id}-video`,
+        type: "video",
 
         title:
-
             row.videoTitle ||
-
             row.title ||
-
             "Lesson Video",
 
-        url:
-
+        videoUrl:
             extractYoutubeEmbedUrl(
                 row.videoUrl
             ),
@@ -164,6 +154,9 @@ function createTipBlock(
             `${row.id}-tip`,
 
         type:
+            "callout",
+
+        variant:
             "tip",
 
         title:
@@ -461,7 +454,6 @@ function createLesson(
         // ====================================
 
         videoUrl:
-
             extractYoutubeEmbedUrl(
                 first.videoUrl
             ),

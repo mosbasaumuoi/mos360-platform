@@ -513,15 +513,11 @@ export function normalizeLesson(
     // ========================================
 
     if (
-
-        Array.isArray(
-            lesson.blocks
-        )
-
+        Array.isArray(lesson.blocks)
         &&
-
         lesson.blocks.length
-
+        &&
+        lesson.runtimeNative === true
     ) {
 
         return {

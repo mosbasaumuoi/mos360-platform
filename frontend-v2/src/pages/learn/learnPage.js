@@ -277,17 +277,15 @@ export async function renderLearnPage() {
   // ========================================
 
   const runtimeBlocks =
-
-    composeLesson(
-      filteredBlocks
-    );
+    filteredBlocks.flow ||
+    filteredBlocks.blocks ||
+    filteredBlocks;
 
   // ========================================
   // BLOCK RENDERER
   // ========================================
 
   const lessonBlocksHtml =
-
     renderLessonBlocks(
       runtimeBlocks
     );

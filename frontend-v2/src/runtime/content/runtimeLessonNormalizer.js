@@ -36,14 +36,32 @@ function compileVideoBlock(
         ...block
     };
 
+    // ================================
+    // EXTRACT URL
+    // ================================
+
+    let videoUrl =
+
+        compiled.videoUrl
+        ||
+        compiled.url
+        ||
+        compiled.embedUrl
+        ||
+        "";
+
+    // ================================
+    // CONTENT FALLBACK
+    // ================================
+
     if (
 
-        !compiled.videoUrl
+        !videoUrl
 
         &&
 
         typeof compiled.content ===
-            "string"
+        "string"
 
     ) {
 
@@ -54,10 +72,40 @@ function compileVideoBlock(
             possibleUrl.startsWith("http")
         ) {
 
-            compiled.videoUrl =
+            videoUrl =
                 possibleUrl;
         }
     }
+
+    // ================================
+    // RUNTIME VIDEO CONTRACT
+    // ================================
+
+    compiled.videoUrl =
+        videoUrl;
+
+    compiled.url =
+        videoUrl;
+
+    compiled.embedUrl =
+        videoUrl;
+
+    compiled.video = {
+
+        type: "youtube",
+
+        url: videoUrl,
+
+        embedUrl: videoUrl
+    };
+
+    // ================================
+    // PLAYABLE FLAG
+    // ================================
+
+    compiled.playable = true;
+
+    compiled.provider = "youtube";
 
     return compiled;
 }

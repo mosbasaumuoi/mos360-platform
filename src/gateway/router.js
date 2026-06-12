@@ -56,6 +56,8 @@ const routes = new Map([
 
   ["GET:/api/courses", handleCourses],
 
+  ["GET:/api/lessons", handleCourses],
+
   ["GET:/api/admin/analytics", handleAdmin],
 
   ["GET:/api/public/track", handlePublic],
@@ -128,7 +130,44 @@ export async function router(
   const key =
     `${request.method}:${url.pathname}`;
 
-  // ==========================================
+  if (
+
+  request.method === "GET"
+
+  &&
+
+  url.pathname.startsWith(
+    "/api/lessons/"
+  )
+
+) {
+
+  const response =
+    await handleLessonDetail(
+      request,
+      env
+    );
+
+  const headers =
+    new Headers(
+      response.headers
+    );
+
+  Object.entries(corsHeaders)
+    .forEach(([key, value]) => {
+      headers.set(key, value);
+    });
+
+  return new Response(
+    response.body,
+    {
+      status: response.status,
+      headers
+    }
+  );
+}
+
+// ==========================================
 // COURSE DETAIL
 // ==========================================
 
@@ -146,7 +185,8 @@ if (
 
   const response =
   await handleCourseDetail(
-    request
+    request,
+    env
   );
 
 const headers =
@@ -190,7 +230,8 @@ if (
 
   const response =
     await handleLessonDetail(
-      request
+      request,
+      env
     );
 
   const headers =

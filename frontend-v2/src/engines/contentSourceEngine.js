@@ -30,7 +30,9 @@ import {
 
     buildRuntimeOnlyCourses,
 
-    getRuntimeLessons
+    getRuntimeLessons,
+
+    getRuntimeLessonsAsync
 
 }
 
@@ -345,6 +347,12 @@ export async function loadLesson({
 // ============================================
 
 export async function loadCourses() {
+
+    // ========================================
+    // ĐẢM BẢO LESSONS ĐÃ LOAD (localStorage hoặc KV)
+    // ========================================
+
+    await getRuntimeLessonsAsync();
 
     // ========================================
     // STATIC COURSES

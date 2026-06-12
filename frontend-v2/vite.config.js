@@ -15,13 +15,15 @@ export default defineConfig({
 
         proxy: {
 
-            // Proxy tất cả /api/* → Cloudflare Worker (wrangler dev)
             "/api": {
 
                 target:
-                    "http://localhost:8787",
+                    "https://mos360-platform.mos360-vn.workers.dev",
 
                 changeOrigin:
+                    true,
+
+                secure:
                     true
             }
         }

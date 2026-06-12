@@ -12,11 +12,14 @@ import {
     from "./runtimeSemanticValidationEngine.js";
 
 import {
-
     normalizeValidationResult
+} from "../validation/normalizeValidationResult";   
 
-} from "../validation/normalizeValidationResult";    
-
+import {
+    saveLessons
+}
+    from "../runtime/system/runtimeLibraryManager.js";
+    
 // ============================================
 // STORAGE
 // ============================================
@@ -157,6 +160,8 @@ function normalizeRuntimeLesson(
 
         runtimeImported:
             true,
+
+        runtimeNative: true,    
 
         semanticVersion:
             "phase-h-runtime-bridge",
@@ -346,6 +351,10 @@ export async function importRuntimeLessons(
         // ====================================
 
         saveImportedLessons(
+            normalizedLessons
+        );
+
+        saveLessons(
             normalizedLessons
         );
 

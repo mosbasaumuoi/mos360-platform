@@ -23,7 +23,11 @@ export function normalizeQuizQuestion(
             question.question,
 
         options:
-            question.options || [],
+            question.options
+            ||
+            question.answers
+            ||
+            [],
 
         correctAnswer:
             question.correctAnswer,

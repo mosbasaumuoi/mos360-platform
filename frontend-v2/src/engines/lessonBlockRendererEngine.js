@@ -59,53 +59,71 @@ export function renderLessonBlock(
 
     if (block.type === "video") {
 
+        const videoUrl =
+
+            block.videoUrl
+            ||
+            block.media?.[0]?.url
+            ||
+            block.media?.[0]?.value
+            ||
+            "";
+
+        console.log(
+            "VIDEO URL",
+            videoUrl,
+            block
+        );
+
         return `
 
-<section
-    id="lesson-primary-video"
-    class="lesson-video-block cinematic-spacing"
->
-
-    <div
-    class="video-block-shell"
-    style="
-        overflow: visible;
-        transform: none;
-    "
->
-
-        <div class="lesson-video-top">
-
-            <div class="lesson-video-label">
-
-                VIDEO LESSON
-
-            </div>
+        <section
+            id="lesson-primary-video"
+            class="lesson-video-block cinematic-spacing"
+        >
 
             <div
-                id="videoStatus"
-                class="lesson-video-status"
+                class="video-block-shell"
+                style="
+                    overflow: visible;
+                    transform: none;
+                "
             >
 
-                Video bài học
+                <div class="lesson-video-top">
+
+                    <div class="lesson-video-label">
+
+                        VIDEO LESSON
+
+                    </div>
+
+                    <div
+                        id="videoStatus"
+                        class="lesson-video-status"
+                    >
+
+                        Video bài học
+
+                    </div>
+
+                </div>
+
+                <iframe
+                    class="lesson-video-frame"
+                    style="
+                        position: relative;
+                        z-index: 1;
+                        border: none;
+                    "
+                    src="${videoUrl}"
+                    title="${block.title || ""}"
+                    frameborder="0"
+                    allowfullscreen
+                ></iframe>
 
             </div>
 
-        </div>
-
-        <iframe
-    class="lesson-video-frame"
-    style="
-        position: relative;
-        z-index: 1;
-        border: none;
-    "
-    src="${block.videoUrl || ""}"
-    title="${block.title || ""}"
-    frameborder="0"
-    allowfullscreen
-        ></iframe>
-        
         </section>
 
     `;
@@ -123,7 +141,22 @@ export function renderLessonBlock(
 
     <div class="lesson-rich-text">
 
-        ${block.content || ""}
+        ${
+
+            block.content
+
+            ||
+
+            block.resources?.find(
+                item =>
+                    item.type === "content"
+            )?.value
+
+            ||
+
+            ""
+
+        }
 
     </div>
 
@@ -138,6 +171,14 @@ export function renderLessonBlock(
 
     if (block.type === "workflow") {
 
+        const workflowSteps =
+
+            block.steps
+            ||
+            block.sequence?.nodes
+            ||
+            [];
+        
         return `
 
 <section class="workflow-block cinematic-spacing">
@@ -164,7 +205,7 @@ export function renderLessonBlock(
 
         <ol class="workflow-list">
 
-            ${(block.steps || [])
+            ${workflowSteps
 
                 .map(
 
@@ -241,7 +282,19 @@ export function renderLessonBlock(
 
         <p>
 
-            ${block.content || ""}
+            ${
+
+            block.content
+
+            ||
+
+            block.resources?.[0]?.value
+
+            ||
+
+            ""
+
+            }
 
         </p>
 
@@ -353,6 +406,42 @@ export function renderLessonBlock(
 
     `;
     }
+ 
+    // ========================================
+    // PRACTICE
+    // ========================================
+
+    if (block.type === "practice") {
+
+        const practiceTasks =
+
+            block.tasks
+            ||
+            block.activities
+            ||
+            [];
+
+        return renderPracticeSection([
+            {
+                title:
+                    block.title ||
+                    "Thực hành",
+
+                tasks:
+                    practiceTasks
+            }
+        ]);
+    }    
+
+    // ========================================
+    // QUIZ
+    // ========================================
+
+    if (block.type === "quiz") {
+
+        return "";
+
+    }
 
     return "";
 }
@@ -406,6 +495,86 @@ export function bindPracticeMissions() {
         });
 }
 
+export function bindQuizInteractions() {
+
+    document
+
+        .querySelectorAll(
+            ".quiz-shell"
+        )
+
+        .forEach(shell => {
+
+            let selected = null;
+
+            const answers =
+                shell.querySelectorAll(
+                    ".quiz-answer-item"
+                );
+
+            answers.forEach(btn => {
+
+                btn.onclick = () => {
+
+                    answers.forEach(
+                        a => a.classList.remove(
+                            "selected"
+                        )
+                    );
+
+                    btn.classList.add(
+                        "selected"
+                    );
+
+                    selected =
+                        Number(
+                            btn.dataset.answer
+                        );
+                };
+            });
+
+            const submitBtn =
+                shell.querySelector(
+                    ".quiz-submit-btn"
+                );
+
+            const result =
+                shell.querySelector(
+                    ".quiz-result"
+                );
+
+            submitBtn.onclick = () => {
+
+                if (
+                    selected === null
+                ) {
+
+                    result.innerHTML =
+                        "⚠️ Hãy chọn đáp án";
+
+                    return;
+                }
+
+                const correct =
+                    Number(
+                        shell.dataset.correct
+                    );
+
+                if (
+                    selected === correct
+                ) {
+
+                    result.innerHTML =
+                        "✅ Chính xác";
+
+                } else {
+
+                    result.innerHTML =
+                        "❌ Chưa đúng";
+                }
+            };
+        });
+}
 // ============================================
 // RENDER PRACTICE SECTION
 // ============================================

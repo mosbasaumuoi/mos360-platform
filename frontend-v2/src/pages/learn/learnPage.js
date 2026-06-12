@@ -70,6 +70,8 @@ import {
 
   bindPracticeMissions,
 
+  bindQuizInteractions,
+
   renderPracticeSection
 
 }
@@ -256,9 +258,19 @@ export async function renderLearnPage() {
   // FILTERED BLOCKS
   // ========================================
 
-  const filteredBlocks =
+  console.log(
+    "LESSON BLOCKS",
+    lesson.blocks
+  );
 
-    filterLessonBlocks(
+  console.log(
+    "NORMALIZED BLOCKS",
+    normalizedLesson.blocks
+  );  
+  
+  const filteredBlocks =    
+  
+  filterLessonBlocks(
 
       normalizedLesson.blocks || [],
 
@@ -271,6 +283,12 @@ export async function renderLearnPage() {
       }
 
     );
+
+  console.log(
+    "FILTERED BLOCKS",
+    filteredBlocks
+  );  
+
 
   // ========================================
   // COMPOSED FLOW
@@ -285,10 +303,21 @@ export async function renderLearnPage() {
   // BLOCK RENDERER
   // ========================================
 
-  const lessonBlocksHtml =
-    renderLessonBlocks(
+  const lessonBlocksHtml =  
+  
+  renderLessonBlocks(
       runtimeBlocks
     );
+
+  console.log(
+    "CURRENT LESSON",
+    lesson
+  );
+
+  console.log(
+    "CURRENT BLOCKS",
+    lesson.blocks
+  );   
 
   // ========================================
   // PAGE CONTENT
@@ -381,7 +410,14 @@ export async function renderLearnPage() {
         <!-- QUIZ -->
 
         ${renderQuizSection(
-          normalizedLesson.quiz || []
+        normalizedLesson.blocks
+          ?.filter(
+            block => block.type === "quiz"
+          )
+          ?.flatMap(
+            block => block.assessment?.questions || []
+          )
+
       )}
 
       </main>
@@ -443,7 +479,14 @@ export async function renderLearnPage() {
   bindQuiz({
 
     quiz:
-      normalizedLesson.quiz || []
+
+      normalizedLesson.blocks
+        ?.filter(
+          block => block.type === "quiz"
+        )
+        ?.flatMap(
+          block => block.assessment?.questions || []
+        )
 
   });
 

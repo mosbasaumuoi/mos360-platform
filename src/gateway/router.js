@@ -39,6 +39,11 @@ import {
 }
   from "../modules/gamification/gamification.routes.js";
 
+import {
+  handleRuntimeImport
+}
+  from "../modules/import/import.routes.js";
+
 // ============================================
 // ROUTES API
 // ============================================
@@ -68,6 +73,8 @@ const routes = new Map([
   ["POST:/api/gamification/xp", handleAddXP],
 
   ["POST:/api/gamification/streak", handleDailyStreak],
+
+  ["POST:/api/import/runtime", handleRuntimeImport],
 
 ]);
 

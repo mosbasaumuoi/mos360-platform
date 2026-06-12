@@ -76,15 +76,7 @@ export const BLOCK_REGISTRY = {
             true
     },
 
-    resource: {
-
-        type:
-            "resource",
-
-        priority:
-            "optional"
-    },
-
+    
     quiz: {
 
         type:

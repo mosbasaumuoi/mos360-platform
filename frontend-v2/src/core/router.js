@@ -68,12 +68,14 @@ import {
   from "../pages/admin/importPage.js";  
 
 import {
-
   renderRuntimeLessonTestPage
-
 }
-
-  from "../pages/runtime/runtimeLessonTestPage.jsx";  
+  from "../pages/runtime/runtimeLessonTestPage.jsx"; 
+  
+import {
+  renderAdminLibraryPage
+}
+  from "../pages/admin/adminLibraryPage.js";  
   
 // ============================================
 // ROUTES
@@ -99,6 +101,9 @@ const routes = {
 
   "/admin/import":
     renderImportPage,
+
+  "/admin/library":
+    renderAdminLibraryPage,
 
   "/admin":
     renderAdminPage  

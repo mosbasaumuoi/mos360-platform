@@ -17,11 +17,7 @@ export function mapBlockToLessonFlow(
         case "video":
 
             return "learning";
-
-        case "resource":
-
-            return "learning";
-
+        
         case "checkpoint":
 
             return "checkpoint";

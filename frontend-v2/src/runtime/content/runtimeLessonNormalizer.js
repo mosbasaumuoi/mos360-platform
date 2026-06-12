@@ -50,6 +50,32 @@ function compileVideoBlock(
         ||
         "";
 
+    if (
+
+        !videoUrl
+
+        &&
+
+        Array.isArray(
+            compiled.media
+        )
+
+    ) {
+
+        const mediaItem =
+
+            compiled.media.find(
+                item =>
+                    item?.url
+            );
+
+        if (mediaItem) {
+
+            videoUrl =
+                mediaItem.url;
+        }
+    }
+
     // ================================
     // CONTENT FALLBACK
     // ================================
@@ -149,6 +175,28 @@ function compileWorkflowBlock(
                 .filter(Boolean);
     }
 
+    if (
+
+        !Array.isArray(
+            compiled.steps
+        )
+
+        &&
+
+        compiled.sequence
+
+        &&
+
+        Array.isArray(
+            compiled.sequence.nodes
+        )
+
+    ) {
+
+        compiled.steps =
+            compiled.sequence.nodes;
+    }
+
     return compiled;
 }
 
@@ -225,6 +273,41 @@ function compileQuizBlock(
 
                 : {};
 
+    if (
+
+        block.assessment
+
+        &&
+
+        Array.isArray(
+            block.assessment.questions
+        )
+
+        &&
+
+        block.assessment.questions.length
+
+    ) {
+
+        const first =
+
+            block.assessment.questions[0];
+
+        return {
+
+            ...block,
+
+            question:
+                first.question || "",
+
+            answers:
+                first.answers || [],
+
+            correctAnswer:
+                first.correctAnswer || 0
+        };
+    }
+
     return {
 
         ...block,
@@ -274,6 +357,23 @@ function compilePracticeBlock(
     block = {}
 ) {
 
+    if (
+
+        Array.isArray(
+            block.activities
+        )
+
+    ) {
+
+        return {
+
+            ...block,
+
+            tasks:
+                block.activities
+        };
+    }
+    
     return {
 
         ...block,
@@ -448,16 +548,7 @@ function extractQuizBlocks(
 function filterRenderableBlocks(
     blocks = []
 ) {
-
-    return blocks.filter(block =>
-
-        ![
-            "practice",
-            "quiz"
-        ].includes(
-            block.type
-        )
-    );
+    return blocks;
 }
 
 // ============================================

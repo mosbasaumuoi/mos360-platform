@@ -4,12 +4,14 @@
 // ============================================
 
 import {
-
     getImportedLessons
-
 }
-
     from "./runtimeImportEngine.js";
+
+import {
+    getLessons
+}
+    from "../runtime/system/runtimeLibraryManager.js";   
 
 // ============================================
 // NORMALIZE COURSE ID
@@ -37,6 +39,16 @@ export function normalizeRuntimeCourseId(
 // ============================================
 
 export function getRuntimeLessons() {
+
+    const libraryLessons =
+        getLessons();
+
+    if (
+        libraryLessons.length
+    ) {
+
+        return libraryLessons;
+    }
 
     return getImportedLessons();
 }
@@ -191,7 +203,31 @@ export function attachRuntimeLessons(
                     lesson.blocks || [],
 
                 quiz:
-                    lesson.quiz || []
+
+                    (lesson.blocks || [])
+
+                        .filter(
+                            block =>
+                                block.type === "quiz"
+                        )
+
+                        .flatMap(
+                            block =>
+                                block.assessment?.questions || []
+                        )
+
+                        .map(question => ({
+
+                            question:
+                                question.question,
+
+                            options:
+                                question.answers || [],
+
+                            correctAnswer:
+                                question.correctAnswer ?? 0
+
+                        }))
             })
         );
 

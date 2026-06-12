@@ -371,6 +371,13 @@ export async function importRuntimeLessons(
                     }
                 );
 
+            if (!kvResponse.ok) {
+
+                throw new Error(
+                    `KV API responded ${kvResponse.status}`
+                );
+            }
+
             const kvData =
                 await kvResponse.json();
 

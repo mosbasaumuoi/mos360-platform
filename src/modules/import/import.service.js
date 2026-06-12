@@ -1,30 +1,22 @@
 // ============================================
 // IMPORT SERVICE
-// Lưu runtime lessons + course graph vào KV
-// ============================================
-
-// ============================================
-// KV KEY SCHEMA
+// Lưu normalized lessons vào Cloudflare KV
 //
-//   course:index              → string[]       danh sách courseId
-//   course:{courseId}         → CourseGraph    metadata + lessons[]
-//   lesson:{lessonId}         → Lesson         full lesson object
+// KV SCHEMA (align với key hiện có):
+//   courses          → CourseEntry[]   danh sách courses với lessons
+//   lesson:{id}      → Lesson          full lesson object
 // ============================================
 
-const MOS360_COURSES_KV = "course:index";
-
 // ============================================
-// READ COURSE INDEX
+// READ COURSES
 // ============================================
 
-async function readCourseIndex(KV) {
+async function readCourses(KV) {
 
     try {
 
         const raw =
-            await KV.get(
-                MOS360_COURSES_KV
-            );
+            await KV.get("courses");
 
         return raw
             ? JSON.parse(raw)
@@ -37,34 +29,13 @@ async function readCourseIndex(KV) {
 }
 
 // ============================================
-// WRITE COURSE INDEX
-// ============================================
-
-async function writeCourseIndex(
-    KV,
-    courseIds = []
-) {
-
-    await KV.put(
-        MOS360_COURSES_KV,
-        JSON.stringify(courseIds)
-    );
-}
-
-// ============================================
 // SAVE LESSON TO KV
 // ============================================
 
-async function saveLesson(
-    KV,
-    lesson = {}
-) {
-
-    const key =
-        `lesson:${lesson.id}`;
+async function saveLesson(KV, lesson = {}) {
 
     await KV.put(
-        key,
+        `lesson:${lesson.id}`,
         JSON.stringify({
             ...lesson,
             savedAt: new Date().toISOString()
@@ -73,73 +44,66 @@ async function saveLesson(
 }
 
 // ============================================
-// SAVE COURSE GRAPH TO KV
+// MERGE COURSE GRAPH INTO COURSES KEY
 //
 // courseGraph = {
 //   courseId: [{ id, title, order, ... }]
 // }
 // ============================================
 
-async function saveCourseGraph(
-    KV,
-    courseGraph = {}
-) {
-
-    const courseIds =
-        Object.keys(courseGraph);
-
-    for (const courseId of courseIds) {
-
-        const key =
-            `course:${courseId}`;
-
-        const lessons =
-            courseGraph[courseId];
-
-        await KV.put(
-            key,
-            JSON.stringify({
-                courseId,
-                lessons,
-                totalLessons:
-                    lessons.length,
-                updatedAt:
-                    new Date().toISOString()
-            })
-        );
-    }
-
-    return courseIds;
-}
-
-// ============================================
-// UPDATE COURSE INDEX
-// Merge courseId mới vào index hiện có
-// ============================================
-
-async function updateCourseIndex(
-    KV,
-    newCourseIds = []
-) {
+async function mergeCourses(KV, courseGraph = {}) {
 
     const existing =
-        await readCourseIndex(KV);
+        await readCourses(KV);
 
-    const merged = [
-        ...new Set([
-            ...existing,
-            ...newCourseIds
-        ])
-    ];
+    const courseMap = {};
 
-    await writeCourseIndex(KV, merged);
+    // Index existing courses by id
+    existing.forEach(course => {
+        courseMap[course.id] = course;
+    });
+
+    // Merge / upsert new courses
+    Object.entries(courseGraph).forEach(
+
+        ([courseId, lessons]) => {
+
+            courseMap[courseId] = {
+
+                id:
+                    courseId,
+
+                title:
+                    courseMap[courseId]?.title
+                    || courseId,
+
+                lessons,
+
+                totalLessons:
+                    lessons.length,
+
+                updatedAt:
+                    new Date().toISOString(),
+
+                runtimeImported:
+                    true
+            };
+        }
+    );
+
+    const merged =
+        Object.values(courseMap);
+
+    await KV.put(
+        "courses",
+        JSON.stringify(merged)
+    );
 
     return merged;
 }
 
 // ============================================
 // IMPORT RUNTIME LESSONS
-// Entry point chính của service
 // ============================================
 
 export async function importRuntimeLessons(
@@ -159,21 +123,18 @@ export async function importRuntimeLessons(
     if (!KV) {
 
         throw new Error(
-            "KV binding MOS360_COURSES_KV không tìm thấy trong env. " +
-            "Kiểm tra wrangler.toml."
+            "KV binding MOS360_COURSES_KV không tìm thấy trong env."
         );
     }
 
     // ========================================
-    // SAVE LESSONS
+    // SAVE LESSONS (song song)
     // ========================================
 
     const lessonResults =
         await Promise.allSettled(
-
             importedLessons.map(
-                lesson =>
-                    saveLesson(KV, lesson)
+                lesson => saveLesson(KV, lesson)
             )
         );
 
@@ -188,23 +149,13 @@ export async function importRuntimeLessons(
         ).length;
 
     // ========================================
-    // SAVE COURSE GRAPHS
+    // MERGE COURSE GRAPH → courses key
     // ========================================
 
-    const savedCourseIds =
-        await saveCourseGraph(
+    const updatedCourses =
+        await mergeCourses(
             KV,
             importedCourseGraphs
-        );
-
-    // ========================================
-    // UPDATE COURSE INDEX
-    // ========================================
-
-    const updatedIndex =
-        await updateCourseIndex(
-            KV,
-            savedCourseIds
         );
 
     // ========================================
@@ -216,9 +167,9 @@ export async function importRuntimeLessons(
         savedLessons,
         failedLessons,
         savedCourses:
-            savedCourseIds.length,
-        courseIndex:
-            updatedIndex,
+            Object.keys(importedCourseGraphs).length,
+        totalCourses:
+            updatedCourses.length,
         timestamp:
             new Date().toISOString()
     };

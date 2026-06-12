@@ -347,7 +347,50 @@ export async function importRuntimeLessons(
             );
 
         // ====================================
-        // SAVE
+        // SAVE TO CLOUDFLARE KV (normalized)
+        // ====================================
+
+        let kvResult = { ok: false };
+
+        try {
+
+            const kvResponse =
+                await fetch(
+                    "/api/import/runtime",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            importedLessons:
+                                normalizedLessons,
+                            importedCourseGraphs:
+                                importResult.importedCourseGraphs || {}
+                        })
+                    }
+                );
+
+            const kvData =
+                await kvResponse.json();
+
+            kvResult = kvData.data || kvData;
+
+            console.log(
+                "[MOS360 KV] Saved",
+                kvResult
+            );
+
+        } catch (kvError) {
+
+            console.error(
+                "[MOS360 KV] Save failed",
+                kvError
+            );
+        }
+
+        // ====================================
+        // SAVE TO LOCALSTORAGE (local cache)
         // ====================================
 
         saveImportedLessons(
@@ -374,7 +417,9 @@ export async function importRuntimeLessons(
             totalImported:
                 normalizedLessons.length,
 
-            totalRejected: 0
+            totalRejected: 0,
+
+            kv: kvResult
         };
 
     } catch (error) {

@@ -1,7 +1,7 @@
 // ============================================
 // IMPORT SPREADSHEET LESSONS
 // Canonical persistence runtime
-// Phase: KV-enabled
+// Phase: KV-ready (transform only, no KV call)
 // ============================================
 
 import {
@@ -13,85 +13,8 @@ import {
     from "./spreadsheetLessonTransformer.v2.js";
 
 // ============================================
-// KV API ENDPOINT
-// ============================================
-
-const KV_IMPORT_ENDPOINT =
-    "/api/import/runtime";
-
-// ============================================
-// SAVE TO CLOUDFLARE KV
-// ============================================
-
-async function saveToKV({
-
-    importedLessons,
-    importedCourseGraphs
-
-}) {
-
-    try {
-
-        const response =
-            await fetch(
-                KV_IMPORT_ENDPOINT,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        importedLessons,
-                        importedCourseGraphs
-                    })
-                }
-            );
-
-        const result =
-            await response.json();
-
-        if (!result.ok) {
-
-            console.error(
-                "KV SAVE FAILED",
-                result.error
-            );
-
-            return {
-                ok: false,
-                error: result.error
-            };
-        }
-
-        console.log(
-            "KV SAVE SUCCESS",
-            result.data
-        );
-
-        return {
-            ok: true,
-            ...result.data
-        };
-
-    } catch (err) {
-
-        console.error(
-            "KV SAVE ERROR",
-            err
-        );
-
-        return {
-            ok: false,
-            error: err.message
-        };
-    }
-}
-
-// ============================================
 // IMPORT SPREADSHEET LESSONS
+// Pure transform — KV save handled by engine
 // ============================================
 
 export async function importSpreadsheetLessons(
@@ -176,20 +99,6 @@ export async function importSpreadsheetLessons(
         }
     );
 
-    // ========================================
-    // SAVE TO CLOUDFLARE KV
-    // ========================================
-
-    const kvResult =
-        await saveToKV({
-            importedLessons,
-            importedCourseGraphs: courseMap
-        });
-
-    // ========================================
-    // RESULT
-    // ========================================
-
     return {
 
         ok: true,
@@ -205,27 +114,6 @@ export async function importSpreadsheetLessons(
             importedLessons.length,
 
         totalRejected:
-            0,
-
-        // ====================================
-        // KV PERSISTENCE RESULT
-        // ====================================
-
-        kv: {
-            ok:
-                kvResult.ok,
-
-            savedLessons:
-                kvResult.savedLessons ?? 0,
-
-            savedCourses:
-                kvResult.savedCourses ?? 0,
-
-            courseIndex:
-                kvResult.courseIndex ?? [],
-
-            error:
-                kvResult.error ?? null
-        }
+            0
     };
 }

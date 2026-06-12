@@ -40,7 +40,8 @@ import {
   from "../modules/gamification/gamification.routes.js";
 
 import {
-  handleRuntimeImport
+  handleRuntimeImport,
+  handleDeleteLesson
 }
   from "../modules/import/import.routes.js";
 
@@ -90,7 +91,7 @@ const corsHeaders = {
     "*",
 
   "Access-Control-Allow-Methods":
-    "GET, POST, OPTIONS",
+    "GET, POST, DELETE, OPTIONS",
 
   "Access-Control-Allow-Headers":
     "Content-Type, Authorization",
@@ -131,6 +132,38 @@ export async function router(
     `${request.method}:${url.pathname}`;
 
   if (
+
+  request.method === "DELETE"
+
+  &&
+
+  url.pathname.startsWith(
+    "/api/lessons/"
+  )
+
+) {
+
+  const response =
+    await handleDeleteLesson(
+      request,
+      env
+    );
+
+  const headers =
+    new Headers(response.headers);
+
+  Object.entries(corsHeaders)
+    .forEach(([key, value]) => {
+      headers.set(key, value);
+    });
+
+  return new Response(
+    response.body,
+    { status: response.status, headers }
+  );
+}
+
+if (
 
   request.method === "GET"
 
